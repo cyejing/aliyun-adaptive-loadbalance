@@ -2,6 +2,9 @@ package com.aliware.tianchi;
 
 import org.apache.dubbo.common.Constants;
 import org.apache.dubbo.common.extension.Activate;
+import org.apache.dubbo.common.logger.Logger;
+import org.apache.dubbo.common.logger.LoggerFactory;
+import org.apache.dubbo.qos.server.handler.HttpProcessHandler;
 import org.apache.dubbo.rpc.Filter;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
@@ -17,12 +20,17 @@ import org.apache.dubbo.rpc.RpcException;
  */
 @Activate(group = Constants.CONSUMER)
 public class TestClientFilter implements Filter {
+
+    private static final Logger log = LoggerFactory.getLogger(TestClientFilter.class);
+
+
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         try{
             Result result = invoker.invoke(invocation);
             return result;
         }catch (Exception e){
+            log.error("", e);
             throw e;
         }
 
