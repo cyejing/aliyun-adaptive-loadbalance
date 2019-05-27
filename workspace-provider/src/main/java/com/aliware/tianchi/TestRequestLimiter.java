@@ -34,7 +34,7 @@ public class TestRequestLimiter implements RequestLimiter {
         Map<String, Object> executors = dataStore.get(Constants.EXECUTOR_SERVICE_COMPONENT_KEY);
         ThreadPoolExecutor executor = (ThreadPoolExecutor) executors.values().iterator().next();
         int max = executor.getMaximumPoolSize();
-        if (activeCount >= max) {
+        if (activeCount+10 >= max) {
             log.warn("服务器线程已满,开始限制流量.activeTaskCount" + activeCount + ",max" + max);
             return false;
         }

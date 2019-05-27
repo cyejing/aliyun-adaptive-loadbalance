@@ -9,6 +9,7 @@ import org.apache.dubbo.rpc.Filter;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
+import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
 
 /**
@@ -29,10 +30,12 @@ public class TestClientFilter implements Filter {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         try {
             Result result = invoker.invoke(invocation);
-            return result;
-        } catch (RpcException rpcEx) {
-            log.warn("调用失败重试,count" + FAIL_COUNT.incrementAndGet(), rpcEx);
-            Result result = invoker.invoke(invocation);
+            RpcContext.getContext().getCompletableFuture().whenComplete((a, t) -> {
+                if (t != null) {
+                    log.error("线程池已满,现在发起重试请求");
+                    invoke(invoker, invocation);
+                }
+            });
             return result;
         } catch (Exception e) {
             throw e;
