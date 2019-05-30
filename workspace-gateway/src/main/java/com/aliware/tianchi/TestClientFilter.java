@@ -28,10 +28,6 @@ public class TestClientFilter implements Filter {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         try{
             Result result = invoker.invoke(invocation);
-            CompletableFuture<Integer> completableFuture = RpcContext.getContext().getCompletableFuture();
-            CompletableFutureWrapper<Integer> any = new CompletableFutureWrapper<>(completableFuture);
-            RpcContext.getContext().setFuture(any);
-
             return result;
         }catch (Exception e){
             throw e;

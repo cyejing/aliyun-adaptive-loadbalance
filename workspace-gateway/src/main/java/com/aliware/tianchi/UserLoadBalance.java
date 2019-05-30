@@ -20,10 +20,9 @@ import org.apache.dubbo.rpc.cluster.loadbalance.LeastActiveLoadBalance;
  */
 public class UserLoadBalance implements LoadBalance {
 
-    private LoadBalance loadBalance = new LeastActiveLoadBalance();
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
-        return loadBalance.select(invokers, url, invocation);
+        return new InvokerWrapper<>(invokers, url, invocation);
     }
 }

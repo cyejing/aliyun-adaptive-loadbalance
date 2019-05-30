@@ -20,9 +20,6 @@ import org.apache.dubbo.remoting.transport.RequestLimiter;
 public class TestRequestLimiter implements RequestLimiter {
     private static final Logger log = LoggerFactory.getLogger(TestRequestLimiter.class);
 
-    private static final Logger log = LoggerFactory.getLogger(TestRequestLimiter.class);
-
-
     /**
      * @param request 服务请求
      * @param activeCount 服务端对应线程池的活跃线程数
