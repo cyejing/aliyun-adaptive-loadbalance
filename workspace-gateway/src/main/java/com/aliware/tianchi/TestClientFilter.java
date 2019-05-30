@@ -1,10 +1,11 @@
 package com.aliware.tianchi;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.CompletableFuture;
 import org.apache.dubbo.common.Constants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
+import org.apache.dubbo.qos.server.handler.HttpProcessHandler;
 import org.apache.dubbo.rpc.Filter;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
@@ -21,23 +22,18 @@ import org.apache.dubbo.rpc.RpcException;
  */
 @Activate(group = Constants.CONSUMER)
 public class TestClientFilter implements Filter {
-
     private static final Logger log = LoggerFactory.getLogger(TestClientFilter.class);
-    private static final AtomicLong FAIL_COUNT = new AtomicLong(0);
-
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-        try {
+        try{
             Result result = invoker.invoke(invocation);
-            RpcContext.getContext().getCompletableFuture().whenComplete((a, t) -> {
-                if (t != null) {
-                    log.error("线程池已满,现在发起重试请求");
-                    invoke(invoker, invocation);
-                }
-            });
+            CompletableFuture<Integer> completableFuture = RpcContext.getContext().getCompletableFuture();
+            CompletableFutureWrapper<Integer> any = new CompletableFutureWrapper<>(completableFuture);
+            RpcContext.getContext().setFuture(any);
+
             return result;
-        } catch (Exception e) {
+        }catch (Exception e){
             throw e;
         }
 
@@ -47,4 +43,7 @@ public class TestClientFilter implements Filter {
     public Result onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
         return result;
     }
+
+
+
 }
