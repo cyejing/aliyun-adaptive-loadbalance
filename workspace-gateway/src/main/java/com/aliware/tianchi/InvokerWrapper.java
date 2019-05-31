@@ -1,8 +1,5 @@
 package com.aliware.tianchi;
 
-import static com.aliware.tianchi.CompletableFutureWrapper.RETRY_FLAG;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -23,20 +20,20 @@ import org.apache.dubbo.rpc.cluster.loadbalance.RandomLoadBalance;
  */
 public class InvokerWrapper<T> implements Invoker<T> {
     private static final Logger log = LoggerFactory.getLogger(InvokerWrapper.class);
+    public static final int RETRY_FLAG = -1111;
 
     private final List<Invoker<T>> invokers;
     private final URL url;
     private final Invocation invocation;
+    private final LoadBalance loadBalance;
 
     private Invoker<T> invoker;
 
-    private LoadBalance loadBalance = new RandomLoadBalance();
-
-
-    public InvokerWrapper(List<Invoker<T>> invokers, URL url, Invocation invocation) {
+    public InvokerWrapper(List<Invoker<T>> invokers, URL url, Invocation invocation, LoadBalance loadBalance) {
         this.invokers = invokers;
         this.url = url;
         this.invocation = invocation;
+        this.loadBalance = loadBalance;
         this.invoker = select();
     }
 
@@ -69,7 +66,10 @@ public class InvokerWrapper<T> implements Invoker<T> {
         Result result = invoker.invoke(invocation);
         if (result instanceof SimpleAsyncRpcResult) {
             CompletableFuture<Result> resultFuture = ((SimpleAsyncRpcResult) result).getValueFuture();
-            CompletableFutureWrapper any = new CompletableFutureWrapper(resultFuture, (a)->{
+            CompletableFutureWrapper any = new CompletableFutureWrapper(resultFuture,(t)->{
+                // calc weight
+                return RETRY_FLAG;
+            }, (a)->{
                 if (a == RETRY_FLAG) {
                     log.error("重试请求");
                     Result retry = select().invoke(invocation);
