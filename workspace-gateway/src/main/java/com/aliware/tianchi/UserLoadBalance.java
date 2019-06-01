@@ -7,8 +7,6 @@ import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.cluster.LoadBalance;
 
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-import org.apache.dubbo.rpc.cluster.loadbalance.LeastActiveLoadBalance;
 
 /**
  * @author daofeng.xjf
@@ -20,7 +18,7 @@ import org.apache.dubbo.rpc.cluster.loadbalance.LeastActiveLoadBalance;
  */
 public class UserLoadBalance implements LoadBalance {
 
-    private static WeightLoadBalance loadBalance = new WeightLoadBalance();
+    private static WeightedLoadBalance loadBalance = new WeightedLoadBalance();
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {

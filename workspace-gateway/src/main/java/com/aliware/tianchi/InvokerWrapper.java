@@ -2,6 +2,7 @@ package com.aliware.tianchi;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
@@ -12,38 +13,33 @@ import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.SimpleAsyncRpcResult;
-import org.apache.dubbo.rpc.cluster.LoadBalance;
-import org.apache.dubbo.rpc.cluster.loadbalance.RandomLoadBalance;
 
 /**
  * @author Born
  */
 public class InvokerWrapper<T> implements Invoker<T> {
+
     private static final Logger log = LoggerFactory.getLogger(InvokerWrapper.class);
     public static final int RETRY_FLAG = -1111;
 
     private final List<Invoker<T>> invokers;
     private final URL url;
     private final Invocation invocation;
-    private final LoadBalance loadBalance;
+    private final WeightedLoadBalance loadBalance;
 
     private Invoker<T> invoker;
 
-    public InvokerWrapper(List<Invoker<T>> invokers, URL url, Invocation invocation, LoadBalance loadBalance) {
+    public InvokerWrapper(List<Invoker<T>> invokers, URL url, Invocation invocation, WeightedLoadBalance loadBalance) {
         this.invokers = invokers;
         this.url = url;
         this.invocation = invocation;
         this.loadBalance = loadBalance;
-        this.invoker = select();
+        this.invoker = loadBalance.select(invokers, url, invocation);
     }
 
     Invoker select() {
-        if (invoker != null) {
-            List<Invoker<T>> r = invokers.stream().filter(i -> !i.equals(invoker)).collect(Collectors.toList());
-            return loadBalance.select(r, url, invocation);
-        }
-        Invoker<T> invoker = loadBalance.select(invokers, url, invocation);
-        return invoker;
+        List<Invoker<T>> r = invokers.stream().filter(i -> !i.equals(invoker)).collect(Collectors.toList());
+        return loadBalance.select(r, url, invocation);
     }
 
     @Override
@@ -65,21 +61,56 @@ public class InvokerWrapper<T> implements Invoker<T> {
     public Result invoke(Invocation invocation) throws RpcException {
         Result result = invoker.invoke(invocation);
         if (result instanceof SimpleAsyncRpcResult) {
-            CompletableFuture<Result> resultFuture = ((SimpleAsyncRpcResult) result).getValueFuture();
-            CompletableFutureWrapper any = new CompletableFutureWrapper(resultFuture,(t)->{
-                // calc weight
+            CompletableFuture<Integer> valueFuture = ((SimpleAsyncRpcResult) result).getValueFuture();
+            CompletableFutureWrapper cfw = new CompletableFutureWrapper(valueFuture);
+
+            AtomicReference<Invoker> realInvoke = new AtomicReference<>(this.invoker);
+
+            cfw.setExceptionally( (t) -> {
+                loadBalance.tripped(this.invoker);
                 return RETRY_FLAG;
-            }, (a)->{
+            });
+            Invoker invoker1 = select();
+            cfw.setRetry1((a) -> {
                 if (a == RETRY_FLAG) {
                     log.error("重试请求");
-                    Result retry = select().invoke(invocation);
+                    realInvoke.set(invoker1);
+                    Result retry = invoker1.invoke(invocation);
                     if (retry instanceof SimpleAsyncRpcResult) {
                         return ((SimpleAsyncRpcResult) retry).getValueFuture();
                     }
                 }
                 return CompletableFuture.supplyAsync(() -> a);
             });
-            RpcContext.getContext().setFuture(any);
+
+            cfw.setExceptionally1( (t) -> {
+                loadBalance.tripped(invoker1);
+                return RETRY_FLAG;
+            });
+            Invoker invoker2 = select();
+            cfw.setRetry2((a) -> {
+                if (a == RETRY_FLAG) {
+                    log.error("重试请求");
+                    realInvoke.set(invoker2);
+                    Result retry = invoker2.invoke(invocation);
+                    if (retry instanceof SimpleAsyncRpcResult) {
+                        return ((SimpleAsyncRpcResult) retry).getValueFuture();
+                    }
+                }
+                return CompletableFuture.supplyAsync(() -> a);
+            });
+
+            cfw.setExceptionally2( (t) -> {
+                loadBalance.tripped(invoker2);
+                return RETRY_FLAG;
+            });
+
+            cfw.setCalcResponseTime(() -> {
+                Invoker invoker = realInvoke.get();
+                String identityString = invoker.getUrl().toIdentityString();
+            });
+
+            RpcContext.getContext().setFuture(cfw);
         }
         return result;
     }

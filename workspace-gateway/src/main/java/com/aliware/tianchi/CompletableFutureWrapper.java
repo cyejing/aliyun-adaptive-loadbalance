@@ -12,14 +12,19 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
     private static final Logger log = LoggerFactory.getLogger(CompletableFutureWrapper.class);
 
     private final CompletableFuture<Integer> completableFuture;
-    private final Function<Integer,CompletionStage<Integer>> retry;
-    private final Function<Throwable, Integer> exHandler ;
 
-    public CompletableFutureWrapper(CompletableFuture completableFuture,
-            Function<Throwable, Integer> exHandler,
-            Function<Integer, CompletionStage<Integer>> fn) {
-        this.exHandler = exHandler;
-        this.retry = fn;
+    private Runnable calcResponseTime;
+
+    private Function<Throwable, Integer> exceptionally;
+
+    private Function<Throwable, Integer> exceptionally1;
+    private Function<Integer, CompletionStage<Integer>> retry1;
+
+    private Function<Throwable, Integer> exceptionally2;
+    private Function<Integer, CompletionStage<Integer>> retry2;
+
+
+    public CompletableFutureWrapper(CompletableFuture<Integer> completableFuture) {
         this.completableFuture = completableFuture;
         this.completableFuture.whenComplete((a, t) -> {
             if (t != null) {
@@ -29,14 +34,43 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
         });
     }
 
+
     @Override
     public CompletableFuture whenComplete(BiConsumer action) {
-        return super.exceptionally(exHandler)
-                .thenCompose(retry)
-                .exceptionally(exHandler)
-                .thenCompose(retry)
+
+        return super
+                .exceptionally(exceptionally)
+                .thenCompose(retry1)
+                .exceptionally(exceptionally1)
+                .thenCompose(retry2)
+                .exceptionally(exceptionally2)
+//                .thenRunAsync(calcResponseTime)
                 .whenComplete(action);
     }
 
+    public void setCalcResponseTime(Runnable calcResponseTime) {
+        this.calcResponseTime = calcResponseTime;
+    }
 
+    public void setExceptionally(Function<Throwable, Integer> exceptionally) {
+        this.exceptionally = exceptionally;
+    }
+
+    public void setExceptionally1(Function<Throwable, Integer> exceptionally1) {
+        this.exceptionally1 = exceptionally1;
+    }
+
+    public void setRetry1(
+            Function<Integer, CompletionStage<Integer>> retry1) {
+        this.retry1 = retry1;
+    }
+
+    public void setExceptionally2(Function<Throwable, Integer> exceptionally2) {
+        this.exceptionally2 = exceptionally2;
+    }
+
+    public void setRetry2(
+            Function<Integer, CompletionStage<Integer>> retry2) {
+        this.retry2 = retry2;
+    }
 }
