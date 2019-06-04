@@ -2,6 +2,7 @@ package com.aliware.tianchi;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import org.apache.dubbo.common.logger.Logger;
@@ -34,6 +35,14 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
         });
     }
 
+    public static void main(String[] args) throws Exception {
+        CompletableFuture run = CompletableFuture.supplyAsync(() -> 10)
+                .thenCompose(i -> CompletableFuture.supplyAsync(() -> 20))
+                .thenCompose(i -> CompletableFuture.supplyAsync(() -> 30))
+                .whenComplete((i, t) -> System.out.println("result: " + i + " , " + t))
+                .thenRunAsync(() -> System.out.println("run"));
+        run.get();
+    }
 
     @Override
     public CompletableFuture whenComplete(BiConsumer action) {
@@ -44,8 +53,8 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
                 .exceptionally(exceptionally1)
                 .thenCompose(retry2)
                 .exceptionally(exceptionally2)
-//                .thenRunAsync(calcResponseTime)
-                .whenComplete(action);
+                .whenComplete(action)
+                .thenRunAsync(calcResponseTime);
     }
 
     public void setCalcResponseTime(Runnable calcResponseTime) {

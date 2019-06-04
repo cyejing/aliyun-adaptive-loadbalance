@@ -21,9 +21,9 @@ public class WeightedLoadBalance implements LoadBalance {
 
     private static final Logger log = LoggerFactory.getLogger(WeightedLoadBalance.class);
 
-    public static final int DEFAULT_WEIGHT = 200;
+    public static final int DEFAULT_WEIGHT = 1000;
     public static final int TRIPPED_DECREASE_WEIGHT = 50;
-    public static final int REGAIN_DECREASE_WEIGHT = 1;
+    public static final int REGAIN_DECREASE_WEIGHT = 25;
 
     private Timer timer = new Timer();
 
@@ -39,7 +39,7 @@ public class WeightedLoadBalance implements LoadBalance {
                     }
                 }
             }
-        }, 0, 1000);
+        }, 0, 500);
     }
 
     private ConcurrentMap<String, WeightedRoundRobin> map = new ConcurrentHashMap<>();
