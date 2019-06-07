@@ -109,10 +109,10 @@ public class InvokerWrapper<T> implements Invoker<T> {
                 return RETRY_FLAG;
             });
 
-//            Stopwatch stopwatch = Stopwatch.createStarted();
+            Stopwatch stopwatch = Stopwatch.createStarted();
             cfw.setCalcResponseTime(() -> {
-//                stopwatch.stop();
-//                InvokerStats.getInstance().noteResponseTime(realInvoke.get(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
+                stopwatch.stop();
+                InvokerStats.getInstance().noteResponseTime(realInvoke.get(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
             });
 
             RpcContext.getContext().setFuture(cfw);
