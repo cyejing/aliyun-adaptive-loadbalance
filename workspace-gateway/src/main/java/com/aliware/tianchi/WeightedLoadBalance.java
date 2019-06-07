@@ -28,7 +28,6 @@ public class WeightedLoadBalance implements LoadBalance {
     public static final int REGAIN_DECREASE_WEIGHT = 25;
 
     private Timer timer = new Timer();
-    private Timer logTimer = new Timer();
 
 
 
@@ -40,27 +39,12 @@ public class WeightedLoadBalance implements LoadBalance {
                 if (values != null && values.size() > 0) {
                     for (WeightedRoundRobin wrr : values) {
                         wrr.increaseWeight(REGAIN_DECREASE_WEIGHT);
+                        log.info("adjustment weight key:" + wrr.getKey() + ", weight:" + wrr.getWeight() + ", current"
+                                + wrr.getCurrent());
                     }
                 }
             }
         }, 0, 500);
-        logTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    Set<String> keySet = map.keySet();
-                    InvokerStats invokerStats = InvokerStats.getInstance();
-                    for (String key : keySet) {
-                        WeightedRoundRobin wrr = map.get(key);
-                        Distribution stats = invokerStats.getStats(key);
-                        log.info("adjustment weight key:" + wrr.getKey() + ", weight:" + wrr.getWeight() + ", current"
-                                + wrr.getCurrent() + ", mean" + stats.getMean());
-                    }
-                } catch (Exception e) {
-                    log.error("is ok", e);
-                }
-            }
-        },0,1000);
     }
 
     private ConcurrentMap<String, WeightedRoundRobin> map = new ConcurrentHashMap<>();
