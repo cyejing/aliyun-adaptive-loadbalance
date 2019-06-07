@@ -47,15 +47,18 @@ public class WeightedLoadBalance implements LoadBalance {
         logTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Set<String> keySet = map.keySet();
-                InvokerStats invokerStats = InvokerStats.getInstance();
-                for (String key : keySet) {
-                    WeightedRoundRobin wrr = map.get(key);
-                    Distribution stats = invokerStats.getStats(key);
-                    log.info("adjustment weight key:" + wrr.getKey() + ", weight:" + wrr.getWeight() + ", current" + wrr
-                            .getCurrent() + ", mean" + stats.getMean());
+                try {
+                    Set<String> keySet = map.keySet();
+                    InvokerStats invokerStats = InvokerStats.getInstance();
+                    for (String key : keySet) {
+                        WeightedRoundRobin wrr = map.get(key);
+                        Distribution stats = invokerStats.getStats(key);
+                        log.info("adjustment weight key:" + wrr.getKey() + ", weight:" + wrr.getWeight() + ", current"
+                                + wrr.getCurrent() + ", mean" + stats.getMean());
+                    }
+                } catch (Exception e) {
+                    log.error("is ok", e);
                 }
-
             }
         },0,1000);
     }
