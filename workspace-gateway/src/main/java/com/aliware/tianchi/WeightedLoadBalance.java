@@ -132,7 +132,7 @@ public class WeightedLoadBalance implements LoadBalance {
             return selectedInvoker;
         }
 
-        log.error("should not happen here. have not selectedInvoker");
+//        log.error("should not happen here. have not selectedInvoker");
         return invokers.get(ThreadLocalRandom.current().nextInt(invokers.size()));
     }
 }
