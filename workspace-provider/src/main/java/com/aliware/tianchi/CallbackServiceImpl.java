@@ -18,20 +18,20 @@ import org.apache.dubbo.rpc.service.CallbackService;
 public class CallbackServiceImpl implements CallbackService {
 
     public CallbackServiceImpl() {
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (!listeners.isEmpty()) {
-                    for (Map.Entry<String, CallbackListener> entry : listeners.entrySet()) {
-                        try {
-                            entry.getValue().receiveServerMsg(System.getProperty("quota") + " " + new Date().toString());
-                        } catch (Throwable t1) {
-                            listeners.remove(entry.getKey());
-                        }
-                    }
-                }
-            }
-        }, 0, 5000);
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                if (!listeners.isEmpty()) {
+//                    for (Map.Entry<String, CallbackListener> entry : listeners.entrySet()) {
+//                        try {
+//                            entry.getValue().receiveServerMsg(System.getProperty("quota") + " " + new Date().toString());
+//                        } catch (Throwable t1) {
+//                            listeners.remove(entry.getKey());
+//                        }
+//                    }
+//                }
+//            }
+//        }, 0, 5000);
     }
 
     private Timer timer = new Timer();

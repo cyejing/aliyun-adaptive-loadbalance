@@ -1,7 +1,10 @@
 package com.aliware.tianchi;
 
+import com.aliware.tianchi.stats.InvokerStats;
+import com.aliware.tianchi.stats.Stopwatch;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.apache.dubbo.common.URL;
@@ -26,6 +29,7 @@ public class InvokerWrapper<T> implements Invoker<T> {
     private final URL url;
     private final Invocation invocation;
     private final WeightedLoadBalance loadBalance;
+
 
     private Invoker<T> invoker;
 
@@ -105,16 +109,17 @@ public class InvokerWrapper<T> implements Invoker<T> {
                 return RETRY_FLAG;
             });
 
+            Stopwatch stopwatch = Stopwatch.createStarted();
             cfw.setCalcResponseTime(() -> {
-                Invoker invoker = realInvoke.get();
-                String identityString = invoker.getUrl().toIdentityString();
-
+                stopwatch.stop();
+                InvokerStats.getInstance().noteResponseTime(realInvoke.get(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
             });
 
             RpcContext.getContext().setFuture(cfw);
         }
         return result;
     }
+
 
     @Override
     public void destroy() {

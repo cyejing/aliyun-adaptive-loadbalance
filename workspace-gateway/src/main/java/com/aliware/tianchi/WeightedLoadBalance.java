@@ -1,7 +1,11 @@
 package com.aliware.tianchi;
 
+import com.alibaba.fastjson.JSON;
+import com.aliware.tianchi.stats.Distribution;
+import com.aliware.tianchi.stats.InvokerStats;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +30,9 @@ public class WeightedLoadBalance implements LoadBalance {
     public static final int REGAIN_DECREASE_WEIGHT = 25;
 
     private Timer timer = new Timer();
+    private Timer logTimer = new Timer();
+
+
 
     public WeightedLoadBalance() {
         timer.schedule(new TimerTask() {
@@ -35,11 +42,24 @@ public class WeightedLoadBalance implements LoadBalance {
                 if (values != null && values.size() > 0) {
                     for (WeightedRoundRobin wrr : values) {
                         wrr.increaseWeight(REGAIN_DECREASE_WEIGHT);
-                        log.info("adjustment weight key:" + wrr.getKey() + " weight:" + wrr.getWeight() + " current" + wrr.getCurrent());
                     }
                 }
             }
         }, 0, 500);
+        logTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Set<String> keySet = map.keySet();
+                InvokerStats invokerStats = InvokerStats.getInstance();
+                for (String key : keySet) {
+                    WeightedRoundRobin wrr = map.get(key);
+                    Distribution stats = invokerStats.getStats(key);
+                    log.info("adjustment weight key:" + wrr.getKey() + ", weight:" + wrr.getWeight() + ", current" + wrr
+                            .getCurrent() + ", mean" + stats.getMean());
+                }
+
+            }
+        },0,1000);
     }
 
     private ConcurrentMap<String, WeightedRoundRobin> map = new ConcurrentHashMap<>();

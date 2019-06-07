@@ -35,15 +35,6 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
         });
     }
 
-    public static void main(String[] args) throws Exception {
-        CompletableFuture run = CompletableFuture.supplyAsync(() -> 10)
-                .thenCompose(i -> CompletableFuture.supplyAsync(() -> 20))
-                .thenCompose(i -> CompletableFuture.supplyAsync(() -> 30))
-                .whenComplete((i, t) -> System.out.println("result: " + i + " , " + t))
-                .thenRunAsync(() -> System.out.println("run"));
-        run.get();
-    }
-
     @Override
     public CompletableFuture whenComplete(BiConsumer action) {
 
