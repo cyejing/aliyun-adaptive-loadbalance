@@ -1,6 +1,5 @@
 package com.aliware.tianchi;
 
-import com.alibaba.fastjson.JSON;
 import com.aliware.tianchi.stats.Distribution;
 import com.aliware.tianchi.stats.InvokerStats;
 import java.util.Collection;
@@ -22,7 +21,6 @@ import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.cluster.LoadBalance;
 
 public class WeightedLoadBalance implements LoadBalance {
-
     private static final Logger log = LoggerFactory.getLogger(WeightedLoadBalance.class);
 
     public static final int DEFAULT_WEIGHT = 1000;

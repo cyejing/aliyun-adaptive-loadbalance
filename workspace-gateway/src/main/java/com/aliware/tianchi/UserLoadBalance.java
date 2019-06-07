@@ -2,6 +2,8 @@ package com.aliware.tianchi;
 
 import com.aliware.tianchi.stats.InvokerStats;
 import org.apache.dubbo.common.URL;
+import org.apache.dubbo.common.logger.Logger;
+import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.RpcException;
@@ -18,6 +20,7 @@ import java.util.List;
  * 选手需要基于此类实现自己的负载均衡算法
  */
 public class UserLoadBalance implements LoadBalance {
+    private static final Logger log = LoggerFactory.getLogger(UserLoadBalance.class);
 
     private static WeightedLoadBalance loadBalance = new WeightedLoadBalance();
 

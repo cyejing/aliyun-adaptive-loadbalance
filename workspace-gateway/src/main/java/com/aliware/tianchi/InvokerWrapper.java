@@ -21,8 +21,8 @@ import org.apache.dubbo.rpc.SimpleAsyncRpcResult;
  * @author Born
  */
 public class InvokerWrapper<T> implements Invoker<T> {
-
     private static final Logger log = LoggerFactory.getLogger(InvokerWrapper.class);
+
     public static final int RETRY_FLAG = -1111;
 
     private final List<Invoker<T>> invokers;

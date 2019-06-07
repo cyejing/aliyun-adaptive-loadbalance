@@ -9,8 +9,8 @@ import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 
 public class CompletableFutureWrapper extends CompletableFuture<Integer> {
-
     private static final Logger log = LoggerFactory.getLogger(CompletableFutureWrapper.class);
+
 
     private final CompletableFuture<Integer> completableFuture;
 
