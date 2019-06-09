@@ -77,7 +77,6 @@ public class InvokerWrapper<T> implements Invoker<T> {
             Invoker invoker1 = select();
             cfw.setRetry1((a) -> {
                 if (a == RETRY_FLAG) {
-                    log.error("重试请求");
                     realInvoke.set(invoker1);
                     Result retry = invoker1.invoke(invocation);
                     if (retry instanceof SimpleAsyncRpcResult) {
@@ -94,7 +93,6 @@ public class InvokerWrapper<T> implements Invoker<T> {
             Invoker invoker2 = select();
             cfw.setRetry2((a) -> {
                 if (a == RETRY_FLAG) {
-                    log.error("重试请求");
                     realInvoke.set(invoker2);
                     Result retry = invoker2.invoke(invocation);
                     if (retry instanceof SimpleAsyncRpcResult) {

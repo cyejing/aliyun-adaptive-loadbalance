@@ -40,12 +40,12 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
 
         return super
                 .exceptionally(exceptionally)
-//                .thenCompose(retry1)
-//                .exceptionally(exceptionally1)
+                .thenCompose(retry1)
+                .exceptionally(exceptionally1)
 //                .thenCompose(retry2)
 //                .exceptionally(exceptionally2)
-                .whenComplete(action);
-//                .thenRunAsync(calcResponseTime);
+                .whenComplete(action)
+                .thenRunAsync(calcResponseTime);
     }
 
     public void setCalcResponseTime(Runnable calcResponseTime) {
