@@ -50,4 +50,18 @@ public class InvokerStats {
         return getDataCollector(key);
     }
 
+    public static void main(String[] args) throws Exception{
+        MeasuredRate measuredRate = new MeasuredRate(1000);
+        for (int i = 0; i < 100; i++) {
+            Thread.sleep(350);
+            measuredRate.increment();
+            measuredRate.increment();
+            measuredRate.increment();
+            System.out.println(measuredRate.getCount()+","+measuredRate.getMaxCount());
+        }
+
+
+
+    }
+
 }

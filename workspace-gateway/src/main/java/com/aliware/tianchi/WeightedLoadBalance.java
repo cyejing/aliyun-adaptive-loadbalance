@@ -44,9 +44,9 @@ public class WeightedLoadBalance implements LoadBalance {
 
                         DataCollector dc = InvokerStats.getInstance().getDataCollector(key);
                         String s = String
-                                .format("adjustment weight key:%s, weight:%d, current:%d, failed:%d, failedWindow",
-                                        wrr.getKey(), wrr.getWeight(), wrr.getCurrent(), dc.getFailedRequestCount(),
-                                        dc.getFailedRequestCountInWindow());
+                                .format("adjustment weight key:%s, weight:%d, current:%d, Succeed:%d, SucceedWindow:%d .",
+                                        wrr.getKey(), wrr.getWeight(), wrr.getCurrent(), dc.getSucceedRequestCount(),
+                                        dc.getSucceedRequestCountInWindow());
                         log.info(s);
                     }
                 } catch (Exception e) {

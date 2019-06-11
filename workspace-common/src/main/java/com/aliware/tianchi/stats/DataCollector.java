@@ -29,12 +29,19 @@ public class DataCollector {
         }
     }
 
+    public int getSucceedRequestCount() {
+        return activeRequestsCount.get() - failedRequestsCount.get();
+    }
+    public int getSucceedRequestCountInWindow() {
+        return requestCountInWindow.getMaxCount() - failedRequestCountInWindow.getMaxCount();
+    }
+
     public int getFailedRequestCount() {
         return failedRequestsCount.get();
     }
 
     public int getFailedRequestCountInWindow() {
-        return requestCountInWindow.getMaxCount();
+        return failedRequestCountInWindow.getCount();
     }
 
     public int getActiveRequestsCount() {

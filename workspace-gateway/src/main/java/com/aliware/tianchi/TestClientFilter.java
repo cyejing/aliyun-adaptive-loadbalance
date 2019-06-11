@@ -28,6 +28,7 @@ public class TestClientFilter implements Filter {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         try{
             Result result = invoker.invoke(invocation);
+            InvokerStats.getInstance().incrementRequests(invoker);
             return result;
         }catch (Exception e){
             throw e;

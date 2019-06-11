@@ -98,7 +98,6 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     InvokerStats.getInstance().incrementFailedRequests(realInvoke.get());
                     return RETRY_FLAG;
                 }
-                InvokerStats.getInstance().decrementRequests(realInvoke.get());
                 return a;
             });
 
