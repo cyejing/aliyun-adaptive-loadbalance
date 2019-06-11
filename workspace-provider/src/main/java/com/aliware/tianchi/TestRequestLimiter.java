@@ -33,7 +33,7 @@ public class TestRequestLimiter implements RequestLimiter {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) executors.values().iterator().next();
         int max = executor.getMaximumPoolSize();
         if (activeCount+10 >= max) {
-            log.warn("服务器线程已满,开始限制流量.activeTaskCount" + activeCount + ",max" + max);
+//            log.warn("服务器线程已满,开始限制流量.activeTaskCount" + activeCount + ",max" + max);
             return false;
         }
         return true;
