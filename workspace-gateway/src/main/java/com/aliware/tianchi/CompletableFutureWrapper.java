@@ -2,27 +2,27 @@ package com.aliware.tianchi;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 
 public class CompletableFutureWrapper extends CompletableFuture<Integer> {
+
     private static final Logger log = LoggerFactory.getLogger(CompletableFutureWrapper.class);
 
 
     private final CompletableFuture<Integer> completableFuture;
 
-    private Runnable calcResponseTime;
+    private Consumer<Integer> calcResponseTime;
 
-    private Function<Throwable, Integer> exceptionally;
+    private BiFunction<Integer, Throwable, Integer> handle;
 
-    private Function<Throwable, Integer> exceptionally1;
+    private BiFunction<Integer, Throwable, Integer> handle1;
     private Function<Integer, CompletionStage<Integer>> retry1;
 
-    private Function<Throwable, Integer> exceptionally2;
-    private Function<Integer, CompletionStage<Integer>> retry2;
 
 
     public CompletableFutureWrapper(CompletableFuture<Integer> completableFuture) {
@@ -39,25 +39,22 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
     public CompletableFuture whenComplete(BiConsumer action) {
 
         return super
-                .exceptionally(exceptionally)
-                .thenCompose(retry1)
-                .exceptionally(exceptionally1)
-//                .thenCompose(retry2)
-//                .exceptionally(exceptionally2)
-                .whenComplete(action)
-                .thenRunAsync(calcResponseTime);
+                .handle(handle)
+//                .thenCompose(retry1)
+//                .handle(handle1)
+                .whenComplete(action);
     }
 
-    public void setCalcResponseTime(Runnable calcResponseTime) {
+    public void setCalcResponseTime(Consumer<Integer> calcResponseTime) {
         this.calcResponseTime = calcResponseTime;
     }
 
-    public void setExceptionally(Function<Throwable, Integer> exceptionally) {
-        this.exceptionally = exceptionally;
+    public void setHandle(BiFunction<Integer, Throwable, Integer> handle) {
+        this.handle = handle;
     }
 
-    public void setExceptionally1(Function<Throwable, Integer> exceptionally1) {
-        this.exceptionally1 = exceptionally1;
+    public void setHandle1(BiFunction<Integer, Throwable, Integer> handle1) {
+        this.handle1 = handle1;
     }
 
     public void setRetry1(
@@ -65,12 +62,4 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
         this.retry1 = retry1;
     }
 
-    public void setExceptionally2(Function<Throwable, Integer> exceptionally2) {
-        this.exceptionally2 = exceptionally2;
-    }
-
-    public void setRetry2(
-            Function<Integer, CompletionStage<Integer>> retry2) {
-        this.retry2 = retry2;
-    }
 }

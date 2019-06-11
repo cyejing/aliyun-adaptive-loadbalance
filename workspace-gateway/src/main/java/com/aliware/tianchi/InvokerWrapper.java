@@ -70,10 +70,16 @@ public class InvokerWrapper<T> implements Invoker<T> {
 
             AtomicReference<Invoker> realInvoke = new AtomicReference<>(this.invoker);
 
-            cfw.setExceptionally( (t) -> {
-                loadBalance.tripped(this.invoker);
-                return RETRY_FLAG;
+            cfw.setHandle( (a,t) -> {
+                if (t != null) {
+                    loadBalance.tripped(this.invoker);
+                    InvokerStats.getInstance().incrementFailedRequests(realInvoke.get());
+                    return RETRY_FLAG;
+                }
+                return a;
             });
+
+
             Invoker invoker1 = select();
             cfw.setRetry1((a) -> {
                 if (a == RETRY_FLAG) {
@@ -86,31 +92,18 @@ public class InvokerWrapper<T> implements Invoker<T> {
                 return CompletableFuture.supplyAsync(() -> a);
             });
 
-            cfw.setExceptionally1( (t) -> {
-                loadBalance.tripped(invoker1);
-                return RETRY_FLAG;
-            });
-            Invoker invoker2 = select();
-            cfw.setRetry2((a) -> {
-                if (a == RETRY_FLAG) {
-                    realInvoke.set(invoker2);
-                    Result retry = invoker2.invoke(invocation);
-                    if (retry instanceof SimpleAsyncRpcResult) {
-                        return ((SimpleAsyncRpcResult) retry).getValueFuture();
-                    }
+            cfw.setHandle1( (a,t) -> {
+                if (t != null) {
+                    loadBalance.tripped(invoker1);
+                    InvokerStats.getInstance().incrementFailedRequests(realInvoke.get());
+                    return RETRY_FLAG;
                 }
-                return CompletableFuture.supplyAsync(() -> a);
+                InvokerStats.getInstance().decrementRequests(realInvoke.get());
+                return a;
             });
 
-            cfw.setExceptionally2( (t) -> {
-                loadBalance.tripped(invoker2);
-                return RETRY_FLAG;
-            });
 
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            cfw.setCalcResponseTime(() -> {
-                stopwatch.stop();
-                InvokerStats.getInstance().noteResponseTime(realInvoke.get(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            cfw.setCalcResponseTime((a) -> {
             });
 
             RpcContext.getContext().setFuture(cfw);

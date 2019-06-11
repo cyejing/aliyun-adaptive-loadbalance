@@ -1,5 +1,6 @@
 package com.aliware.tianchi;
 
+import com.aliware.tianchi.stats.InvokerStats;
 import java.util.concurrent.CompletableFuture;
 import org.apache.dubbo.common.Constants;
 import org.apache.dubbo.common.extension.Activate;

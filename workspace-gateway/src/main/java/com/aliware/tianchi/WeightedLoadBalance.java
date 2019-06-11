@@ -1,7 +1,10 @@
 package com.aliware.tianchi;
 
-import java.util.Collection;
+import com.aliware.tianchi.stats.DataCollector;
+import com.aliware.tianchi.stats.InvokerStats;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,6 +21,7 @@ import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.cluster.LoadBalance;
 
 public class WeightedLoadBalance implements LoadBalance {
+
     private static final Logger log = LoggerFactory.getLogger(WeightedLoadBalance.class);
 
     public static final int DEFAULT_WEIGHT = 1000;
@@ -27,18 +31,26 @@ public class WeightedLoadBalance implements LoadBalance {
     private Timer timer = new Timer();
 
 
-
     public WeightedLoadBalance() {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Collection<WeightedRoundRobin> values = map.values();
-                if (values != null && values.size() > 0) {
-                    for (WeightedRoundRobin wrr : values) {
+                try {
+                    Set<Entry<String, WeightedRoundRobin>> entries = map.entrySet();
+                    for (Entry<String, WeightedRoundRobin> e : entries) {
+                        String key = e.getKey();
+                        WeightedRoundRobin wrr = e.getValue();
                         wrr.increaseWeight(REGAIN_DECREASE_WEIGHT);
-                        log.info("adjustment weight key:" + wrr.getKey() + ", weight:" + wrr.getWeight() + ", current"
-                                + wrr.getCurrent());
+
+                        DataCollector dc = InvokerStats.getInstance().getDataCollector(key);
+                        String s = String
+                                .format("adjustment weight key:%s, weight:%d, current:%d, failed:%d, failedWindow",
+                                        wrr.getKey(), wrr.getWeight(), wrr.getCurrent(), dc.getFailedRequestCount(),
+                                        dc.getFailedRequestCountInWindow());
+                        log.info(s);
                     }
+                } catch (Exception e) {
+                    log.error("", e);
                 }
             }
         }, 0, 500);
@@ -51,7 +63,6 @@ public class WeightedLoadBalance implements LoadBalance {
         WeightedRoundRobin weightedRoundRobin = map.get(identifyString);
         weightedRoundRobin.decreaseWeight(TRIPPED_DECREASE_WEIGHT);
     }
-
 
 
     protected static class WeightedRoundRobin {
@@ -74,11 +85,11 @@ public class WeightedLoadBalance implements LoadBalance {
         }
 
         public void increaseWeight(int i) {
-            this.weight.updateAndGet(o -> o+i >= DEFAULT_WEIGHT ? DEFAULT_WEIGHT : o + i);
+            this.weight.updateAndGet(o -> o + i >= DEFAULT_WEIGHT ? DEFAULT_WEIGHT : o + i);
         }
 
         public void decreaseWeight(int i) {
-            this.weight.updateAndGet(o -> o-i <= 0 ? 0 : o - i);
+            this.weight.updateAndGet(o -> o - i <= 0 ? 0 : o - i);
         }
 
         public long increaseCurrent() {
@@ -110,7 +121,7 @@ public class WeightedLoadBalance implements LoadBalance {
             WeightedRoundRobin weightedRoundRobin = map.get(identifyString);
 
             if (weightedRoundRobin == null) {
-                weightedRoundRobin = new WeightedRoundRobin(identifyString,DEFAULT_WEIGHT);
+                weightedRoundRobin = new WeightedRoundRobin(identifyString, DEFAULT_WEIGHT);
                 map.putIfAbsent(identifyString, weightedRoundRobin);
             }
 
