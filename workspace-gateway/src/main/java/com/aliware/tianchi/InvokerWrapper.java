@@ -79,11 +79,13 @@ public class InvokerWrapper<T> implements Invoker<T> {
             });
 
 
-            Invoker invoker1 = select();
+            AtomicReference<Invoker> invoker1 = new AtomicReference<>(this.invoker);
+
             cfw.setRetry1((a) -> {
                 if (a == RETRY_FLAG) {
-                    realInvoke.set(invoker1);
-                    Result retry = invoker1.invoke(invocation);
+                    invoker1.set(select());
+                    realInvoke.set(invoker1.get());
+                    Result retry = invoker1.get().invoke(invocation);
                     if (retry instanceof SimpleAsyncRpcResult) {
                         return ((SimpleAsyncRpcResult) retry).getValueFuture();
                     }
@@ -93,7 +95,7 @@ public class InvokerWrapper<T> implements Invoker<T> {
 
             cfw.setHandle1( (a,t) -> {
                 if (t != null) {
-                    loadBalance.tripped(invoker1);
+                    loadBalance.tripped(invoker1.get());
                     InvokerStats.getInstance().incrementFailedRequests(realInvoke.get());
                     return RETRY_FLAG;
                 }
