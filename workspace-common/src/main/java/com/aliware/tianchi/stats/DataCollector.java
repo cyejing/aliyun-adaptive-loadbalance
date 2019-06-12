@@ -30,7 +30,7 @@ public class DataCollector {
     }
 
     public int getSucceedRequestCount() {
-        return activeRequestsCount.get() - failedRequestsCount.get();
+        return requestCountInWindow.getCount() - failedRequestCountInWindow.getCount();
     }
     public int getSucceedRequestCountInWindow() {
         return requestCountInWindow.getMaxCount() - failedRequestCountInWindow.getMaxCount();

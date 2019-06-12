@@ -1,10 +1,9 @@
 package com.aliware.tianchi;
 
+import com.aliware.tianchi.loadbalance.DynamicWeightedLoadBalance;
 import com.aliware.tianchi.stats.InvokerStats;
-import com.aliware.tianchi.stats.Stopwatch;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.apache.dubbo.common.URL;
@@ -28,12 +27,12 @@ public class InvokerWrapper<T> implements Invoker<T> {
     private final List<Invoker<T>> invokers;
     private final URL url;
     private final Invocation invocation;
-    private final WeightedLoadBalance loadBalance;
+    private final DynamicWeightedLoadBalance loadBalance;
 
 
     private Invoker<T> invoker;
 
-    public InvokerWrapper(List<Invoker<T>> invokers, URL url, Invocation invocation, WeightedLoadBalance loadBalance) {
+    public InvokerWrapper(List<Invoker<T>> invokers, URL url, Invocation invocation, DynamicWeightedLoadBalance loadBalance) {
         this.invokers = invokers;
         this.url = url;
         this.invocation = invocation;
