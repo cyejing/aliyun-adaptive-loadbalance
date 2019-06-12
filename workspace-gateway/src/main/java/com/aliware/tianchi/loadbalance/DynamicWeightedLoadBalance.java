@@ -21,7 +21,7 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
     private static final Logger log = LoggerFactory.getLogger(DynamicWeightedLoadBalance.class);
 
     public static final int TRIPPED_DECREASE_WEIGHT = 50;
-    public static final int REGAIN_DECREASE_WEIGHT = 25;
+    public static final int REGAIN_DECREASE_WEIGHT = 40;
 
     private Timer timer = new Timer();
     private Timer logTimer = new Timer();
@@ -42,7 +42,7 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
                     log.error("", e);
                 }
             }
-        }, 0, 200);
+        }, 0, 150);
 
         logTimer.schedule(new TimerTask() {
             @Override
