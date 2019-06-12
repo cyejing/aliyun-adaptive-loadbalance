@@ -18,7 +18,7 @@ public class WeightedLoadBalance extends BasicWeightedLoadBalance {
 
     private static final Logger log = LoggerFactory.getLogger(WeightedLoadBalance.class);
 
-    private Timer timer = new Timer("tps-weighted-adjust");
+    private Timer timer = new Timer();
 
     public WeightedLoadBalance() {
         this.timer.schedule(new TimerTask() {
@@ -33,13 +33,13 @@ public class WeightedLoadBalance extends BasicWeightedLoadBalance {
                     log.error("", e);
                 }
             }
-        }, 0, 200);
+        }, 0, 600);
     }
 
     private ConcurrentMap<String, WeightedRoundRobin> map = new ConcurrentHashMap<>();
 
     protected ConcurrentMap<String, WeightedRoundRobin> getMap() {
-        return map;
+        return this.map;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.aliware.tianchi.loadbalance;
 
+import static com.aliware.tianchi.loadbalance.BasicWeightedLoadBalance.DEFAULT_WEIGHT;
+
 import com.aliware.tianchi.stats.InvokerStats;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,11 +28,13 @@ public class WeightedRoundRobin {
     }
 
     public void setWeight(int weight) {
-        this.weight.set(weight);
+        int max = DEFAULT_WEIGHT > weight ? DEFAULT_WEIGHT : weight;
+        this.weight.set(max);
     }
 
     public void increaseWeight(int i) {
-        int max = InvokerStats.getInstance().getDataCollector(invoker).getSucceedRequestCountInWindow();
+        int srcw = InvokerStats.getInstance().getDataCollector(invoker).getSucceedRequestCountInWindow();
+        int max = DEFAULT_WEIGHT > srcw ? DEFAULT_WEIGHT : srcw;
         this.weight.updateAndGet(o -> o + i >= max? max : o + i);
     }
 

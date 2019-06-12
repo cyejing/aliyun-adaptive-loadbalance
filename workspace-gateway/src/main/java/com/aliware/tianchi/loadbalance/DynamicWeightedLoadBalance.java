@@ -30,6 +30,7 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
 
     public DynamicWeightedLoadBalance(WeightedLoadBalance weightedLoadBalance) {
         this.weightedLoadBalance = weightedLoadBalance;
+
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -51,7 +52,6 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
                     for (Entry<String, WeightedRoundRobin> e : entries) {
                         String key = e.getKey();
                         WeightedRoundRobin wrr = e.getValue();
-                        wrr.increaseWeight(REGAIN_DECREASE_WEIGHT);
 
                         DataCollector dc = InvokerStats.getInstance().getDataCollector(key);
                         String s = String.format(
