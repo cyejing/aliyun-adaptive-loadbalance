@@ -42,7 +42,7 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
                     log.error("", e);
                 }
             }
-        }, 0, 20);
+        }, 0, 200);
 
         logTimer.schedule(new TimerTask() {
             @Override
