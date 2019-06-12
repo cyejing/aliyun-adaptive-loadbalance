@@ -29,6 +29,7 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
     private final WeightedLoadBalance weightedLoadBalance;
 
     public DynamicWeightedLoadBalance(WeightedLoadBalance weightedLoadBalance) {
+        System.out.println("make by Born");
         this.weightedLoadBalance = weightedLoadBalance;
 
         timer.schedule(new TimerTask() {
@@ -42,7 +43,7 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
                     log.error("", e);
                 }
             }
-        }, 0, 200);
+        }, 0, 180);
 
         logTimer.schedule(new TimerTask() {
             @Override
