@@ -13,11 +13,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.47</version>
-        </dependency>
-        <dependency>
             <groupId>com.aliware.tianchi</groupId>
             <artifactId>workspace-common</artifactId>
         </dependency>
