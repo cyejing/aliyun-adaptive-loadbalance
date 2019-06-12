@@ -42,7 +42,7 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
                     log.error("", e);
                 }
             }
-        }, 0, 100);
+        }, 0, 200);
 
         logTimer.schedule(new TimerTask() {
             @Override
@@ -64,7 +64,7 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
                     log.error("", e);
                 }
             }
-        }, 0, 500);
+        }, 0, 600);
     }
 
     private ConcurrentMap<String, WeightedRoundRobin> map = new ConcurrentHashMap<>();
