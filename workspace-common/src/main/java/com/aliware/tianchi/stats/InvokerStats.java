@@ -44,7 +44,7 @@ public class InvokerStats {
                     log.error("", e);
                 }
             }
-        },1000*3,600);
+        },0,600);
     }
 
     private static class InvokerStatsBuilder {
