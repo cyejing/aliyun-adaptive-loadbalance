@@ -34,7 +34,7 @@ public class WeightedLoadBalance extends BasicWeightedLoadBalance {
                     log.error("", e);
                 }
             }
-        }, 0, 600);
+        }, 1000 * 5, 600);
     }
 
     private ConcurrentMap<String, WeightedRoundRobin> map = new ConcurrentHashMap<>();
