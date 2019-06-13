@@ -56,7 +56,7 @@ public class BucketLoadBalance implements LoadBalance {
                     log.error("", e);
                 }
             }
-        }, 0, 600);
+        }, 1000 * 10, 600);
 
     }
 
