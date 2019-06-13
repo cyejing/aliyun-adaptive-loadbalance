@@ -28,7 +28,7 @@ public class WeightedLoadBalance extends BasicWeightedLoadBalance {
                 try {
                     for (WeightedRoundRobin wrr : getMap().values()) {
                         wrr.setWeight(InvokerStats.getInstance().getDataCollector(wrr.getInvoker())
-                                .getSucceedRequestCount());
+                                .getSucceedRequestCountInWindow());
                     }
                 } catch (Exception e) {
                     log.error("", e);
@@ -45,7 +45,6 @@ public class WeightedLoadBalance extends BasicWeightedLoadBalance {
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
-        log.info(LocalDateTime.now().toString() + "全部熔断");
         Invoker<T> select = super.select(invokers, url, invocation);
         if (select == null) {
             select = invokers.get(ThreadLocalRandom.current().nextInt(invokers.size()));

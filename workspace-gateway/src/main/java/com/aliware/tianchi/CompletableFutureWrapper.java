@@ -16,7 +16,6 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
 
     private final CompletableFuture<Integer> completableFuture;
 
-    private Consumer<Integer> calcResponseTime;
 
     private BiFunction<Integer, Throwable, Integer> handle;
 
@@ -43,10 +42,6 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
                 .thenCompose(retry1)
                 .handle(handle1)
                 .whenComplete(action);
-    }
-
-    public void setCalcResponseTime(Consumer<Integer> calcResponseTime) {
-        this.calcResponseTime = calcResponseTime;
     }
 
     public void setHandle(BiFunction<Integer, Throwable, Integer> handle) {
