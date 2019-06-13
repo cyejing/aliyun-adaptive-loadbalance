@@ -34,8 +34,8 @@ public class InvokerStats {
                     Set<Entry<String, DataCollector>> entries = dataMap.entrySet();
                     sort = entries.stream()
                             .sorted((o1, o2) -> {
-                                int x = o1.getValue().getSucceedRequestCountInWindow();
-                                int y = o2.getValue().getSucceedRequestCountInWindow();
+                                int x = o1.getValue().getSucceedRequestCount();
+                                int y = o2.getValue().getSucceedRequestCount();
                                 return (x > y) ? -1 : ((x == y) ? 0 : 1);
                             })
                             .map(Entry::getKey)
