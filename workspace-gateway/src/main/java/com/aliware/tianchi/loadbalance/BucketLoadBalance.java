@@ -40,11 +40,9 @@ public class BucketLoadBalance implements LoadBalance {
             @Override
             public void run() {
                 try {
-                    Set<Entry<String, Bucket>> entries = map.entrySet();
-                    for (Entry<String, Bucket> e : entries) {
-                        String key = e.getKey();
-                        Bucket bucket = e.getValue();
-
+                    List<String> sort = InvokerStats.getInstance().getSort();
+                    for (String key : sort) {
+                        Bucket bucket = map.get(key);
                         DataCollector dc = InvokerStats.getInstance().getDataCollector(key);
                         String s = String.format(
                                 LocalDateTime.now().toString() +
