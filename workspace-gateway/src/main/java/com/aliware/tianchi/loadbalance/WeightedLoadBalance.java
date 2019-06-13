@@ -1,6 +1,7 @@
 package com.aliware.tianchi.loadbalance;
 
 import com.aliware.tianchi.stats.InvokerStats;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,7 +45,7 @@ public class WeightedLoadBalance extends BasicWeightedLoadBalance {
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
-        log.info("全部熔断");
+        log.info(LocalDateTime.now().toString() + "全部熔断");
         Invoker<T> select = super.select(invokers, url, invocation);
         if (select == null) {
             select = invokers.get(ThreadLocalRandom.current().nextInt(invokers.size()));

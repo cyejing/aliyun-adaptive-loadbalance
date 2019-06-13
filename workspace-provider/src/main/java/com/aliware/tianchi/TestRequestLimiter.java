@@ -1,5 +1,6 @@
 package com.aliware.tianchi;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.dubbo.common.Constants;
@@ -33,7 +34,7 @@ public class TestRequestLimiter implements RequestLimiter {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) executors.values().iterator().next();
         int max = executor.getMaximumPoolSize();
         if (activeCount+10 >= max) {
-            log.warn("服务器线程已满,开始限制流量.activeTaskCount" + activeCount + ",max" + max);
+            log.warn(LocalDateTime.now().toString()+" 服务器线程已满,开始限制流量.activeTaskCount" + activeCount + ",max" + max);
             return false;
         }
         return true;

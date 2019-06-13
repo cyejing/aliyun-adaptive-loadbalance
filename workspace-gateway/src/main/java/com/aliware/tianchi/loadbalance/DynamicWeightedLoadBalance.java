@@ -2,6 +2,7 @@ package com.aliware.tianchi.loadbalance;
 
 import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -56,7 +57,8 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
 
                         DataCollector dc = InvokerStats.getInstance().getDataCollector(key);
                         String s = String.format(
-                                "adjustment weight key:%s, weight:%d, current:%d, Succeed:%d, SucceedWindow:%d .",
+                                LocalDateTime.now().toString() +
+                                        " adjustment weight key:%s, weight:%d, current:%d, Succeed:%d, SucceedWindow:%d .",
                                 wrr.getKey(), wrr.getWeight(), wrr.getCurrent(), dc.getSucceedRequestCount(),
                                 dc.getSucceedRequestCountInWindow());
                         log.info(s);
