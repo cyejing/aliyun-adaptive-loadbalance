@@ -1,5 +1,8 @@
 package com.aliware.tianchi.stats;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,7 +14,11 @@ import org.apache.dubbo.rpc.Invoker;
 public class InvokerStats {
 
 
-    private InvokerStats() {}
+    private Timer timer = new Timer();
+
+    private InvokerStats() {
+        //TODO timer
+    }
 
     private static class InvokerStatsBuilder {
         private static InvokerStats INSTANCE = new InvokerStats();
@@ -22,6 +29,7 @@ public class InvokerStats {
     }
 
     private ConcurrentMap<String, DataCollector> dataMap = new ConcurrentHashMap();
+    private List<String> sort = new ArrayList<>();
 
 
     public void incrementFailedRequests(Invoker invoker) {
@@ -50,18 +58,8 @@ public class InvokerStats {
         return getDataCollector(key);
     }
 
-    public static void main(String[] args) throws Exception{
-        MeasuredRate measuredRate = new MeasuredRate(1000);
-        for (int i = 0; i < 100; i++) {
-            Thread.sleep(350);
-            measuredRate.increment();
-            measuredRate.increment();
-            measuredRate.increment();
-            System.out.println(measuredRate.getCount()+","+measuredRate.getMaxCount());
-        }
-
-
-
+    public List<String> getSort() {
+        return sort;
     }
 
 }

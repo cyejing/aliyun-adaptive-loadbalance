@@ -1,5 +1,6 @@
 package com.aliware.tianchi;
 
+import com.aliware.tianchi.loadbalance.BucketLoadBalance;
 import com.aliware.tianchi.loadbalance.DynamicWeightedLoadBalance;
 import com.aliware.tianchi.loadbalance.WeightedLoadBalance;
 import org.apache.dubbo.common.URL;
@@ -23,7 +24,8 @@ import java.util.List;
 public class UserLoadBalance implements LoadBalance {
     private static final Logger log = LoggerFactory.getLogger(UserLoadBalance.class);
 
-    private static DynamicWeightedLoadBalance loadBalance = new DynamicWeightedLoadBalance(new WeightedLoadBalance());
+//    private static DynamicWeightedLoadBalance loadBalance = new DynamicWeightedLoadBalance(new WeightedLoadBalance());
+    private static BucketLoadBalance loadBalance = new BucketLoadBalance(new WeightedLoadBalance());
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {

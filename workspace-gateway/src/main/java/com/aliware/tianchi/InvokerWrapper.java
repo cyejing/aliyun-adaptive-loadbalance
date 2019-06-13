@@ -1,5 +1,6 @@
 package com.aliware.tianchi;
 
+import com.aliware.tianchi.loadbalance.BucketLoadBalance;
 import com.aliware.tianchi.loadbalance.DynamicWeightedLoadBalance;
 import com.aliware.tianchi.stats.InvokerStats;
 import java.util.List;
@@ -27,12 +28,12 @@ public class InvokerWrapper<T> implements Invoker<T> {
     private final List<Invoker<T>> invokers;
     private final URL url;
     private final Invocation invocation;
-    private final DynamicWeightedLoadBalance loadBalance;
+    private final BucketLoadBalance loadBalance;
 
 
     private Invoker<T> invoker;
 
-    public InvokerWrapper(List<Invoker<T>> invokers, URL url, Invocation invocation, DynamicWeightedLoadBalance loadBalance) {
+    public InvokerWrapper(List<Invoker<T>> invokers, URL url, Invocation invocation, BucketLoadBalance loadBalance) {
         this.invokers = invokers;
         this.url = url;
         this.invocation = invocation;
@@ -71,7 +72,7 @@ public class InvokerWrapper<T> implements Invoker<T> {
 
             cfw.setHandle( (a,t) -> {
                 if (t != null) {
-                    loadBalance.tripped(this.invoker);
+                    loadBalance.breaking(this.invoker);
                     InvokerStats.getInstance().incrementFailedRequests(realInvoke.get());
                     return RETRY_FLAG;
                 }
@@ -95,7 +96,7 @@ public class InvokerWrapper<T> implements Invoker<T> {
 
             cfw.setHandle1( (a,t) -> {
                 if (t != null) {
-                    loadBalance.tripped(invoker1.get());
+                    loadBalance.breaking(invoker1.get());
                     InvokerStats.getInstance().incrementFailedRequests(realInvoke.get());
                     return RETRY_FLAG;
                 }
