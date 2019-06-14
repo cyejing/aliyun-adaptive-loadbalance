@@ -100,11 +100,8 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     InvokerStats.getInstance().incrementFailedRequests(realInvoke.get());
                     return RETRY_FLAG;
                 }
+                loadBalance.decrement(realInvoke.get());
                 return a;
-            });
-
-
-            cfw.setCalcResponseTime((a) -> {
             });
 
             RpcContext.getContext().setFuture(cfw);
