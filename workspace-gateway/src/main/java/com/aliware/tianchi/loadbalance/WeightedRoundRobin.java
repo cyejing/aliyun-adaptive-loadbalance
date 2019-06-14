@@ -33,8 +33,8 @@ public class WeightedRoundRobin {
     }
 
     public void increaseWeight(int i) {
-        int srcw = InvokerStats.getInstance().getDataCollector(invoker).getSucceedRequestCount();
-        int srcMax = InvokerStats.getInstance().getDataCollector(invoker).getSucceedRequestCountInWindow();
+        int srcw = InvokerStats.getInstance().getDataCollector(invoker).getSucceedQPS();
+        int srcMax = InvokerStats.getInstance().getDataCollector(invoker).getSucceedMaxQPS();
         int max;
         if (srcw > 0) {
             max = srcw;

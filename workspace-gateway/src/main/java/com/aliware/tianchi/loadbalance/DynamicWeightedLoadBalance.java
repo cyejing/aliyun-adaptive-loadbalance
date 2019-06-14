@@ -59,8 +59,8 @@ public class DynamicWeightedLoadBalance extends BasicWeightedLoadBalance {
                         String s = String.format(
                                 LocalDateTime.now().toString() +
                                         " adjustment weight key:%s, weight:%d, current:%d, Succeed:%d, SucceedWindow:%d .",
-                                wrr.getKey(), wrr.getWeight(), wrr.getCurrent(), dc.getSucceedRequestCount(),
-                                dc.getSucceedRequestCountInWindow());
+                                wrr.getKey(), wrr.getWeight(), wrr.getCurrent(), dc.getSucceedQPS(),
+                                dc.getSucceedMaxQPS());
                         log.info(s);
                     }
                 } catch (Exception e) {

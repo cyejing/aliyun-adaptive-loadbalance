@@ -29,33 +29,32 @@ public class DataCollector {
         }
     }
 
-    public int getSucceedRequestCount() {
+    public int getSucceedQPS() {
         return requestCountInWindow.getCount() - failedRequestCountInWindow.getCount();
     }
-    public int getSucceedRequestCountInWindow() {
+    public int getSucceedMaxQPS() {
         return requestCountInWindow.getMaxCount() - failedRequestCountInWindow.getMaxCount();
     }
-
-    public int getFailedRequestCount() {
-        return failedRequestsCount.get();
-    }
-
-    public int getFailedRequestCountInWindow() {
+    public int getFailedQPS() {
         return failedRequestCountInWindow.getCount();
     }
+
+    public int getFailedMaxQPS() {
+        return failedRequestCountInWindow.getMaxCount();
+    }
+
+    public int getQPS() {
+        return requestCountInWindow.getCount();
+    }
+
+    public int getMaxQPS() {
+       return requestCountInWindow.getMaxCount();
+    }
+
 
     public int getActiveRequestsCount() {
         return activeRequestsCount.get();
     }
-
-    public int getRequestCountInWindow() {
-        return requestCountInWindow.getCount();
-    }
-
-    public int getMaxActive() {
-       return requestCountInWindow.getMaxCount();
-    }
-
 
     public Distribution getDistribution() {
         return distribution;
