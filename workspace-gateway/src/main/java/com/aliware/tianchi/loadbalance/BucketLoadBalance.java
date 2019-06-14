@@ -48,7 +48,7 @@ public class BucketLoadBalance implements LoadBalance {
                                 LocalDateTime.now().toString() +
                                         " bucket weight key:%s, active:%d, breaking:%s Succeed:%d, SucceedWindow:%d.",
                                 key, bucket.getActive(), String.valueOf(bucket.isBreaking()),
-                                dc.getSucceedRequestCount(), dc.getSucceedRequestCountInWindow());
+                                dc.getSucceedQPS(), dc.getSucceedMaxQPS());
 
                         log.info(s);
                     }
