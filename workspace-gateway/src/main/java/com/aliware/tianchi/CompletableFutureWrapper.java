@@ -43,8 +43,7 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
                 .handle(handle)
 //                .thenCompose(retry1)
 //                .handle(handle1)
-                .whenComplete(action)
-                .thenRun(runnable);
+                .whenComplete(action);
     }
 
     public void setHandle(BiFunction<Integer, Throwable, Integer> handle) {

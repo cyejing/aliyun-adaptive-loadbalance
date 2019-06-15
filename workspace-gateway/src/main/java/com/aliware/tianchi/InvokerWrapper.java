@@ -81,6 +81,8 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     loadBalance.decrement(realInvoke.get());
                     return RETRY_FLAG;
                 }
+                loadBalance.decrement(realInvoke.get());
+                dc.decrementRequests();
                 return a;
             });
 
@@ -108,12 +110,6 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     return RETRY_FLAG;
                 }
                 return a;
-            });
-
-            cfw.setRunnable(() -> {
-                DataCollector dc = InvokerStats.getInstance().getDataCollector(realInvoke.get());
-                loadBalance.decrement(realInvoke.get());
-                dc.decrementRequests();
             });
 
             RpcContext.getContext().setFuture(cfw);
