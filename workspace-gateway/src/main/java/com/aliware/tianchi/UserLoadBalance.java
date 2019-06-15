@@ -29,8 +29,6 @@ public class UserLoadBalance implements LoadBalance {
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
-//        return new InvokerWrapper<>(invokers, url, invocation, loadBalance);
-        return invokers.get(ThreadLocalRandom.current().nextInt(invokers.size()));
+        return new InvokerWrapper<>(invokers, url, invocation, loadBalance);
     }
-
 }
