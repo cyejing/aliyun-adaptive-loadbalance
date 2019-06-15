@@ -79,7 +79,6 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     dc.decrementRequests();
                     return RETRY_FLAG;
                 }
-                dc.decrementRequests();
                 return a;
             });
 
@@ -105,6 +104,7 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     dc.decrementRequests();
                     return RETRY_FLAG;
                 }
+                dc.decrementRequests();
                 return a;
             });
 

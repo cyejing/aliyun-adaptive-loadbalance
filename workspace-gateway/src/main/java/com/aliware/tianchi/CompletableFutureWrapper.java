@@ -41,8 +41,8 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
 
         return super
                 .handle(handle)
-//                .thenCompose(retry1)
-//                .handle(handle1)
+                .thenCompose(retry1)
+                .handle(handle1)
                 .whenComplete(action);
     }
 

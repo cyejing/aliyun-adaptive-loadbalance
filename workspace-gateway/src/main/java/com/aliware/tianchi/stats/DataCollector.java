@@ -11,6 +11,7 @@ public class DataCollector {
     private BucketRate bucketRate = new BucketRate(300);
     private MeasuredRate qps = new MeasuredRate(300);
 
+
     public void incrementRequests() {
         activeRequests.incrementAndGet();
     }
