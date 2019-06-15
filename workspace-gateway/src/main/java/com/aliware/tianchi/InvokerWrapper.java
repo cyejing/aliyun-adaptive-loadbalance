@@ -107,9 +107,13 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     dc.decrementRequests();
                     return RETRY_FLAG;
                 }
+                return a;
+            });
+
+            cfw.setRunnable(() -> {
+                DataCollector dc = InvokerStats.getInstance().getDataCollector(realInvoke.get());
                 loadBalance.decrement(realInvoke.get());
                 dc.decrementRequests();
-                return a;
             });
 
             RpcContext.getContext().setFuture(cfw);
