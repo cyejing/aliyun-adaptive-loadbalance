@@ -30,6 +30,7 @@ public class BucketLoadBalance implements LoadBalance {
     private Timer logTimer = new Timer();
 
     private ConcurrentMap<String, Bucket> map = new ConcurrentHashMap<>();
+    private AtomicInteger limitCount = new AtomicInteger();
 
     private final LoadBalance loadBalance;
 
@@ -47,8 +48,8 @@ public class BucketLoadBalance implements LoadBalance {
                         DataCollector dc = InvokerStats.getInstance().getDataCollector(key);
                         String s = String.format(
                                 LocalDateTime.now().toString() +
-                                        " bucket weight key:%s, active:%d, limit:%d, Active:%d, Succeed:%d, SucceedWindow:%d.",
-                                key, bucket.getActive(), dc.getBucket(), dc.getActive(), dc.getQPS(), dc.getMaxQPS());
+                                        " bucket weight key:%s, active:%d, limit:%d, Active:%d, Succeed:%d, SucceedWindow:%d. limitCount:%d",
+                                key, bucket.getActive(), dc.getBucket(), dc.getActive(), dc.getQPS(), dc.getMaxQPS(),limitCount.get());
 
                         log.info(s);
                     }
@@ -74,6 +75,7 @@ public class BucketLoadBalance implements LoadBalance {
                 bucket = map.get(key);
             }
             if (bucket.getActive() < limit) {
+                limitCount.incrementAndGet();
                 selects.add(invoker);
             }
 
