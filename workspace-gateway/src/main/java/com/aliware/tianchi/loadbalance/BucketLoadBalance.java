@@ -31,6 +31,7 @@ public class BucketLoadBalance implements LoadBalance {
     private Timer logTimer = new Timer();
 
     private ConcurrentMap<String, AtomicInteger> map = new ConcurrentHashMap<>();
+    private int time = 0;
 
     private final LoadBalance loadBalance;
 
@@ -53,7 +54,7 @@ public class BucketLoadBalance implements LoadBalance {
 
                         log.info(s);
                     }
-
+                    time++;
                 } catch (Exception e) {
                     log.error("", e);
                 }
@@ -76,7 +77,9 @@ public class BucketLoadBalance implements LoadBalance {
                     map.putIfAbsent(key, new AtomicInteger(0));
                     a = map.get(key);
                 }
-                a.incrementAndGet();
+                if (time > 20) {
+                    a.incrementAndGet();
+                }
                 selects.add(invoker);
             }
 
