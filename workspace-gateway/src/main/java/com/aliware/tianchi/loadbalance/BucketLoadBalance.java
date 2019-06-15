@@ -47,7 +47,7 @@ public class BucketLoadBalance implements LoadBalance {
                         DataCollector dc = InvokerStats.getInstance().getDataCollector(key);
                         String s = String.format(
                                 LocalDateTime.now().toString() +
-                                        " bucket1 weight key:%s, active:%d, limit:%d, Active:%d, Succeed:%d, SucceedWindow:%d.",
+                                        " bucket weight key:%s, active:%d, limit:%d, Active:%d, Succeed:%d, SucceedWindow:%d.",
                                 key, bucket.getActive(), dc.getBucket(), dc.getActive(), dc.getQPS(), dc.getMaxQPS());
 
                         log.info(s);
