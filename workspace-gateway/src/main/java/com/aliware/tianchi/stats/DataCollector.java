@@ -43,7 +43,6 @@ public class DataCollector {
         return qps.getMaxCount();
     }
 
-
     public void setBucket(int i) {
         bucketRate.setBucket(i);
     }
@@ -66,5 +65,9 @@ public class DataCollector {
 
     public int getFailed() {
         return failedRequests.get();
+    }
+
+    public int getOneQPS() {
+        return new Double(1000 / getMean()).intValue();
     }
 }

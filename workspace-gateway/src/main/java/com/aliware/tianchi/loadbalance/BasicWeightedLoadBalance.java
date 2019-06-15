@@ -30,7 +30,7 @@ public abstract class BasicWeightedLoadBalance implements LoadBalance {
             WeightedRoundRobin weightedRoundRobin = getMap().get(identifyString);
 
             if (weightedRoundRobin == null) {
-                weightedRoundRobin = new WeightedRoundRobin(identifyString, invoker, DEFAULT_WEIGHT);
+                weightedRoundRobin = new WeightedRoundRobin(identifyString, DEFAULT_WEIGHT);
                 getMap().putIfAbsent(identifyString, weightedRoundRobin);
             }
 

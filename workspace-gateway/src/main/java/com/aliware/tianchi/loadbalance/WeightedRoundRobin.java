@@ -5,7 +5,6 @@ import static com.aliware.tianchi.loadbalance.BasicWeightedLoadBalance.DEFAULT_W
 import com.aliware.tianchi.stats.InvokerStats;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import org.apache.dubbo.rpc.Invoker;
 
 /**
  * @author Born
@@ -13,13 +12,11 @@ import org.apache.dubbo.rpc.Invoker;
 public class WeightedRoundRobin {
 
     private final String key;
-    private final Invoker invoker;
     private AtomicInteger weight;
     private AtomicLong current = new AtomicLong(0);
 
-    public WeightedRoundRobin(String key, Invoker invoker, int weight) {
+    public WeightedRoundRobin(String key, int weight) {
         this.key = key;
-        this.invoker = invoker;
         this.weight = new AtomicInteger(weight);
     }
 
@@ -33,8 +30,8 @@ public class WeightedRoundRobin {
     }
 
     public void increaseWeight(int i) {
-        int srcw = InvokerStats.getInstance().getDataCollector(invoker).getQPS();
-        int srcMax = InvokerStats.getInstance().getDataCollector(invoker).getMaxQPS();
+        int srcw = InvokerStats.getInstance().getDataCollector(key).getQPS();
+        int srcMax = InvokerStats.getInstance().getDataCollector(key).getMaxQPS();
         int max;
         if (srcw > 0) {
             max = srcw;
@@ -67,7 +64,4 @@ public class WeightedRoundRobin {
         return current.get();
     }
 
-    public Invoker getInvoker() {
-        return invoker;
-    }
 }
