@@ -87,13 +87,12 @@ public class InvokerWrapper<T> implements Invoker<T> {
             });
 
 
-            AtomicReference<Invoker> invoker1 = new AtomicReference<>(this.invoker);
 
             cfw.setRetry1((a) -> {
                 if (a == RETRY_FLAG) {
-                    invoker1.set(select());
-                    realInvoke.set(invoker1.get());
-                    Result retry = invoker1.get().invoke(invocation);
+                    Invoker invoker = select();
+                    realInvoke.set(invoker);
+                    Result retry = invoker.invoke(invocation);
                     if (retry instanceof SimpleAsyncRpcResult) {
                         return ((SimpleAsyncRpcResult) retry).getValueFuture();
                     }
