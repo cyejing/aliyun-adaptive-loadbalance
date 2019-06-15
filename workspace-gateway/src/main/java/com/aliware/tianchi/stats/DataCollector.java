@@ -10,6 +10,7 @@ public class DataCollector {
     private AtomicInteger activeRequests = new AtomicInteger(0);
     private BucketRate bucketRate = new BucketRate(300);
     private MeasuredRate qps = new MeasuredRate(300);
+    private DistributionRate distributionRate = new DistributionRate(300);
 
 
     public void incrementRequests() {
@@ -24,6 +25,7 @@ public class DataCollector {
         return activeRequests.get();
     }
 
+
     public void succeedRequest() {
         qps.increment();
     }
@@ -36,6 +38,7 @@ public class DataCollector {
         return qps.getMaxCount();
     }
 
+
     public void setBucket(int i) {
         bucketRate.setBucket(i);
     }
@@ -44,9 +47,16 @@ public class DataCollector {
         return bucketRate.getCount();
     }
 
-
     public int getMaxBucket() {
         return bucketRate.getMaxCount();
+    }
+
+    public void noteValue(long i) {
+        distributionRate.noteValue(i);
+    }
+
+    public double getMean() {
+        return distributionRate.getMean();
     }
 
 }

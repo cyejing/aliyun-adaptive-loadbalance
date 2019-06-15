@@ -2,6 +2,7 @@ package com.aliware.tianchi;
 
 import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
+import com.aliware.tianchi.stats.Stopwatch;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -35,8 +36,7 @@ public class TestClientFilter implements Filter {
         try{
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             dc.incrementRequests();
-            String id = invocation.getAttachment("id");
-            invocation.getAttachments().put(id, String.valueOf(dc.getActive()));
+            invocation.getAttachments().put("active", String.valueOf(dc.getActive()));
             Result result = invoker.invoke(invocation);
             return result;
         }catch (Exception e){

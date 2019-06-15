@@ -3,8 +3,10 @@ package com.aliware.tianchi;
 import com.aliware.tianchi.loadbalance.BucketLoadBalance;
 import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
+import com.aliware.tianchi.stats.Stopwatch;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.apache.dubbo.common.URL;
@@ -69,14 +71,15 @@ public class InvokerWrapper<T> implements Invoker<T> {
             CompletableFutureWrapper cfw = new CompletableFutureWrapper(valueFuture);
 
             AtomicReference<Invoker> realInvoke = new AtomicReference<>(this.invoker);
+            AtomicReference<Stopwatch> stopwatch = new AtomicReference<>(Stopwatch.createStarted());
 
             cfw.setHandle( (a,t) -> {
                 DataCollector dc = InvokerStats.getInstance().getDataCollector(realInvoke.get());
                 if (t != null) {
-                    String id = invocation.getAttachment("id");
-                    String maxBucket = invocation.getAttachment(id);
-                    dc.setBucket(Integer.valueOf(maxBucket));
+                    String active = invocation.getAttachment("active");
+                    dc.setBucket(Integer.valueOf(active));
                     dc.decrementRequests();
+                    dc.noteValue(stopwatch.get().stop().elapsed(TimeUnit.MILLISECONDS));
                     return RETRY_FLAG;
                 }
                 return a;
@@ -88,6 +91,7 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     Invoker invoker = select();
                     realInvoke.set(invoker);
                     Result retry = invoker.invoke(invocation);
+                    stopwatch.set(Stopwatch.createStarted());
                     if (retry instanceof SimpleAsyncRpcResult) {
                         return ((SimpleAsyncRpcResult) retry).getValueFuture();
                     }
@@ -98,12 +102,13 @@ public class InvokerWrapper<T> implements Invoker<T> {
             cfw.setHandle1( (a,t) -> {
                 DataCollector dc = InvokerStats.getInstance().getDataCollector(realInvoke.get());
                 if (t != null) {
-                    String id = invocation.getAttachment("id");
-                    String maxBucket = invocation.getAttachment(id);
-                    dc.setBucket(Integer.valueOf(maxBucket));
+                    String active = invocation.getAttachment("active");
+                    dc.setBucket(Integer.valueOf(active));
                     dc.decrementRequests();
+                    dc.noteValue(stopwatch.get().stop().elapsed(TimeUnit.MILLISECONDS));
                     return RETRY_FLAG;
                 }
+                dc.noteValue(stopwatch.get().stop().elapsed(TimeUnit.MILLISECONDS));
                 dc.decrementRequests();
                 return a;
             });
