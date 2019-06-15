@@ -47,9 +47,6 @@ public class TestClientFilter implements Filter {
 
     @Override
     public Result onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
-        DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
-        dc.decrementRequests();
-        dc.succeedRequest();
         return result;
     }
 

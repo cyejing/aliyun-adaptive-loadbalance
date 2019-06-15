@@ -111,6 +111,8 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     return RETRY_FLAG;
                 }
                 dc.noteValue(stopwatch.get().stop().elapsed(TimeUnit.MILLISECONDS));
+                dc.decrementRequests();
+                dc.succeedRequest();
                 return a;
             });
 
