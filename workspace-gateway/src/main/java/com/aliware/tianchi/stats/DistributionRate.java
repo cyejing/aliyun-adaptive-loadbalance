@@ -22,6 +22,7 @@ public class DistributionRate {
     }
 
     public void noteValue(long i) {
+        checkAndResetWindow();
         request.incrementAndGet();
         ms.addAndGet(i);
     }
@@ -53,7 +54,7 @@ public class DistributionRate {
         if (request.get() < 1) {
             return 0.0;
         } else {
-            return request.get() / ms.get();
+            return new Double(ms.get()) /  request.get();
         }
     }
 
