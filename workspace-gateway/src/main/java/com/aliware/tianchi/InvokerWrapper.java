@@ -81,11 +81,8 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     loadBalance.decrement(realInvoke.get());
                     return RETRY_FLAG;
                 }
-                dc.decrementRequests();
-                loadBalance.decrement(realInvoke.get());
                 return a;
             });
-
 
 
             cfw.setRetry1((a) -> {
