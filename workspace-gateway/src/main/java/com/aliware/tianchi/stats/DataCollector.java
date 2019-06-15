@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
     private AtomicInteger activeRequests = new AtomicInteger(0);
+    private AtomicInteger failedRequests = new AtomicInteger(0);
     private BucketRate bucketRate = new BucketRate(1000);
     private MeasuredRate qps = new MeasuredRate(500);
     private DistributionRate distributionRate = new DistributionRate(500);
@@ -15,6 +16,10 @@ public class DataCollector {
 
     public void incrementRequests() {
         activeRequests.incrementAndGet();
+    }
+
+    public void incrementFailedRequests() {
+        failedRequests.incrementAndGet();
     }
 
     public void decrementRequests() {
@@ -59,4 +64,7 @@ public class DataCollector {
         return distributionRate.getMean();
     }
 
+    public int getFailed() {
+        return failedRequests.get();
+    }
 }

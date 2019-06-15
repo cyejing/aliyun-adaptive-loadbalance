@@ -79,6 +79,7 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     String active = invocation.getAttachment("active");
                     dc.setBucket(Integer.valueOf(active));
                     dc.decrementRequests();
+                    dc.incrementFailedRequests();
                     dc.noteValue(stopwatch.get().stop().elapsed(TimeUnit.MILLISECONDS));
                     return RETRY_FLAG;
                 }
@@ -104,12 +105,12 @@ public class InvokerWrapper<T> implements Invoker<T> {
                 if (t != null) {
                     String active = invocation.getAttachment("active");
                     dc.setBucket(Integer.valueOf(active));
+                    dc.incrementFailedRequests();
                     dc.decrementRequests();
                     dc.noteValue(stopwatch.get().stop().elapsed(TimeUnit.MILLISECONDS));
                     return RETRY_FLAG;
                 }
                 dc.noteValue(stopwatch.get().stop().elapsed(TimeUnit.MILLISECONDS));
-                dc.decrementRequests();
                 return a;
             });
 

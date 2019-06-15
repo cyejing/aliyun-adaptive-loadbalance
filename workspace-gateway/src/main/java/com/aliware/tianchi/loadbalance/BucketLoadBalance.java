@@ -5,15 +5,12 @@ import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
@@ -48,9 +45,9 @@ public class BucketLoadBalance implements LoadBalance {
                         String key = e.getKey();
                         DataCollector dc = e.getValue();
                         String s = String.format(
-                                LocalDateTime.now().toString() +
-                                        " bucket key:%s, active:%d, limit:%d, mean:%f, qps:%d. limitCount:%d",
-                                key, dc.getActive(), dc.getBucket(), dc.getMean(), dc.getQPS(), map.get(key).get());
+                                "%s bucket key:%s, active:%d, limit:%d, mean:%f, qps:%d, failed:%d limitCount:%d",
+                                LocalDateTime.now().toString(), key, dc.getActive(), dc.getBucket(), dc.getMean(),
+                                dc.getQPS(), dc.getFailed(), map.get(key).get());
 
                         log.info(s);
                     }
