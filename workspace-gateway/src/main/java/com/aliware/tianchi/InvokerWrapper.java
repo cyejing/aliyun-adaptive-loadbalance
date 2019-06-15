@@ -1,7 +1,6 @@
 package com.aliware.tianchi;
 
 import com.aliware.tianchi.loadbalance.BucketLoadBalance;
-import com.aliware.tianchi.loadbalance.DynamicWeightedLoadBalance;
 import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
 import java.util.List;
@@ -78,10 +77,8 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     String maxBucket = invocation.getAttachment(id);
                     dc.setBucket(Integer.valueOf(maxBucket));
                     dc.decrementRequests();
-                    loadBalance.decrement(realInvoke.get());
                     return RETRY_FLAG;
                 }
-                loadBalance.decrement(realInvoke.get());
                 dc.decrementRequests();
                 return a;
             });
@@ -105,7 +102,6 @@ public class InvokerWrapper<T> implements Invoker<T> {
                     String id = invocation.getAttachment("id");
                     String maxBucket = invocation.getAttachment(id);
                     dc.setBucket(Integer.valueOf(maxBucket));
-                    loadBalance.decrement(realInvoke.get());
                     dc.decrementRequests();
                     return RETRY_FLAG;
                 }

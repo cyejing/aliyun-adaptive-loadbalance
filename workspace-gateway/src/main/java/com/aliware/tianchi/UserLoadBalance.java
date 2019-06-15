@@ -1,9 +1,8 @@
 package com.aliware.tianchi;
 
 import com.aliware.tianchi.loadbalance.BucketLoadBalance;
-import com.aliware.tianchi.loadbalance.DynamicWeightedLoadBalance;
 import com.aliware.tianchi.loadbalance.WeightedLoadBalance;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.List;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
@@ -11,8 +10,6 @@ import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.cluster.LoadBalance;
-
-import java.util.List;
 
 /**
  * @author daofeng.xjf

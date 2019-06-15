@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
     private AtomicInteger activeRequests = new AtomicInteger(0);
-    private BucketRate bucketRate = new BucketRate(500);
-    private MeasuredRate qps = new MeasuredRate(500);
+    private BucketRate bucketRate = new BucketRate(300);
+    private MeasuredRate qps = new MeasuredRate(100);
 
     public void incrementRequests() {
         activeRequests.incrementAndGet();

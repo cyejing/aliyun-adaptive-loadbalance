@@ -50,4 +50,8 @@ public class InvokerStats {
         return getDataCollector(key);
     }
 
+    public ConcurrentMap<String, DataCollector> getDataCollectors() {
+        return dataMap;
+    }
+
 }

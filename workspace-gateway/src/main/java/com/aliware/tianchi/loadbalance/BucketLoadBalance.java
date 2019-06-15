@@ -5,6 +5,7 @@ import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -29,7 +30,6 @@ public class BucketLoadBalance implements LoadBalance {
 
     private Timer logTimer = new Timer();
 
-    private ConcurrentMap<String, Bucket> map = new ConcurrentHashMap<>();
     private AtomicInteger limitCount = new AtomicInteger();
 
     private final LoadBalance loadBalance;
@@ -41,15 +41,15 @@ public class BucketLoadBalance implements LoadBalance {
             @Override
             public void run() {
                 try {
-                    Set<Entry<String, Bucket>> entries = map.entrySet();
-                    for (Entry<String, Bucket> e : entries) {
+                    ConcurrentMap<String, DataCollector> dcm = InvokerStats.getInstance()
+                            .getDataCollectors();
+                    for (Entry<String, DataCollector> e : dcm.entrySet()) {
                         String key = e.getKey();
-                        Bucket bucket = e.getValue();
-                        DataCollector dc = InvokerStats.getInstance().getDataCollector(key);
+                        DataCollector dc = e.getValue();
                         String s = String.format(
                                 LocalDateTime.now().toString() +
-                                        " bucket weight key:%s, active:%d, limit:%d, Active:%d, Succeed:%d, SucceedWindow:%d. limitCount:%d",
-                                key, bucket.getActive(), dc.getBucket(), dc.getActive(), dc.getQPS(), dc.getMaxQPS(),limitCount.get());
+                                        " bucket weight key:%s, active:%d, limit:%d, Succeed:%d, SucceedWindow:%d. limitCount:%d",
+                                key, dc.getActive(), dc.getBucket(), dc.getActive(), dc.getQPS(), dc.getMaxQPS(),limitCount.get());
 
                         log.info(s);
                     }
@@ -58,7 +58,7 @@ public class BucketLoadBalance implements LoadBalance {
                     log.error("", e);
                 }
             }
-        }, 0, 600);
+        }, 1000, 600);
 
     }
 
@@ -68,13 +68,8 @@ public class BucketLoadBalance implements LoadBalance {
         for (Invoker invoker : invokers) {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             int limit = dc.getBucket();
-            String key = invoker.getUrl().toIdentityString();
-            Bucket bucket = map.get(key);
-            if (bucket == null) {
-                map.putIfAbsent(key, new Bucket());
-                bucket = map.get(key);
-            }
-            if (bucket.getActive() < limit) {
+            int active = dc.getActive();
+            if (active < limit) {
                 limitCount.incrementAndGet();
                 selects.add(invoker);
             }
@@ -86,37 +81,7 @@ public class BucketLoadBalance implements LoadBalance {
         }
 
         Invoker<T> select = loadBalance.select(selects, url, invocation);
-        increment(select);
         return select;
     }
 
-    public void increment(Invoker invoker) {
-        map.get(invoker.getUrl().toIdentityString()).increment();
-    }
-
-    public void decrement(Invoker invoker) {
-        map.get(invoker.getUrl().toIdentityString()).decrement();
-    }
-
-    static class Bucket {
-
-        private AtomicInteger active = new AtomicInteger(0);
-
-        public Bucket() {
-
-        }
-
-        public int increment() {
-            return active.incrementAndGet();
-        }
-
-        public int decrement() {
-           return active.decrementAndGet();
-        }
-
-        public int getActive() {
-            return active.get();
-        }
-
-    }
 }
