@@ -40,18 +40,19 @@ public class BucketLoadBalance implements LoadBalance {
             @Override
             public void run() {
                 try {
-                    List<String> sort = InvokerStats.getInstance().getSort();
-                    for (String key : sort) {
-                        Bucket bucket = map.get(key);
+                    Set<Entry<String, Bucket>> entries = map.entrySet();
+                    for (Entry<String, Bucket> e : entries) {
+                        String key = e.getKey();
+                        Bucket bucket = e.getValue();
                         DataCollector dc = InvokerStats.getInstance().getDataCollector(key);
                         String s = String.format(
                                 LocalDateTime.now().toString() +
-                                        " bucket weight key:%s, active:%d, breaking:%s Succeed:%d, SucceedWindow:%d.",
-                                key, bucket.getActive(), String.valueOf(bucket.isBreaking()),
-                                dc.getSucceedQPS(), dc.getSucceedMaxQPS());
+                                        " bucket weight key:%s, active:%d, limit:%d, Active:%d, Succeed:%d, SucceedWindow:%d.",
+                                key, bucket.getActive(), dc.getBucket(), dc.getActive(), dc.getQPS(), dc.getMaxQPS());
 
                         log.info(s);
                     }
+
                 } catch (Exception e) {
                     log.error("", e);
                 }
@@ -62,18 +63,22 @@ public class BucketLoadBalance implements LoadBalance {
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
-        List<String> sort = InvokerStats.getInstance().getSort();
         List<Invoker<T>> selects = new ArrayList<>(invokers);
-        for (String key : sort) {
+        for (Invoker invoker : invokers) {
+            DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
+            int limit = dc.getBucket();
+            String key = invoker.getUrl().toIdentityString();
             Bucket bucket = map.get(key);
             if (bucket == null) {
                 map.putIfAbsent(key, new Bucket());
                 bucket = map.get(key);
             }
-            if (bucket.isBreaking()) {
-                selects.removeIf(i -> i.getUrl().toIdentityString().equals(key));
+            if (bucket.getActive() < limit) {
+                selects.add(invoker);
             }
+
         }
+
         if (CollectionUtils.isEmpty(selects)) {
             selects = invokers;
         }
@@ -84,27 +89,16 @@ public class BucketLoadBalance implements LoadBalance {
     }
 
     public void increment(Invoker invoker) {
-        String key = invoker.getUrl().toIdentityString();
-        Bucket bucket = map.get(key);
-        if (bucket == null) {
-            map.putIfAbsent(key, new Bucket());
-            bucket = map.get(key);
-        }
-        bucket.increment();
+        map.get(invoker.getUrl().toIdentityString()).increment();
     }
 
     public void decrement(Invoker invoker) {
         map.get(invoker.getUrl().toIdentityString()).decrement();
     }
 
-    public void breaking(Invoker invoker) {
-        map.get(invoker.getUrl().toIdentityString()).breaking();
-    }
-
     static class Bucket {
 
         private AtomicInteger active = new AtomicInteger(0);
-        private volatile boolean breaking = false;
 
         public Bucket() {
 
@@ -115,21 +109,7 @@ public class BucketLoadBalance implements LoadBalance {
         }
 
         public int decrement() {
-            int i = active.decrementAndGet();
-            breaking = false;
-            return i;
-        }
-
-        public void breaking() {
-            breaking = true;
-        }
-
-        public boolean isNotBreaking() {
-            return !breaking;
-        }
-
-        public boolean isBreaking() {
-            return breaking;
+           return active.decrementAndGet();
         }
 
         public int getActive() {

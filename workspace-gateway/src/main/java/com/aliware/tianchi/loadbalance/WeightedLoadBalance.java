@@ -27,8 +27,7 @@ public class WeightedLoadBalance extends BasicWeightedLoadBalance {
             public void run() {
                 try {
                     for (WeightedRoundRobin wrr : getMap().values()) {
-                        wrr.setWeight(InvokerStats.getInstance().getDataCollector(wrr.getInvoker())
-                                .getSucceedMaxQPS());
+                        wrr.setWeight(InvokerStats.getInstance().getDataCollector(wrr.getInvoker()).getQPS());
                     }
                 } catch (Exception e) {
                     log.error("", e);

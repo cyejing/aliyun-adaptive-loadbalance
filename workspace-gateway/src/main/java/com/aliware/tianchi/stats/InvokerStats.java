@@ -24,29 +24,6 @@ public class InvokerStats {
     private static final Logger log = LoggerFactory.getLogger(InvokerStats.class);
 
 
-    private Timer timer = new Timer();
-
-    private InvokerStats() {
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    Set<Entry<String, DataCollector>> entries = dataMap.entrySet();
-                    sort = entries.stream()
-                            .sorted((o1, o2) -> {
-                                int x = o1.getValue().getSucceedQPS();
-                                int y = o2.getValue().getSucceedQPS();
-                                return (x > y) ? -1 : ((x == y) ? 0 : 1);
-                            })
-                            .map(Entry::getKey)
-                            .collect(Collectors.toList());
-                } catch (Exception e) {
-                    log.error("", e);
-                }
-            }
-        },0,600);
-    }
-
     private static class InvokerStatsBuilder {
         private static InvokerStats INSTANCE = new InvokerStats();
     }
@@ -56,20 +33,8 @@ public class InvokerStats {
     }
 
     private ConcurrentMap<String, DataCollector> dataMap = new ConcurrentHashMap();
-    private List<String> sort = new ArrayList<>();
 
 
-    public void incrementFailedRequests(Invoker invoker) {
-        getDataCollector(invoker).incrementFailedRequests();
-    }
-
-    public void incrementRequests(Invoker invoker) {
-        getDataCollector(invoker).incrementRequests();
-    }
-
-    public void decrementRequests(Invoker invoker) {
-        getDataCollector(invoker).decrementRequests();
-    }
 
     public DataCollector getDataCollector(String key) {
         DataCollector dataCollector = dataMap.get(key);
@@ -83,10 +48,6 @@ public class InvokerStats {
     public DataCollector getDataCollector(Invoker invoker) {
         String key = invoker.getUrl().toIdentityString();
         return getDataCollector(key);
-    }
-
-    public List<String> getSort() {
-        return sort;
     }
 
 }

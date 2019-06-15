@@ -2,6 +2,7 @@ package com.aliware.tianchi;
 
 import com.aliware.tianchi.loadbalance.BucketLoadBalance;
 import com.aliware.tianchi.loadbalance.DynamicWeightedLoadBalance;
+import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -71,11 +72,17 @@ public class InvokerWrapper<T> implements Invoker<T> {
             AtomicReference<Invoker> realInvoke = new AtomicReference<>(this.invoker);
 
             cfw.setHandle( (a,t) -> {
+                DataCollector dc = InvokerStats.getInstance().getDataCollector(realInvoke.get());
                 if (t != null) {
-                    loadBalance.breaking(this.invoker);
-                    InvokerStats.getInstance().incrementFailedRequests(realInvoke.get());
+                    String id = invocation.getAttachment("id");
+                    String maxBucket = invocation.getAttachment(id);
+                    dc.setBucket(Integer.valueOf(maxBucket));
+                    dc.decrementRequests();
+                    loadBalance.decrement(realInvoke.get());
                     return RETRY_FLAG;
                 }
+                dc.decrementRequests();
+                loadBalance.decrement(realInvoke.get());
                 return a;
             });
 
@@ -95,12 +102,17 @@ public class InvokerWrapper<T> implements Invoker<T> {
             });
 
             cfw.setHandle1( (a,t) -> {
+                DataCollector dc = InvokerStats.getInstance().getDataCollector(realInvoke.get());
                 if (t != null) {
-                    loadBalance.breaking(invoker1.get());
-                    InvokerStats.getInstance().incrementFailedRequests(realInvoke.get());
+                    String id = invocation.getAttachment("id");
+                    String maxBucket = invocation.getAttachment(id);
+                    dc.setBucket(Integer.valueOf(maxBucket));
+                    loadBalance.decrement(realInvoke.get());
+                    dc.decrementRequests();
                     return RETRY_FLAG;
                 }
                 loadBalance.decrement(realInvoke.get());
+                dc.decrementRequests();
                 return a;
             });
 

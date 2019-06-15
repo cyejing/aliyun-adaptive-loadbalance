@@ -1,7 +1,10 @@
 package com.aliware.tianchi;
 
+import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.dubbo.common.Constants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.logger.Logger;
@@ -23,12 +26,18 @@ import org.apache.dubbo.rpc.RpcException;
  */
 @Activate(group = Constants.CONSUMER)
 public class TestClientFilter implements Filter {
+    private static final Logger log = LoggerFactory.getLogger(TestClientFilter.class);
+
+
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         try{
+            DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
+            dc.incrementRequests();
+            String id = invocation.getAttachment("id");
+            invocation.getAttachments().put(id, String.valueOf(dc.getActive()));
             Result result = invoker.invoke(invocation);
-            InvokerStats.getInstance().incrementRequests(invoker);
             return result;
         }catch (Exception e){
             throw e;
@@ -38,6 +47,8 @@ public class TestClientFilter implements Filter {
 
     @Override
     public Result onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
+        DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
+        dc.succeedRequest();
         return result;
     }
 

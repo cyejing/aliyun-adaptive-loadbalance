@@ -28,13 +28,13 @@ public class WeightedRoundRobin {
     }
 
     public void setWeight(int weight) {
-        int max = DEFAULT_WEIGHT > weight ? DEFAULT_WEIGHT : weight;
+        int max = weight == 0 ? DEFAULT_WEIGHT : weight;
         this.weight.set(max);
     }
 
     public void increaseWeight(int i) {
-        int srcw = InvokerStats.getInstance().getDataCollector(invoker).getSucceedQPS();
-        int srcMax = InvokerStats.getInstance().getDataCollector(invoker).getSucceedMaxQPS();
+        int srcw = InvokerStats.getInstance().getDataCollector(invoker).getQPS();
+        int srcMax = InvokerStats.getInstance().getDataCollector(invoker).getMaxQPS();
         int max;
         if (srcw > 0) {
             max = srcw;
