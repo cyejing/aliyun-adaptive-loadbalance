@@ -52,7 +52,7 @@ public class DistributionRate {
 
     private double getRT() {
         if (request.get() < 1) {
-            return 0.0;
+            return sampleInterval;
         } else {
             return new Double(ms.get()) /  request.get();
         }
