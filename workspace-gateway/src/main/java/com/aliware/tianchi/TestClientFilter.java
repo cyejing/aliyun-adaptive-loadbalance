@@ -35,6 +35,7 @@ public class TestClientFilter implements Filter {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         try{
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
+            dc.incrementRequests();
             invocation.getAttachments().put("active", String.valueOf(dc.getActive()));
             Result result = invoker.invoke(invocation);
             return result;

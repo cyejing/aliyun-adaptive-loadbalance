@@ -14,8 +14,8 @@ public class DataCollector {
     private DistributionRate distributionRate = new DistributionRate(500);
 
 
-    public void incrementRequests() {
-        activeRequests.incrementAndGet();
+    public int incrementRequests() {
+        return activeRequests.incrementAndGet();
     }
 
     public void incrementFailedRequests() {
