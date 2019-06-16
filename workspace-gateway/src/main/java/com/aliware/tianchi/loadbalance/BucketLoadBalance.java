@@ -83,7 +83,7 @@ public class BucketLoadBalance implements LoadBalance {
         }
 
         if (CollectionUtils.isEmpty(selects)) {
-            log.error("全部熔断");
+//            log.error("全部熔断");
             selects = invokers;
         }
 

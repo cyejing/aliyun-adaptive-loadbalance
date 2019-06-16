@@ -35,7 +35,7 @@ public class DataCollector {
     }
 
     public void decrementLimitRequests() {
-        limitRequests.incrementAndGet();
+        limitRequests.decrementAndGet();
     }
 
 
