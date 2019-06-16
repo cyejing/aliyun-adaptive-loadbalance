@@ -30,14 +30,12 @@ public class BucketRate {
     public int getAvgBucket() {
         checkAndResetWindow();
         int totalBucket = 0;
-        int size;
-        if (index.get() > BUCKET_SIZE) {
-            size = BUCKET_SIZE;
+        int size=index.get();
+        if (size >= BUCKET_SIZE) {
             for (int i = 0; i < BUCKET_SIZE; i++) {
                 totalBucket += buckets[i];
             }
         } else {
-            size = index.get();
             for (int i = 0; i < size; i++) {
                 totalBucket += buckets[i];
             }
