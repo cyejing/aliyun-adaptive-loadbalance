@@ -66,9 +66,10 @@ public class BucketLoadBalance implements LoadBalance {
         List<Invoker<T>> selects = new ArrayList<>(invokers);
         for (Invoker invoker : invokers) {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
-            int limit = dc.getMaxBucket();
-            int active = dc.incrementRequests();
-            if (active < limit) {
+            int bucket = dc.getMaxBucket();
+            dc.incrementLimitRequests();
+            int limit = dc.getLimit();
+            if (limit < bucket) {
                 selects.add(invoker);
             }else{
                 String key = invoker.getUrl().toIdentityString();
@@ -84,7 +85,7 @@ public class BucketLoadBalance implements LoadBalance {
         if (CollectionUtils.isEmpty(selects)) {
             selects = invokers;
         }
-        invokers.forEach(i -> InvokerStats.getInstance().getDataCollector(i).decrementRequests());
+        invokers.forEach(i -> InvokerStats.getInstance().getDataCollector(i).decrementLimitRequests());
         Invoker<T> select = loadBalance.select(selects, url, invocation);
         return select;
     }

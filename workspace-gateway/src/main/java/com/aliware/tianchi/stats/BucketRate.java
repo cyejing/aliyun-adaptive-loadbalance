@@ -8,6 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BucketRate {
     public static final int DEFAULT_BUCKET = 1000;
 
+
+
     private final AtomicInteger maxBucket = new AtomicInteger(DEFAULT_BUCKET);
     private final AtomicInteger lastBucket = new AtomicInteger(DEFAULT_BUCKET);
     private final AtomicInteger currentBucket = new AtomicInteger(DEFAULT_BUCKET);
