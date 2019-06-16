@@ -46,7 +46,7 @@ public class BucketLoadBalance implements LoadBalance {
                         DataCollector dc = e.getValue();
                         String s = String.format(
                                 "%s bucket key:%s, active:%d, limit:%d, mean:%f, one:%d, qps:%d, failed:%d limitCount:%d",
-                                LocalDateTime.now().toString(), key, dc.getActive(), dc.getBucket(), dc.getMean(),dc.getOneQPS(),
+                                LocalDateTime.now().toString(), key, dc.getActive(), dc.getMaxBucket(), dc.getMean(),dc.getOneQPS(),
                                 dc.getQPS(), dc.getFailed(), map.get(key).get());
 
                         log.info(s);
@@ -65,19 +65,18 @@ public class BucketLoadBalance implements LoadBalance {
         List<Invoker<T>> selects = new ArrayList<>(invokers);
         for (Invoker invoker : invokers) {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
-            int limit = dc.getBucket();
+            int limit = dc.getMaxBucket();
             int active = dc.getActive();
             if (active < limit) {
+                selects.add(invoker);
+            }else{
                 String key = invoker.getUrl().toIdentityString();
                 AtomicInteger a = map.get(key);
                 if (a == null) {
                     map.putIfAbsent(key, new AtomicInteger(0));
                     a = map.get(key);
                 }
-                if (time > 20) {
-                    a.incrementAndGet();
-                }
-                selects.add(invoker);
+                a.incrementAndGet();
             }
 
         }
