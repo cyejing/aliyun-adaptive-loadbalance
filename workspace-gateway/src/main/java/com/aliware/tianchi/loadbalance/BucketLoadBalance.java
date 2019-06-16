@@ -66,6 +66,7 @@ public class BucketLoadBalance implements LoadBalance {
         List<Invoker<T>> selects = new ArrayList<>(invokers);
         for (Invoker invoker : invokers) {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
+            dc.incrementRequests();
             int limit = dc.getMaxBucket();
             int active = dc.getActive();
             if (active < limit) {
