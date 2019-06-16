@@ -83,7 +83,7 @@ public class BucketLoadBalance implements LoadBalance {
         }
 
         if (CollectionUtils.isEmpty(selects)) {
-            breaking.get();
+            breaking.incrementAndGet();
             selects = invokers;
         }
 
