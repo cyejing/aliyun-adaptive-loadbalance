@@ -13,7 +13,7 @@ public class BucketRate {
 
     private int[] buckets = new int[BUCKET_SIZE];
 
-    private AtomicInteger index = new AtomicInteger();
+    private AtomicInteger index = new AtomicInteger(0);
 
     private final AtomicInteger currentBucket = new AtomicInteger(DEFAULT_BUCKET);
     private final long sampleInterval;
