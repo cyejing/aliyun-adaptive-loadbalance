@@ -16,8 +16,8 @@ public class DataCollector {
 
 
     public void incrementRequests() {
-        limitRequests.incrementAndGet();
         activeRequests.incrementAndGet();
+        limitRequests.incrementAndGet();
     }
 
     public void incrementFailedRequests() {
@@ -26,7 +26,7 @@ public class DataCollector {
 
     public void decrementRequests() {
         activeRequests.decrementAndGet();
-        limitRequests.incrementAndGet();
+        limitRequests.decrementAndGet();
     }
 
 
