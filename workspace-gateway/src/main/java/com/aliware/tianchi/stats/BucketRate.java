@@ -6,36 +6,46 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Born
  */
 public class BucketRate {
+
     public static final int DEFAULT_BUCKET = 1000;
+    public static final int BUCKET_SIZE = 100;
 
 
+    private int[] buckets = new int[BUCKET_SIZE];
 
-    private final AtomicInteger maxBucket = new AtomicInteger(DEFAULT_BUCKET);
-    private final AtomicInteger lastBucket = new AtomicInteger(DEFAULT_BUCKET);
+    private AtomicInteger index = new AtomicInteger();
+
     private final AtomicInteger currentBucket = new AtomicInteger(DEFAULT_BUCKET);
     private final long sampleInterval;
-    private final long sampleInterval1;
     private volatile long threshold;
-    private volatile long threshold1;
 
-    public BucketRate(long sampleInterval,long sampleInterval1){
+    public BucketRate(long sampleInterval) {
         this.sampleInterval = sampleInterval;
-        this.sampleInterval1 = sampleInterval1;
 
         threshold = System.currentTimeMillis() + sampleInterval;
-        threshold1 = System.currentTimeMillis() + sampleInterval1;
     }
 
-    public int getCount() {
+    public int getAvgBucket() {
         checkAndResetWindow();
-        return lastBucket.get();
+        int totalBucket = 0;
+        int size;
+        if (index.get() > BUCKET_SIZE) {
+            size = BUCKET_SIZE;
+            for (int i = 0; i < BUCKET_SIZE; i++) {
+                totalBucket += buckets[i];
+            }
+        } else {
+            size = index.get();
+            for (int i = 0; i < size; i++) {
+                totalBucket += buckets[i];
+            }
+        }
+        if (size == 0) {
+            return DEFAULT_BUCKET;
+        }
+        return totalBucket / size;
     }
 
-
-    public int getMaxCount() {
-        checkAndResetWindow();
-        return maxBucket.get();
-    }
 
     public int getCurrentCount() {
         checkAndResetWindow();
@@ -51,14 +61,12 @@ public class BucketRate {
 
     private void checkAndResetWindow() {
         long now = System.currentTimeMillis();
-        if(threshold < now) {
-            lastBucket.set(currentBucket.get());
+        int bucket;
+        if (threshold < now &&  (bucket = currentBucket.get()) != DEFAULT_BUCKET) {
+            int i = index.getAndIncrement();
+            buckets[i % BUCKET_SIZE] = bucket;
             currentBucket.set(DEFAULT_BUCKET);
             threshold = now + sampleInterval;
-        }
-        if (threshold1 < now) {
-            maxBucket.set(lastBucket.get());
-            threshold1 = now + sampleInterval1;
         }
     }
 }

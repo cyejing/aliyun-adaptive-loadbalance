@@ -47,7 +47,7 @@ public class BucketLoadBalance implements LoadBalance {
                         AtomicInteger a = map.get(key);
                         String s = String.format(
                                 "%s bucket key:%s, active:%d, limit:%d, bucket:%d, mean:%f, one:%d, qps:%d, failed:%d limitCount:%d",
-                                LocalDateTime.now().toString(), key, dc.getActive(),dc.getLimit(), dc.getMaxBucket(), dc.getMean(),dc.getOneQPS(),
+                                LocalDateTime.now().toString(), key, dc.getActive(),dc.getLimit(), dc.getAvgBucket(), dc.getMean(),dc.getOneQPS(),
                                 dc.getQPS(), dc.getFailed(), a==null?0:a.get());
 
                         log.info(s);
@@ -66,7 +66,7 @@ public class BucketLoadBalance implements LoadBalance {
         List<Invoker<T>> selects = new ArrayList<>();
         for (Invoker invoker : invokers) {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
-            int bucket = dc.getMaxBucket();
+            int bucket = dc.getAvgBucket();
             int limit = dc.getActive();
             if (limit < bucket) {
                 selects.add(invoker);
