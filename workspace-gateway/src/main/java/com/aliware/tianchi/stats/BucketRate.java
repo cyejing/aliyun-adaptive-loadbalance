@@ -69,6 +69,11 @@ public class BucketRate {
             buckets[i % BUCKET_SIZE] = bucket;
             currentBucket.set(DEFAULT_BUCKET);
             threshold = now + sampleInterval;
+            StringBuilder sb = new StringBuilder();
+            for (int j = 0; j < BUCKET_SIZE; j++) {
+                sb.append(buckets[j]).append(",");
+            }
+            System.out.println(sb);
         }
     }
 }
