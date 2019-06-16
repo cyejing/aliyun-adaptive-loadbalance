@@ -63,7 +63,7 @@ public class BucketLoadBalance implements LoadBalance {
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
-        List<Invoker<T>> selects = new ArrayList<>(invokers);
+        List<Invoker<T>> selects = new ArrayList<>();
         for (Invoker invoker : invokers) {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             int bucket = dc.getMaxBucket();
