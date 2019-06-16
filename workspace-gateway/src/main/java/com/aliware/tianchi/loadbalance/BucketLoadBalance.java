@@ -44,10 +44,11 @@ public class BucketLoadBalance implements LoadBalance {
                     for (Entry<String, DataCollector> e : dcm.entrySet()) {
                         String key = e.getKey();
                         DataCollector dc = e.getValue();
+                        AtomicInteger a = map.get(key);
                         String s = String.format(
                                 "%s bucket key:%s, active:%d, limit:%d, mean:%f, one:%d, qps:%d, failed:%d limitCount:%d",
                                 LocalDateTime.now().toString(), key, dc.getActive(), dc.getMaxBucket(), dc.getMean(),dc.getOneQPS(),
-                                dc.getQPS(), dc.getFailed(), map.get(key).get());
+                                dc.getQPS(), dc.getFailed(), a==null?"non":a.get());
 
                         log.info(s);
                     }
