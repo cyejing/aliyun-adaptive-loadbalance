@@ -25,41 +25,10 @@ public class BucketLoadBalance implements LoadBalance {
 
     private static final Logger log = LoggerFactory.getLogger(BucketLoadBalance.class);
 
-    private Timer logTimer = new Timer();
-
-    private ConcurrentMap<String, AtomicInteger> map = new ConcurrentHashMap<>();
-    private AtomicInteger breaking = new AtomicInteger(0);
-    private int time = 0;
-
     private final LoadBalance loadBalance;
 
     public BucketLoadBalance(LoadBalance loadBalance) {
-        System.out.println("make by Born");
         this.loadBalance = loadBalance;
-        logTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    ConcurrentMap<String, DataCollector> dcm = InvokerStats.getInstance()
-                            .getDataCollectors();
-                    for (Entry<String, DataCollector> e : dcm.entrySet()) {
-                        String key = e.getKey();
-                        DataCollector dc = e.getValue();
-                        AtomicInteger a = map.get(key);
-                        String s = String.format(
-                                "%s bucket key:%s, active:%d, bucket:%d, mean:%f, one:%d, qps:%d, failed:%d limitCount:%d, breaking:%d",
-                                LocalDateTime.now().toString(), key, dc.getActive(), dc.getAvgBucket(), dc.getMean(),dc.getOneQPS(),
-                                dc.getQPS(), dc.getFailed(), a==null?0:a.get(),breaking.get());
-
-                        log.info(s);
-                    }
-                    time++;
-                } catch (Exception e) {
-                    log.error("", e);
-                }
-            }
-        }, 1000, 500);
-
     }
 
     @Override
@@ -71,19 +40,10 @@ public class BucketLoadBalance implements LoadBalance {
             int limit = dc.getActive();
             if (limit < bucket) {
                 selects.add(invoker);
-            } else {
-                String key = invoker.getUrl().toIdentityString();
-                AtomicInteger a = map.get(key);
-                if (a == null) {
-                    map.putIfAbsent(key, new AtomicInteger(0));
-                    a = map.get(key);
-                }
-                a.incrementAndGet();
             }
         }
 
         if (CollectionUtils.isEmpty(selects)) {
-            breaking.incrementAndGet();
             selects = invokers;
         }
 

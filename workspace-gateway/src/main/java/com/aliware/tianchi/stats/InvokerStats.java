@@ -1,5 +1,6 @@
 package com.aliware.tianchi.stats;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +23,35 @@ import org.apache.dubbo.rpc.Invoker;
  */
 public class InvokerStats {
     private static final Logger log = LoggerFactory.getLogger(InvokerStats.class);
+    private Timer logTimer = new Timer();
 
+
+    public InvokerStats() {
+        System.out.println("make by Born");
+
+        logTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    ConcurrentMap<String, DataCollector> dcm = InvokerStats.getInstance()
+                            .getDataCollectors();
+                    for (Entry<String, DataCollector> e : dcm.entrySet()) {
+                        String key = e.getKey();
+                        DataCollector dc = e.getValue();
+                        String s = String.format(
+                                "%s bucket key:%s, active:%d, bucket:%d, mean:%f, one:%d, qps:%d, failed:%d.",
+                                LocalDateTime.now().toString(), key, dc.getActive(), dc.getAvgBucket(),
+                                dc.getMean(), dc.getOneQPS(), dc.getQPS(), dc.getFailed());
+
+                        log.info(s);
+                    }
+                } catch (Exception e) {
+                    log.error("", e);
+                }
+            }
+        }, 1000, 500);
+
+    }
 
     private static class InvokerStatsBuilder {
         private static InvokerStats INSTANCE = new InvokerStats();

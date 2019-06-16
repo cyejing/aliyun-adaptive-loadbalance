@@ -47,7 +47,6 @@ public class RTLoadBalance extends BasicWeightedLoadBalance {
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
         Invoker<T> select = super.select(invokers, url, invocation);
         if (select == null) {
-            log.error("不应该出现的位置");
             select = invokers.get(ThreadLocalRandom.current().nextInt(invokers.size()));
         }
         return select;
