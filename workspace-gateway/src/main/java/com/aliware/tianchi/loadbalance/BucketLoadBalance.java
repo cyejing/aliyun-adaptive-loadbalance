@@ -46,8 +46,8 @@ public class BucketLoadBalance implements LoadBalance {
                         DataCollector dc = e.getValue();
                         AtomicInteger a = map.get(key);
                         String s = String.format(
-                                "%s bucket key:%s, active:%d, limit:%d, mean:%f, one:%d, qps:%d, failed:%d limitCount:%d",
-                                LocalDateTime.now().toString(), key, dc.getActive(), dc.getMaxBucket(), dc.getMean(),dc.getOneQPS(),
+                                "%s bucket key:%s, active:%d, limit:%d, bucket:%d, mean:%f, one:%d, qps:%d, failed:%d limitCount:%d",
+                                LocalDateTime.now().toString(), key, dc.getActive(),dc.getLimit(), dc.getMaxBucket(), dc.getMean(),dc.getOneQPS(),
                                 dc.getQPS(), dc.getFailed(), a==null?0:a.get());
 
                         log.info(s);
@@ -67,8 +67,7 @@ public class BucketLoadBalance implements LoadBalance {
         for (Invoker invoker : invokers) {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             int bucket = dc.getMaxBucket();
-            dc.incrementLimitRequests();
-            int limit = dc.getLimit();
+            int limit = dc.incrementLimitRequests();
             if (limit < bucket) {
                 selects.add(invoker);
             }else{
@@ -80,12 +79,13 @@ public class BucketLoadBalance implements LoadBalance {
                 }
                 a.incrementAndGet();
             }
+            dc.decrementLimitRequests();
         }
 
         if (CollectionUtils.isEmpty(selects)) {
             selects = invokers;
         }
-        invokers.forEach(i -> InvokerStats.getInstance().getDataCollector(i).decrementLimitRequests());
+
         Invoker<T> select = loadBalance.select(selects, url, invocation);
         return select;
     }

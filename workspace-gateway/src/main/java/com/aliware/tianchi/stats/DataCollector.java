@@ -30,8 +30,8 @@ public class DataCollector {
     }
 
 
-    public void incrementLimitRequests() {
-        limitRequests.incrementAndGet();
+    public int incrementLimitRequests() {
+        return limitRequests.incrementAndGet();
     }
 
     public void decrementLimitRequests() {
