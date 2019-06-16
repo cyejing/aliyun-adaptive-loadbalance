@@ -48,7 +48,7 @@ public class BucketLoadBalance implements LoadBalance {
                         String s = String.format(
                                 "%s bucket key:%s, active:%d, limit:%d, mean:%f, one:%d, qps:%d, failed:%d limitCount:%d",
                                 LocalDateTime.now().toString(), key, dc.getActive(), dc.getMaxBucket(), dc.getMean(),dc.getOneQPS(),
-                                dc.getQPS(), dc.getFailed(), a==null?"non":a.get());
+                                dc.getQPS(), dc.getFailed(), a==null?0:a.get());
 
                         log.info(s);
                     }
