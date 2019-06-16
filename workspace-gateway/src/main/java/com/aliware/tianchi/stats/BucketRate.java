@@ -18,11 +18,13 @@ public class BucketRate {
     private final AtomicInteger currentBucket = new AtomicInteger(DEFAULT_BUCKET);
     private final long sampleInterval;
     private volatile long threshold;
+    private volatile long delayThreshold;
 
-    public BucketRate(long sampleInterval) {
+    public BucketRate(long delay,long sampleInterval) {
         this.sampleInterval = sampleInterval;
 
-        threshold = System.currentTimeMillis() + sampleInterval;
+        this.threshold = System.currentTimeMillis() + sampleInterval;
+        this.delayThreshold = System.currentTimeMillis() + delay;
     }
 
     public int getAvgBucket() {
@@ -62,7 +64,7 @@ public class BucketRate {
     private void checkAndResetWindow() {
         long now = System.currentTimeMillis();
         int bucket;
-        if (threshold < now &&  (bucket = currentBucket.get()) != DEFAULT_BUCKET) {
+        if (threshold < now && delayThreshold < now && (bucket = currentBucket.get()) != DEFAULT_BUCKET) {
             int i = index.getAndIncrement();
             buckets[i % BUCKET_SIZE] = bucket;
             currentBucket.set(DEFAULT_BUCKET);
