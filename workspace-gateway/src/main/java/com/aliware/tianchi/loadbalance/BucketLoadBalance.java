@@ -28,6 +28,7 @@ public class BucketLoadBalance implements LoadBalance {
     private Timer logTimer = new Timer();
 
     private ConcurrentMap<String, AtomicInteger> map = new ConcurrentHashMap<>();
+    private AtomicInteger breaking = new AtomicInteger(0);
     private int time = 0;
 
     private final LoadBalance loadBalance;
@@ -46,9 +47,9 @@ public class BucketLoadBalance implements LoadBalance {
                         DataCollector dc = e.getValue();
                         AtomicInteger a = map.get(key);
                         String s = String.format(
-                                "%s bucket key:%s, active:%d, limit:%d, bucket:%d, mean:%f, one:%d, qps:%d, failed:%d limitCount:%d",
-                                LocalDateTime.now().toString(), key, dc.getActive(),dc.getLimit(), dc.getAvgBucket(), dc.getMean(),dc.getOneQPS(),
-                                dc.getQPS(), dc.getFailed(), a==null?0:a.get());
+                                "%s bucket key:%s, active:%d, bucket:%d, mean:%f, one:%d, qps:%d, failed:%d limitCount:%d, breaking:%d",
+                                LocalDateTime.now().toString(), key, dc.getActive(), dc.getAvgBucket(), dc.getMean(),dc.getOneQPS(),
+                                dc.getQPS(), dc.getFailed(), a==null?0:a.get(),breaking.get());
 
                         log.info(s);
                     }
@@ -70,7 +71,7 @@ public class BucketLoadBalance implements LoadBalance {
             int limit = dc.getActive();
             if (limit < bucket) {
                 selects.add(invoker);
-            }else{
+            } else {
                 String key = invoker.getUrl().toIdentityString();
                 AtomicInteger a = map.get(key);
                 if (a == null) {
@@ -79,11 +80,10 @@ public class BucketLoadBalance implements LoadBalance {
                 }
                 a.incrementAndGet();
             }
-//            dc.decrementLimitRequests();
         }
 
         if (CollectionUtils.isEmpty(selects)) {
-//            log.error("全部熔断");
+            breaking.get();
             selects = invokers;
         }
 

@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BucketRate {
 
     public static final int DEFAULT_BUCKET = 1000;
-    public static final int BUCKET_SIZE = 100;
+    public static final int BUCKET_SIZE = 50;
 
 
     private int[] buckets = new int[BUCKET_SIZE];
@@ -67,11 +67,6 @@ public class BucketRate {
             buckets[i % BUCKET_SIZE] = bucket;
             currentBucket.set(DEFAULT_BUCKET);
             threshold = now + sampleInterval;
-            StringBuilder sb = new StringBuilder();
-            for (int j = 0; j < BUCKET_SIZE; j++) {
-                sb.append(buckets[j]).append(",");
-            }
-            System.out.println(sb);
         }
     }
 }
