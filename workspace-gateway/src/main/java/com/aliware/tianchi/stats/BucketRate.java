@@ -8,10 +8,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BucketRate {
 
     public static final int DEFAULT_BUCKET = 1000;
-    public static final int BUCKET_SIZE = 50;
 
 
-    private int[] buckets = new int[BUCKET_SIZE];
+    private int size;
+    private int[] buckets;
 
     private AtomicInteger index = new AtomicInteger(0);
 
@@ -20,7 +20,9 @@ public class BucketRate {
     private volatile long threshold;
     private volatile long delayThreshold;
 
-    public BucketRate(long delay,long sampleInterval) {
+    public BucketRate(long delay, long sampleInterval, int size) {
+        this.size = size;
+        this.buckets = new int[size];
         this.sampleInterval = sampleInterval;
 
         this.threshold = System.currentTimeMillis() + sampleInterval;
@@ -30,20 +32,20 @@ public class BucketRate {
     public int getAvgBucket() {
         checkAndResetWindow();
         int totalBucket = 0;
-        int size=index.get();
-        if (size >= BUCKET_SIZE) {
-            for (int i = 0; i < BUCKET_SIZE; i++) {
-                totalBucket += buckets[i];
-            }
-        } else {
+        int s = index.get();
+        if (s >= size) {
             for (int i = 0; i < size; i++) {
                 totalBucket += buckets[i];
             }
+        } else {
+            for (int i = 0; i < s; i++) {
+                totalBucket += buckets[i];
+            }
         }
-        if (size == 0) {
+        if (s == 0) {
             return DEFAULT_BUCKET;
         }
-        return totalBucket / size;
+        return totalBucket / s;
     }
 
 
@@ -63,9 +65,9 @@ public class BucketRate {
         long now = System.currentTimeMillis();
         int bucket;
         if (threshold < now && (bucket = currentBucket.get()) != DEFAULT_BUCKET) {
-            if(delayThreshold < now){
+            if (delayThreshold < now) {
                 int i = index.getAndIncrement();
-                buckets[i % BUCKET_SIZE] = bucket;
+                buckets[i % size] = bucket;
             }
             currentBucket.set(DEFAULT_BUCKET);
             threshold = now + sampleInterval;
