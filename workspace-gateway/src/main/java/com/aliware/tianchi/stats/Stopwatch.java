@@ -20,6 +20,19 @@ public class Stopwatch {
     public static Stopwatch createStarted() {
         return new Stopwatch().start();
     }
+
+
+    public static Stopwatch createStarted(long startTime) {
+        return new Stopwatch().start(startTime);
+    }
+
+
+    public Stopwatch start(long startTime) {
+        this.startTime = startTime;
+        running = true;
+        return this;
+    }
+
     public Stopwatch start() {
         startTime = System.nanoTime();
         running = true;
