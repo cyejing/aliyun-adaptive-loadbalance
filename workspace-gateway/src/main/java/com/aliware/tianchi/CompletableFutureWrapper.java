@@ -22,8 +22,6 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
     private BiFunction<Integer, Throwable, Integer> handle1;
     private Function<Integer, CompletionStage<Integer>> retry1;
 
-    private Runnable runnable;
-
 
 
     public CompletableFutureWrapper(CompletableFuture<Integer> completableFuture) {
@@ -59,7 +57,4 @@ public class CompletableFutureWrapper extends CompletableFuture<Integer> {
         this.retry1 = retry1;
     }
 
-    public void setRunnable(Runnable runnable) {
-        this.runnable = runnable;
-    }
 }

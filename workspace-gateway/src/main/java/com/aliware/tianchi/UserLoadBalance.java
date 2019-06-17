@@ -3,6 +3,7 @@ package com.aliware.tianchi;
 import com.aliware.tianchi.loadbalance.BucketLoadBalance;
 import com.aliware.tianchi.loadbalance.RTLoadBalance;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
@@ -26,6 +27,6 @@ public class UserLoadBalance implements LoadBalance {
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
-        return new InvokerWrapper<>(invokers, url, invocation, loadBalance);
+        return loadBalance.select(invokers, url, invocation);
     }
 }

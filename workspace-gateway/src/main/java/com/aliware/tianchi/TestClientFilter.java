@@ -27,9 +27,8 @@ import org.apache.dubbo.rpc.RpcException;
  */
 @Activate(group = Constants.CONSUMER)
 public class TestClientFilter implements Filter {
+
     private static final Logger log = LoggerFactory.getLogger(TestClientFilter.class);
-
-
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
@@ -42,11 +41,20 @@ public class TestClientFilter implements Filter {
         }catch (Exception e){
             throw e;
         }
-
     }
 
     @Override
     public Result onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
+        DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
+        if (result.hasException()) {
+            String active = invocation.getAttachment("active");
+            dc.setBucket(Integer.valueOf(active));
+            dc.decrementRequests();
+            dc.incrementFailedRequests();
+        }else{
+            dc.decrementRequests();
+            dc.succeedRequest();
+        }
         return result;
     }
 
