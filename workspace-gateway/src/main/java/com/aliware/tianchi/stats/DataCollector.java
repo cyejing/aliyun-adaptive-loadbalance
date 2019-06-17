@@ -11,7 +11,7 @@ public class DataCollector {
     private AtomicInteger failedRequests = new AtomicInteger(0);
     private BucketRate bucketRate = new BucketRate(1000 * 3, 100, 50);
     private MeasuredRate qps = new MeasuredRate(500);
-    private DistributionRate distributionRate = new DistributionRate(200);
+    private DistributionRate distributionRate = new DistributionRate(500);
 
 
     public void incrementRequests() {
