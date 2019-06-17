@@ -37,17 +37,17 @@ public class InvokerStats {
                     String i;
                     long d = TimeUnit.SECONDS.convert(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
                     if (d < 35) {
-                        i = "预热";
+                        i = "preheat";
                     } else if (d < 50) {
-                        i = "1阶段";
+                        i = "1stage";
                     }else if (d < 65) {
-                        i = "2阶段";
+                        i = "2stage";
                     } else if ( d < 80) {
-                        i = "3阶段";
+                        i = "3stage";
                     } else if ( d < 95) {
-                        i = "4阶段";
+                        i = "4stage";
                     }else{
-                        i = "结束";
+                        i = "over";
                     }
                     ConcurrentMap<String, DataCollector> dcm = InvokerStats.getInstance()
                             .getDataCollectors();
