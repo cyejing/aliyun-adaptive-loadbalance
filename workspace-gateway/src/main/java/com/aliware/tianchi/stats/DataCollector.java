@@ -64,6 +64,6 @@ public class DataCollector {
     }
 
     public int getOneQPS() {
-        return (new Double(1000 / getMean()).intValue()) *10;
+        return (new Double(1000 / getMean()).intValue());
     }
 }
