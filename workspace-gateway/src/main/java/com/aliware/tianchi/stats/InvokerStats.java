@@ -12,6 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.apache.dubbo.common.logger.Logger;
@@ -28,19 +29,34 @@ public class InvokerStats {
 
     public InvokerStats() {
         System.out.println("make by Born");
-
+        long start = System.currentTimeMillis();
         logTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
+                    String i;
+                    long d = TimeUnit.SECONDS.convert(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
+                    if (d < 35) {
+                        i = "预热";
+                    } else if (d < 50) {
+                        i = "1阶段";
+                    }else if (d < 65) {
+                        i = "2阶段";
+                    } else if ( d < 80) {
+                        i = "3阶段";
+                    } else if ( d < 95) {
+                        i = "4阶段";
+                    }else{
+                        i = "结束";
+                    }
                     ConcurrentMap<String, DataCollector> dcm = InvokerStats.getInstance()
                             .getDataCollectors();
                     for (Entry<String, DataCollector> e : dcm.entrySet()) {
                         String key = e.getKey();
                         DataCollector dc = e.getValue();
                         String s = String.format(
-                                "%s bucket key:%s, active:%d, bucket:%d, mean:%f, one:%d, qps:%d, failed:%d.",
-                                LocalDateTime.now().toString(), key, dc.getActive(), dc.getAvgBucket(),
+                                "%s ,%s, bucket key:%s, active:%d, bucket:%d, mean:%f, one:%d, qps:%d, failed:%d.",
+                                LocalDateTime.now().toString(), i, key, dc.getActive(), dc.getAvgBucket(),
                                 dc.getMean(), dc.getOneQPS(), dc.getQPS(), dc.getFailed());
 
                         log.info(s);
