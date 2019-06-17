@@ -1,5 +1,6 @@
 package com.aliware.tianchi.loadbalance;
 
+import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,13 +28,14 @@ public class WeightedLoadBalance extends BasicWeightedLoadBalance {
             public void run() {
                 try {
                     for (WeightedRoundRobin wrr : getMap().values()) {
-                        wrr.setWeight(InvokerStats.getInstance().getDataCollector(wrr.getKey()).getQPS());
+                        DataCollector dc = InvokerStats.getInstance().getDataCollector(wrr.getKey());
+                        wrr.setWeight(dc.getQPS() * dc.getOneQPS());
                     }
                 } catch (Exception e) {
                     log.error("", e);
                 }
             }
-        }, 1000, 100);
+        }, 5000, 100);
     }
 
     private ConcurrentMap<String, WeightedRoundRobin> map = new ConcurrentHashMap<>();

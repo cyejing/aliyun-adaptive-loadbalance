@@ -2,6 +2,7 @@ package com.aliware.tianchi;
 
 import com.aliware.tianchi.loadbalance.BucketLoadBalance;
 import com.aliware.tianchi.loadbalance.RTLoadBalance;
+import com.aliware.tianchi.loadbalance.WeightedLoadBalance;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import org.apache.dubbo.common.URL;
@@ -23,7 +24,7 @@ import org.apache.dubbo.rpc.cluster.LoadBalance;
 public class UserLoadBalance implements LoadBalance {
     private static final Logger log = LoggerFactory.getLogger(UserLoadBalance.class);
 
-    private static BucketLoadBalance loadBalance = new BucketLoadBalance(new RTLoadBalance());
+    private static BucketLoadBalance loadBalance = new BucketLoadBalance(new WeightedLoadBalance());
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
