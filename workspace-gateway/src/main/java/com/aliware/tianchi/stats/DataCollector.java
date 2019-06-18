@@ -12,7 +12,7 @@ public class DataCollector {
     private BucketRate bucketRate = new BucketRate(3000, 100, 50);
     private MeasuredRate qps = new MeasuredRate(300);
 //    private DistributionRate distributionRate = new DistributionRate(3000, 50);
-    private RTTRate rttRate = new RTTRate(3000);
+    private RTTRate rttRate = new RTTRate(10000);
 
 
     public void incrementRequests() {
