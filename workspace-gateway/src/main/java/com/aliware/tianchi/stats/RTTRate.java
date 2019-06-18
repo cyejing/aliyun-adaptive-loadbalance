@@ -14,10 +14,9 @@ public class RTTRate {
     private double srtt = 100;
     private double devRtt = 100;
 
-
     public synchronized double calc(double rtt) {
         srtt = srtt + α * (rtt - srtt);
-        devRtt = (1 - β) * devRtt + β * (rtt - srtt);
+        devRtt = (1 - β) * devRtt + β * (Math.abs(rtt - srtt));
         return μ * srtt + e * devRtt;
     }
 
