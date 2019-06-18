@@ -1,8 +1,5 @@
 package com.aliware.tianchi;
 
-import com.aliware.tianchi.loadbalance.BucketLoadBalance;
-import com.aliware.tianchi.stats.DataCollector;
-import com.aliware.tianchi.stats.InvokerStats;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
@@ -16,6 +13,7 @@ import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.SimpleAsyncRpcResult;
+import org.apache.dubbo.rpc.cluster.LoadBalance;
 
 /**
  * @author Born
@@ -29,12 +27,12 @@ public class InvokerWrapper<T> implements Invoker<T> {
     private final List<Invoker<T>> invokers;
     private final URL url;
     private final Invocation invocation;
-    private final BucketLoadBalance loadBalance;
+    private final LoadBalance loadBalance;
 
 
     private AtomicReference<Invoker> invoker = new AtomicReference<>();
 
-    public InvokerWrapper(List<Invoker<T>> invokers, URL url, Invocation invocation, BucketLoadBalance loadBalance) {
+    public InvokerWrapper(List<Invoker<T>> invokers, URL url, Invocation invocation, LoadBalance loadBalance) {
         this.invokers = invokers;
         this.url = url;
         this.invocation = invocation;

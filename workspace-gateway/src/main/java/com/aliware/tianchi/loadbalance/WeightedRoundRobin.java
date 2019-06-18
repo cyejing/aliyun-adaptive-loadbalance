@@ -29,25 +29,6 @@ public class WeightedRoundRobin {
         this.weight.set(max);
     }
 
-    public void increaseWeight(int i) {
-        int srcw = InvokerStats.getInstance().getDataCollector(key).getQPS();
-        int srcMax = InvokerStats.getInstance().getDataCollector(key).getMaxQPS();
-        int max;
-        if (srcw > 0) {
-            max = srcw;
-        } else if (srcMax > 0) {
-            max = srcMax;
-        } else {
-            max = DEFAULT_WEIGHT;
-        }
-
-        this.weight.updateAndGet(o -> o + i >= max ? max : o + i);
-    }
-
-    public void decreaseWeight(int i) {
-        this.weight.updateAndGet(o -> o - i <= 0 ? 0 : o - i);
-    }
-
     public long increaseCurrent() {
         return current.addAndGet(getWeight());
     }

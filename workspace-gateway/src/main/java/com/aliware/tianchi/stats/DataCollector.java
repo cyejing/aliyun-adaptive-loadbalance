@@ -11,7 +11,8 @@ public class DataCollector {
     private AtomicInteger failedRequests = new AtomicInteger(0);
     private BucketRate bucketRate = new BucketRate(1000 * 3, 100, 50);
     private MeasuredRate qps = new MeasuredRate(300);
-    private DistributionRate distributionRate = new DistributionRate(300);
+//    private DistributionRate distributionRate = new DistributionRate(300);
+    private RTTRate rttRate = new RTTRate(3000, 50);
 
 
     public void incrementRequests() {
@@ -52,11 +53,11 @@ public class DataCollector {
     }
 
     public void noteValue(long i) {
-        distributionRate.noteValue(i);
+        rttRate.noteRTT(i);
     }
 
     public double getMean() {
-        return distributionRate.getMean();
+        return rttRate.getMean();
     }
 
     public int getFailed() {
@@ -64,6 +65,11 @@ public class DataCollector {
     }
 
     public int getOneQPS() {
-        return (new Double(1000 / getMean()).intValue());
+        return rttRate.getOneQPS();
     }
+
+    public int getWeight() {
+        return getQPS() * getOneQPS();
+    }
+
 }
