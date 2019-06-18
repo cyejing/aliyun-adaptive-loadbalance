@@ -50,6 +50,9 @@ public class RTTRate {
     }
 
     public int getOneQPS() {
+        if (getRTO() == 0) {
+            return 1000;
+        }
         return (new Double(100000 / getRTO()).intValue());
     }
 
