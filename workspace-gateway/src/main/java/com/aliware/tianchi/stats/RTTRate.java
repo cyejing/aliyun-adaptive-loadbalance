@@ -11,8 +11,20 @@ public class RTTRate {
     private static final double μ = 1;
     private static final double e = 4;
 
-    private double srtt = 100;
-    private double devRtt = 100;
+    private double srtt = 0;
+    private double devRtt = 0;
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 1000; i++) {
+            RTTRate rttRate = new RTTRate();
+            System.out.println(rttRate.calc(45));;
+            if (i == 300) {
+                System.out.println("fuck");
+                System.out.println(rttRate.calc(70));
+            }
+        }
+
+    }
 
     public synchronized double calc(double rtt) {
         srtt = srtt + α * (rtt - srtt);
