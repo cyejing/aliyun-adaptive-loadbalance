@@ -47,7 +47,7 @@ public class RTTRate {
     }
 
     public int getOneQPS() {
-        return (new Double(1000 / getRTO()).intValue());
+        return (new Double(100000 / getRTO()).intValue());
     }
 
 }
