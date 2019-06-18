@@ -1,61 +1,53 @@
 package com.aliware.tianchi.stats;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Born
  */
 public class DistributionRate {
 
-    private volatile double rt;
-    private volatile double maxRt;
+    private int size;
+    private double[] requestRTTs;
+    private AtomicInteger index = new AtomicInteger(0);
 
-    private AtomicInteger request = new AtomicInteger(0);
-    private AtomicLong ms = new AtomicLong(0);
+    private long delayThreshold;
 
-    private final long sampleInterval;
-    private volatile long threshold;
+    public DistributionRate(long delay,int size) {
+        this.size = size;
+        this.requestRTTs = new double[size];
 
-    public DistributionRate(long sampleInterval) {
-        this.sampleInterval = sampleInterval;
+        this.delayThreshold = System.currentTimeMillis() + delay;
     }
 
-    public void noteValue(long i) {
-        checkAndResetWindow();
-        request.incrementAndGet();
-        ms.addAndGet(i);
+    public void noteRTT(double v) {
+        if (delayThreshold > System.currentTimeMillis()) {
+            return;
+        }
+        int i = index.getAndIncrement();
+        requestRTTs[i % size] = v;
     }
 
     public double getMean() {
-        checkAndResetWindow();
-        return rt;
-    }
-
-    public double getMaxMean() {
-        checkAndResetWindow();
-        return maxRt;
-    }
-
-    private void checkAndResetWindow() {
-        long now = System.currentTimeMillis();
-        if(threshold < now) {
-            rt = getRT();
-            request.set(0);
-            ms.set(0);
-            threshold = now + sampleInterval;
-            if (maxRt < rt) {
-                maxRt = rt;
+        double totalRTT = 0;
+        int s = index.get();
+        if (s >= size) {
+            for (int i = 0; i < size; i++) {
+                totalRTT += requestRTTs[i];
+            }
+        } else {
+            for (int i = 0; i < s; i++) {
+                totalRTT += requestRTTs[i];
             }
         }
+        if (s == 0) {
+            return 100d;
+        }
+        return totalRTT / size;
     }
 
-    private double getRT() {
-        if (request.get() < 1) {
-            return sampleInterval;
-        } else {
-            return new Double(ms.get()) /  request.get();
-        }
+    public int getOneQPS() {
+        return (new Double(1000 / getMean()).intValue());
     }
 
 }

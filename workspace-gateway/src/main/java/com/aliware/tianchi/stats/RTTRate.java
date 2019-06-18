@@ -1,53 +1,32 @@
 package com.aliware.tianchi.stats;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * @author Born
  */
 public class RTTRate {
 
-    private int size;
-    private double[] requestRTTs;
-    private AtomicInteger index = new AtomicInteger(0);
+    //    α = 0.125，β = 0.25， μ = 1，∂ = 4；
+    private static final double α = 0.125;
+    private static final double β = 0.25;
+    private static final double μ = 1;
+    private static final double e = 4;
 
-    private long delayThreshold;
+    private double srtt = 100;
+    private double devRtt = 100;
 
-    public RTTRate(long delay,int size) {
-        this.size = size;
-        this.requestRTTs = new double[size];
 
-        this.delayThreshold = System.currentTimeMillis() + delay;
+    public synchronized double calc(double rtt) {
+        srtt = srtt + α * (rtt - srtt);
+        devRtt = (1 - β) * devRtt + β * (rtt - srtt);
+        return μ * srtt + e * devRtt;
     }
 
-    public void noteRTT(double v) {
-        if (delayThreshold > System.currentTimeMillis()) {
-            return;
-        }
-        int i = index.getAndIncrement();
-        requestRTTs[i % size] = v;
-    }
-
-    public double getMean() {
-        double totalRTT = 0;
-        int s = index.get();
-        if (s >= size) {
-            for (int i = 0; i < size; i++) {
-                totalRTT += requestRTTs[i];
-            }
-        } else {
-            for (int i = 0; i < s; i++) {
-                totalRTT += requestRTTs[i];
-            }
-        }
-        if (s == 0) {
-            return 100d;
-        }
-        return totalRTT / size;
+    public double getRTO() {
+        return μ * srtt + e * devRtt;
     }
 
     public int getOneQPS() {
-        return (new Double(1000 / getMean()).intValue());
+        return (new Double(1000 / getRTO()).intValue());
     }
 
 }
