@@ -69,7 +69,7 @@ public class DataCollector {
     }
 
     public int getWeight() {
-        return getOneQPS();
+        return getQPS() * getOneQPS();
     }
 
 }
