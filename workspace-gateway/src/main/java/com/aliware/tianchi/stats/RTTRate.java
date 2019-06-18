@@ -28,6 +28,9 @@ public class RTTRate {
             if (i == 300) {
                 System.out.println("fuck");
                 System.out.println(rttRate.calc(70));
+                System.out.println(rttRate.calc(70));
+                System.out.println(rttRate.calc(70));
+                System.out.println(rttRate.calc(70));
             }
         }
 
