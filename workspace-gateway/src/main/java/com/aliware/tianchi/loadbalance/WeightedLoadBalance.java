@@ -19,28 +19,32 @@ import org.apache.dubbo.rpc.RpcException;
 public class WeightedLoadBalance extends BasicWeightedLoadBalance {
 
     private static final Logger log = LoggerFactory.getLogger(WeightedLoadBalance.class);
-
-    private Timer timer = new Timer();
-
-    public WeightedLoadBalance() {
-        this.timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    for (WeightedRoundRobin wrr : getMap().values()) {
-                        DataCollector dc = InvokerStats.getInstance().getDataCollector(wrr.getKey());
-                        wrr.setWeight(dc.getWeight());
-                    }
-                } catch (Exception e) {
-                    log.error("", e);
-                }
-            }
-        }, 5000, 100);
-    }
+//
+//    private Timer timer = new Timer();
+//
+//    public WeightedLoadBalance() {
+//        this.timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                try {
+//                    for (WeightedRoundRobin wrr : getMap().values()) {
+//                        DataCollector dc = InvokerStats.getInstance().getDataCollector(wrr.getKey());
+//                        wrr.setWeight(dc.getWeight());
+//                    }
+//                } catch (Exception e) {
+//                    log.error("", e);
+//                }
+//            }
+//        }, 5000, 100);
+//    }
 
     private ConcurrentMap<String, WeightedRoundRobin> map = new ConcurrentHashMap<>();
 
     protected ConcurrentMap<String, WeightedRoundRobin> getMap() {
+        for (WeightedRoundRobin wrr : map.values()) {
+            DataCollector dc = InvokerStats.getInstance().getDataCollector(wrr.getKey());
+            wrr.setWeight(dc.getWeight());
+        }
         return this.map;
     }
 

@@ -22,16 +22,33 @@ public class RTTRate {
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 1000; i++) {
-            RTTRate rttRate = new RTTRate(0);
-            System.out.println(rttRate.calc(45));;
-            if (i == 300) {
-                System.out.println("fuck");
-                System.out.println(rttRate.calc(70));
-                System.out.println(rttRate.calc(70));
-                System.out.println(rttRate.calc(70));
-                System.out.println(rttRate.calc(70));
-            }
+        RTTRate rttRate = new RTTRate(0);
+        for (int i = 0; i < 10; i++) {
+            System.out.println(rttRate.calc(45));
+            System.out.println(rttRate.calc(70));
+            System.out.println(rttRate.calc(60));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(50));
+            System.out.println(rttRate.calc(70));
+            System.out.println(rttRate.calc(70));
         }
 
     }
@@ -40,8 +57,10 @@ public class RTTRate {
         if (delayThreshold > System.currentTimeMillis()) {
             return 0;
         }
-        srtt = srtt + α * (rtt - srtt);
-        devRtt = (1 - β) * devRtt + β * (Math.abs(rtt - srtt));
+        double osrtt = srtt;
+        double odevRtt = devRtt;
+        devRtt = (1 - β) * odevRtt + β * (Math.abs(rtt - osrtt));
+        srtt = osrtt + α * (rtt - osrtt);
         return μ * srtt + e * devRtt;
     }
 
