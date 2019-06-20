@@ -10,7 +10,7 @@ public class DataCollector {
     private AtomicInteger activeRequests = new AtomicInteger(0);
     private AtomicInteger failedRequests = new AtomicInteger(0);
     private BucketRate bucketRate = new BucketRate(3000, 100, 50);
-    private MeasuredRate qps = new MeasuredRate(300);
+    private MeasuredRate qps = new MeasuredRate(50);
     private RTTRate rttRate = new RTTRate(5000);
 
 
@@ -68,12 +68,11 @@ public class DataCollector {
     }
 
     public int getWeight() {
-//        if (getQPS() == 0) {
-//            return getOneQPS();
-//        }else{
-//            return getQPS() * getOneQPS();
-//        }
-        return getQPS();
+        if (getQPS() == 0) {
+            return getOneQPS();
+        }else{
+            return getQPS() * getOneQPS();
+        }
     }
 
 }
