@@ -51,7 +51,7 @@ public class RTTRate {
         if (getRTO() == 0) {
             return 1000;
         }
-        return (new Double(100000 / getRTO()).intValue());
+        return (new Double(10000D / getRTO()).intValue());
     }
 
 }
