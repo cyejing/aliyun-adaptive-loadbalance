@@ -7,56 +7,35 @@ public class RTTRate {
 
     //    α = 0.125，β = 0.25， μ = 1，∂ = 4；
     private static final double α = 0.125;
-    private static final double β = 0.25;
+    private static final double β = 0.75;
     private static final double μ = 1;
-    private static final double e = 4;
+    private static final double e = 1;
 
-    private double srtt = 0;
-    private double devRtt = 0;
+    double srtt = 100;
+    double devRtt = 1;
 
     private long delayThreshold;
 
     public RTTRate(long delay) {
-
         this.delayThreshold = System.currentTimeMillis() + delay;
     }
 
     public static void main(String[] args) {
         RTTRate rttRate = new RTTRate(0);
         for (int i = 0; i < 10; i++) {
-            System.out.println(rttRate.calc(45));
-            System.out.println(rttRate.calc(70));
-            System.out.println(rttRate.calc(60));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(50));
-            System.out.println(rttRate.calc(70));
-            System.out.println(rttRate.calc(70));
+            int jsize = 10;
+            for (int j = 0; j < jsize; j++) {
+                System.out.println(i * jsize + j + ":   " + rttRate.calc(50) + ", " + rttRate.srtt + ", " + rttRate.devRtt);
+            }
+            System.out.println(i * jsize + "f:   " + rttRate.calc(70) + ", " + rttRate.srtt + ", " + rttRate.devRtt);
+            System.out.println(i * jsize + "f:   " + rttRate.calc(70) + ", " + rttRate.srtt + ", " + rttRate.devRtt);
+
         }
+
 
     }
 
-    public synchronized double calc(double rtt) {
-        if (delayThreshold > System.currentTimeMillis()) {
-            return 0;
-        }
+    public double calc(double rtt) {
         double osrtt = srtt;
         double odevRtt = devRtt;
         devRtt = (1 - β) * odevRtt + β * (Math.abs(rtt - osrtt));

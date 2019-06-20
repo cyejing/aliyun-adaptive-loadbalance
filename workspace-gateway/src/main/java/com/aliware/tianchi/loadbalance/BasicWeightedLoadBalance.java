@@ -3,6 +3,8 @@ package com.aliware.tianchi.loadbalance;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
@@ -17,7 +19,7 @@ public abstract class BasicWeightedLoadBalance implements LoadBalance {
 
     private static final Logger log = LoggerFactory.getLogger(BasicWeightedLoadBalance.class);
 
-    abstract protected ConcurrentMap<String, WeightedRoundRobin> getMap();
+    abstract protected WeightedRoundRobin getWeightedRoundRobin(Invoker invoker);
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
@@ -26,13 +28,7 @@ public abstract class BasicWeightedLoadBalance implements LoadBalance {
         Invoker<T> selectedInvoker = null;
         WeightedRoundRobin selectedWRR = null;
         for (Invoker<T> invoker : invokers) {
-            String identifyString = invoker.getUrl().toIdentityString();
-            WeightedRoundRobin weightedRoundRobin = getMap().get(identifyString);
-
-            if (weightedRoundRobin == null) {
-                weightedRoundRobin = new WeightedRoundRobin(identifyString, DEFAULT_WEIGHT);
-                getMap().putIfAbsent(identifyString, weightedRoundRobin);
-            }
+            WeightedRoundRobin weightedRoundRobin = getWeightedRoundRobin(invoker);
 
             int weight = weightedRoundRobin.getWeight();
             long cur = weightedRoundRobin.increaseCurrent();
@@ -50,5 +46,43 @@ public abstract class BasicWeightedLoadBalance implements LoadBalance {
         }
 
         return null;
+    }
+
+    static class WeightedRoundRobin {
+
+        private final String key;
+        private AtomicInteger weight;
+        private AtomicLong current = new AtomicLong(0);
+
+        public WeightedRoundRobin(String key, int weight) {
+            this.key = key;
+            this.weight = new AtomicInteger(weight);
+        }
+
+        public int getWeight() {
+            return weight.get();
+        }
+
+        public void setWeight(int weight) {
+            int max = weight == 0 ? DEFAULT_WEIGHT : weight;
+            this.weight.set(max);
+        }
+
+        public long increaseCurrent() {
+            return current.addAndGet(getWeight());
+        }
+
+        public void decreaseCurrent(int total) {
+            current.addAndGet(-1 * total);
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public long getCurrent() {
+            return current.get();
+        }
+
     }
 }

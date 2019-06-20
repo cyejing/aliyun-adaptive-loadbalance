@@ -29,34 +29,19 @@ public class InvokerStats {
 
     public InvokerStats() {
         System.out.println("make by Born");
-        long start = System.currentTimeMillis();
         logTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
-                    String i;
-                    long d = TimeUnit.SECONDS.convert(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
-                    if (d < 35) {
-                        i = "preheat";
-                    } else if (d < 50) {
-                        i = "1stage";
-                    }else if (d < 65) {
-                        i = "2stage";
-                    } else if ( d < 80) {
-                        i = "3stage";
-                    } else if ( d < 95) {
-                        i = "4stage";
-                    }else{
-                        i = "over";
-                    }
+
                     ConcurrentMap<String, DataCollector> dcm = InvokerStats.getInstance()
                             .getDataCollectors();
                     for (Entry<String, DataCollector> e : dcm.entrySet()) {
                         String key = e.getKey();
                         DataCollector dc = e.getValue();
                         String s = String.format(
-                                "%s %s bucket key:%s, active:%d, bucket:%d, weight:%d, mean:%f, qps:%d, failed:%d.",
-                                LocalDateTime.now().toString(), i, key, dc.getActive(), dc.getAvgBucket(),
+                                "%s bucket key:%s, active:%d, bucket:%d, weight:%d, mean:%f, qps:%d, failed:%d.",
+                                LocalDateTime.now().toString(), key, dc.getActive(), dc.getAvgBucket(),
                                 dc.getWeight(), dc.getMean(), dc.getQPS(), dc.getFailed());
 
                         log.info(s);
