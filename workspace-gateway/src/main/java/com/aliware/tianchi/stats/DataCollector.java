@@ -68,11 +68,12 @@ public class DataCollector {
     }
 
     public int getWeight() {
-        if (getQPS() == 0) {
-            return getOneQPS();
-        }else{
-            return getQPS() * getOneQPS();
-        }
+//        if (getQPS() == 0) {
+//            return getOneQPS();
+//        }else{
+//            return getQPS() * getOneQPS();
+//        }
+        return getQPS();
     }
 
 }
