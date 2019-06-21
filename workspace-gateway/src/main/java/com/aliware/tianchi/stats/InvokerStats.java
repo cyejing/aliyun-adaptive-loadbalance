@@ -42,7 +42,7 @@ public class InvokerStats {
                         String s = String.format(
                                 "%s bucket key:%s, active:%d, bucket:%d, weight:%d, mean:%f, qps:%d, failed:%d.",
                                 LocalDateTime.now().toString(), key, dc.getActive(), dc.getAvgBucket(),
-                                dc.getWeight(), dc.getMean(), dc.getQPS(), dc.getFailed());
+                                dc.getWeight(), dc.getOneQPS(), dc.getQPS(), dc.getFailed());
 
                         log.info(s);
                     }
