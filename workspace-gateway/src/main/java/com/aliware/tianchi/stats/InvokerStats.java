@@ -40,9 +40,9 @@ public class InvokerStats {
                         String key = e.getKey();
                         DataCollector dc = e.getValue();
                         String s = String.format(
-                                "%s bucket key:%s, active:%d, bucket:%d, weight:%d, mean:%d, qps:%d, failed:%d.",
+                                "%s bucket key:%s, active:%d, bucket:%d, weight:%d, mean:%f, oneqps:%d, qps:%d, failed:%d.",
                                 LocalDateTime.now().toString(), key, dc.getActive(), dc.getAvgBucket(),
-                                dc.getWeight(), dc.getOneQPS(), dc.getQPS(), dc.getFailed());
+                                dc.getWeight(), dc.getMean(), dc.getOneQPS(), dc.getQPS(), dc.getFailed());
 
                         log.info(s);
                     }
