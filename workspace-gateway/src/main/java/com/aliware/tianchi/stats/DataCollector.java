@@ -10,7 +10,7 @@ public class DataCollector {
     private AtomicInteger activeRequests = new AtomicInteger(0);
     private AtomicInteger failedRequests = new AtomicInteger(0);
     private BucketRate bucketRate = new BucketRate(3000, 100, 50);
-    private QPSRate qps = new QPSRate(3000,50,10);
+    private QPSRate qps = new QPSRate(3000,100,5);
     private DistributionRate distributionRate = new DistributionRate(3000, 10);
     private RTTRate rttRate = new RTTRate(3000);
 
