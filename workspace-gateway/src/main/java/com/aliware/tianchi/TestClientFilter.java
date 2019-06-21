@@ -47,7 +47,7 @@ public class TestClientFilter implements Filter {
             Stopwatch stopwatch = Stopwatch.createStarted(startTime);
             if (result.hasException()) {
                 String active = invocation.getAttachment("active");
-                dc.setBucket(Integer.valueOf(active));
+                dc.noteBucket(Integer.valueOf(active));
                 dc.decrementRequests();
                 dc.incrementFailedRequests();
             } else {

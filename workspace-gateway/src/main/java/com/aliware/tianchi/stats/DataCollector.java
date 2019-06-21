@@ -16,15 +16,15 @@ public class DataCollector {
 
 
     public void incrementRequests() {
-        activeRequests.incrementAndGet();
+//        activeRequests.incrementAndGet();
     }
 
     public void incrementFailedRequests() {
-        failedRequests.incrementAndGet();
+//        failedRequests.incrementAndGet();
     }
 
     public void decrementRequests() {
-        activeRequests.decrementAndGet();
+//        activeRequests.decrementAndGet();
     }
 
     public int getActive() {
@@ -40,7 +40,7 @@ public class DataCollector {
         return qps.getAvgQPS();
     }
 
-    public void setBucket(int i) {
+    public void noteBucket(int i) {
         bucketRate.noteValue(i);
     }
 
