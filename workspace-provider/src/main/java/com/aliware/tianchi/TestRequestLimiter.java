@@ -1,31 +1,62 @@
 package com.aliware.tianchi;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.concurrent.ThreadPoolExecutor;
-import org.apache.dubbo.common.Constants;
-import org.apache.dubbo.common.extension.ExtensionLoader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Enumeration;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
-import org.apache.dubbo.common.store.DataStore;
+import org.apache.dubbo.common.utils.IOUtils;
 import org.apache.dubbo.remoting.exchange.Request;
 import org.apache.dubbo.remoting.transport.RequestLimiter;
 
 /**
  * @author daofeng.xjf
  *
- * 服务端限流
- * 可选接口
- * 在提交给后端线程池之前的扩展，可以用于服务端控制拒绝请求
+ * 服务端限流 可选接口 在提交给后端线程池之前的扩展，可以用于服务端控制拒绝请求
  */
 public class TestRequestLimiter implements RequestLimiter {
+
     private static final Logger log = LoggerFactory.getLogger(TestRequestLimiter.class);
+
+    static {
+        String json = loadResourceAsString("provider-conf.json");
+        log.info(json);
+    }
+
+    private static String loadResourceAsString(String fileName) {
+        ClassLoader classLoader = getClassLoader();
+
+        Enumeration<URL> resources;
+        try {
+            resources = classLoader.getResources(fileName);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load provider-conf.json,cause:" + e.getMessage(), e);
+        }
+
+        while (resources.hasMoreElements()) {
+            URL url = resources.nextElement();
+            try {
+                return IOUtils.read(new InputStreamReader(url.openStream())).replace("\n", "").trim();
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to load provider-conf.json,cause:" + e.getMessage(), e);
+            }
+        }
+        throw new IllegalStateException("Can not found provider-conf.json");
+    }
+
+    private static ClassLoader getClassLoader() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader != null) {
+            return classLoader;
+        }
+        return TestRequestLimiter.class.getClassLoader();
+    }
 
     /**
      * @param request 服务请求
      * @param activeCount 服务端对应线程池的活跃线程数
-     * @return  false 不提交给服务端业务线程池直接返回，客户端可以在 Filter 中捕获 RpcException
-     *          true 不限流
+     * @return false 不提交给服务端业务线程池直接返回，客户端可以在 Filter 中捕获 RpcException true 不限流
      */
     @Override
     public boolean tryAcquire(Request request, int activeCount) {

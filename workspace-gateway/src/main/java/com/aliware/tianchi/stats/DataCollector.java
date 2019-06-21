@@ -16,40 +16,40 @@ public class DataCollector {
 
 
     public void incrementRequests() {
-//        activeRequests.incrementAndGet();
+        activeRequests.incrementAndGet();
     }
 
     public void incrementFailedRequests() {
-//        failedRequests.incrementAndGet();
+        failedRequests.incrementAndGet();
     }
 
     public void decrementRequests() {
-//        activeRequests.decrementAndGet();
-    }
-
-    public int getActive() {
-        return activeRequests.get();
-    }
-
-
-    public void succeedRequest() {
-        qps.note();
-    }
-
-    public int getQPS() {
-        return qps.getAvgQPS();
+        activeRequests.decrementAndGet();
     }
 
     public void noteBucket(int i) {
         bucketRate.noteValue(i);
     }
 
-    public int getAvgBucket() {
-        return bucketRate.getAvgBucket();
-    }
-
     public void noteValue(long i) {
         distributionRate.calc(i);
+    }
+
+    public void succeedRequest() {
+        qps.note();
+    }
+
+
+    public int getActive() {
+        return activeRequests.get();
+    }
+
+    public int getQPS() {
+        return qps.getAvgQPS();
+    }
+
+    public int getAvgBucket() {
+        return bucketRate.getAvgBucket();
     }
 
     public double getMean() {
