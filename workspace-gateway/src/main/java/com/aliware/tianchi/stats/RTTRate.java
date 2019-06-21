@@ -43,15 +43,15 @@ public class RTTRate {
         return μ * srtt + e * devRtt;
     }
 
-    public double getRTO() {
+    public double getMean() {
         return μ * srtt + e * devRtt;
     }
 
     public int getOneQPS() {
-        if (getRTO() == 0) {
+        if (getMean() == 0) {
             return 1000;
         }
-        return (new Double(10000D / getRTO()).intValue());
+        return (new Double(10000D / getMean()).intValue());
     }
 
 }

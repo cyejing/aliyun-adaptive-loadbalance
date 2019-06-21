@@ -20,14 +20,6 @@ public class DistributionRate {
         this.delayThreshold = System.currentTimeMillis() + delay;
     }
 
-    public void noteRTT(double v) {
-        if (delayThreshold > System.currentTimeMillis()) {
-            return;
-        }
-        int i = index.getAndIncrement();
-        requestRTTs[i % size] = v;
-    }
-
     public double getMean() {
         double totalRTT = 0;
         int s = index.get();
@@ -46,8 +38,19 @@ public class DistributionRate {
         return totalRTT / size;
     }
 
+
     public int getOneQPS() {
-        return (new Double(1000 / getMean()).intValue());
+        if (getMean() == 0) {
+            return 1000;
+        }
+        return (new Double(10000D / getMean()).intValue());
     }
 
+    public void calc(double v) {
+        if (delayThreshold > System.currentTimeMillis()) {
+            return;
+        }
+        int i = index.getAndIncrement();
+        requestRTTs[i % size] = v;
+    }
 }
