@@ -20,11 +20,15 @@ public class TestRequestLimiter implements RequestLimiter {
     private static final Logger log = LoggerFactory.getLogger(TestRequestLimiter.class);
 
     static {
-        String json = loadResourceAsString("provider-conf.json");
-        log.info(json);
+        try {
+           String json = loadResourceAsString("provider-conf.json");
+            log.info(json);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static String loadResourceAsString(String fileName) {
+    private static String loadResourceAsString(String fileName) throws ClassNotFoundException {
         ClassLoader classLoader = getClassLoader();
 
         Enumeration<URL> resources;
@@ -45,12 +49,8 @@ public class TestRequestLimiter implements RequestLimiter {
         throw new IllegalStateException("Can not found provider-conf.json");
     }
 
-    private static ClassLoader getClassLoader() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader != null) {
-            return classLoader;
-        }
-        return TestRequestLimiter.class.getClassLoader();
+    private static ClassLoader getClassLoader() throws ClassNotFoundException {
+        return Class.forName("com.aliware.tianchi.policy.BaseConfig").getClassLoader();
     }
 
     /**
