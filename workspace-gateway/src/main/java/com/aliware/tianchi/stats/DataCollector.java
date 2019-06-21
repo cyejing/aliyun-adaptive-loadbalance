@@ -10,7 +10,7 @@ public class DataCollector {
     private AtomicInteger activeRequests = new AtomicInteger(0);
     private AtomicInteger failedRequests = new AtomicInteger(0);
     private BucketRate bucketRate = new BucketRate(3000, 100, 50);
-    private MeasuredRate qps = new MeasuredRate(50);
+    private QPSRate qps = new QPSRate(3000,10,50);
     private RTTRate rttRate = new RTTRate(5000);
 
 
@@ -32,19 +32,15 @@ public class DataCollector {
 
 
     public void succeedRequest() {
-        qps.increment();
+        qps.note();
     }
 
     public int getQPS() {
-        return qps.getCount();
-    }
-
-    public int getMaxQPS() {
-        return qps.getMaxCount();
+        return qps.getAvgQPS();
     }
 
     public void setBucket(int i) {
-        bucketRate.setBucket(i);
+        bucketRate.noteValue(i);
     }
 
     public int getAvgBucket() {

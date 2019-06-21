@@ -54,7 +54,7 @@ public class BucketRate {
         return currentBucket.get();
     }
 
-    public void setBucket(int i) {
+    public void noteValue(int i) {
         checkAndResetWindow();
         if (i < currentBucket.get()) {
             this.currentBucket.updateAndGet(j -> i < j ? i : j);
