@@ -29,14 +29,13 @@ public class TestRequestLimiter implements RequestLimiter {
      */
     @Override
     public boolean tryAcquire(Request request, int activeCount) {
-        DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
-        Map<String, Object> executors = dataStore.get(Constants.EXECUTOR_SERVICE_COMPONENT_KEY);
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) executors.values().iterator().next();
-        int max = executor.getMaximumPoolSize();
-        if (activeCount+10 >= max) {
-            log.warn(LocalDateTime.now().toString()+" 服务器线程已满,开始限制流量.activeTaskCount" + activeCount + ",max" + max);
-            return false;
-        }
+//        DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
+//        Map<String, Object> executors = dataStore.get(Constants.EXECUTOR_SERVICE_COMPONENT_KEY);
+//        ThreadPoolExecutor executor = (ThreadPoolExecutor) executors.values().iterator().next();
+//        int max = executor.getMaximumPoolSize();
+//        if (activeCount+10 >= max) {
+//            return false;
+//        }
         return true;
     }
 
