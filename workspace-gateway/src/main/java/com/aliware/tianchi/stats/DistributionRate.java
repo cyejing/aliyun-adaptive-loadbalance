@@ -41,9 +41,9 @@ public class DistributionRate {
 
     public int getOneQPS() {
         if (getMean() == 0) {
-            return 10;
+            return 100;
         }
-        return (new Double(1000D / getMean()).intValue());
+        return (new Double(10000D / getMean()).intValue());
     }
 
     public void calc(double v) {
