@@ -46,7 +46,7 @@ public class DistributionRate {
         if (getMean() == 0) {
             return 10;
         }
-        return (new Double(10000D / getMean()).intValue());
+        return (new Double(1000D / getMean()).intValue());
     }
 
     public void calc(double v) {
