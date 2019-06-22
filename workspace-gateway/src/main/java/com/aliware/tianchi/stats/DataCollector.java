@@ -7,11 +7,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DataCollector {
 
+    private static final int DEFAULT_BUCKET = 1000;
+
+
+    private volatile int bucket = DEFAULT_BUCKET;
     private AtomicInteger activeRequests = new AtomicInteger(0);
     private AtomicInteger failedRequests = new AtomicInteger(0);
-    private BucketRate bucketRate = new BucketRate(3000, 100, 50);
-    private QPSRate qps = new QPSRate(3000,1000,3);
+    //    private BucketRate bucketRate = new BucketRate(3000, 100, 50);
+    private QPSRate qps = new QPSRate(3000, 1000, 3);
     private DistributionRate distributionRate = new DistributionRate(3000, 100);
+
+    public DataCollector() {
+    }
 
 
     public void incrementRequests() {
@@ -19,7 +26,7 @@ public class DataCollector {
     }
 
     public void incrementFailedRequests() {
-//        failedRequests.incrementAndGet();
+        failedRequests.incrementAndGet();
     }
 
     public void decrementRequests() {
@@ -27,7 +34,11 @@ public class DataCollector {
     }
 
     public void noteBucket(int i) {
-        bucketRate.noteValue(i);
+//        bucketRate.noteValue(i);
+    }
+
+    public void setBucket(int i) {
+        this.bucket = i;
     }
 
     public void noteValue(long i) {
@@ -48,7 +59,7 @@ public class DataCollector {
     }
 
     public int getAvgBucket() {
-        return bucketRate.getAvgBucket();
+        return bucket;
     }
 
     public double getMean() {
@@ -64,10 +75,10 @@ public class DataCollector {
     }
 
     public int getWeight() {
-        if (getQPS() == 0) {
+        if (getActive() == 0) {
             return getOneQPS();
-        }else{
-            double r = getQPS() + getOneQPS() * getActive();
+        } else {
+            double r = getActive() / DEFAULT_BUCKET * getOneQPS();
             return new Double(r).intValue();
         }
     }

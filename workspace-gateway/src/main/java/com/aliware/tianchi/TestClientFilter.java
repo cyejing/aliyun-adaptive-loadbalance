@@ -13,6 +13,7 @@ import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.service.CallbackService;
 
 /**
  * @author daofeng.xjf
@@ -26,6 +27,9 @@ public class TestClientFilter implements Filter {
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+        if (invoker.getInterface().isAssignableFrom(CallbackService.class)) {
+            return invoker.invoke(invocation);
+        }
         try {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             dc.incrementRequests();
@@ -41,6 +45,9 @@ public class TestClientFilter implements Filter {
 
     @Override
     public Result onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
+        if (invoker.getInterface().isAssignableFrom(CallbackService.class)) {
+            return result;
+        }
         try {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             Long startTime = Long.valueOf(invocation.getAttachment("startTime"));

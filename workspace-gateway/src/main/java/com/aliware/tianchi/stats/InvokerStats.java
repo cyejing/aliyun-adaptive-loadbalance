@@ -1,20 +1,13 @@
 package com.aliware.tianchi.stats;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.rpc.Invoker;
@@ -23,6 +16,7 @@ import org.apache.dubbo.rpc.Invoker;
  * @author Born
  */
 public class InvokerStats {
+
     private static final Logger log = LoggerFactory.getLogger(InvokerStats.class);
     private Timer logTimer = new Timer();
 
@@ -42,7 +36,8 @@ public class InvokerStats {
                         String s = String.format(
                                 "%s bucket key:%s, active:%d, bucket:%d, weight:%d, mean:%f, oneqps:%d, qps:%d, failed:%d.",
                                 LocalDateTime.now().toString(), key, dc.getActive(), dc.getAvgBucket(),
-                                dc.getWeight(), dc.getMean(), dc.getOneQPS()*dc.getActive(), dc.getQPS(), dc.getFailed());
+                                dc.getWeight(), dc.getMean(), dc.getOneQPS() * dc.getActive(), dc.getQPS(),
+                                dc.getFailed());
 
                         log.info(s);
                     }
@@ -55,6 +50,7 @@ public class InvokerStats {
     }
 
     private static class InvokerStatsBuilder {
+
         private static InvokerStats INSTANCE = new InvokerStats();
     }
 
@@ -63,8 +59,6 @@ public class InvokerStats {
     }
 
     private ConcurrentMap<String, DataCollector> dataMap = new ConcurrentHashMap();
-
-
 
     public DataCollector getDataCollector(String key) {
         DataCollector dataCollector = dataMap.get(key);
@@ -82,6 +76,15 @@ public class InvokerStats {
 
     public ConcurrentMap<String, DataCollector> getDataCollectors() {
         return dataMap;
+    }
+
+    public void putBucket(String port, int max) {
+        for (Entry<String, DataCollector> entry : dataMap.entrySet()) {
+            if (entry.getKey().contains(port)) {
+                entry.getValue().setBucket(max);
+                break;
+            }
+        }
     }
 
 }
