@@ -67,7 +67,7 @@ public class DataCollector {
         if (getQPS() == 0) {
             return getOneQPS();
         }else{
-            double r = getQPS() * 0.7d + getOneQPS() * getActive();
+            double r = getQPS() + getOneQPS() * getActive();
             return new Double(r).intValue();
         }
     }
