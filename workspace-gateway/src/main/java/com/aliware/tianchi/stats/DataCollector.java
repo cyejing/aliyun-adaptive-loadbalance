@@ -19,7 +19,7 @@ public class DataCollector {
     }
 
     public void incrementFailedRequests() {
-        failedRequests.incrementAndGet();
+//        failedRequests.incrementAndGet();
     }
 
     public void decrementRequests() {
@@ -67,7 +67,8 @@ public class DataCollector {
         if (getQPS() == 0) {
             return getOneQPS();
         }else{
-            return  getOneQPS() * getActive();
+            double r = getQPS() * 0.7d + getOneQPS() * getActive();
+            return new Double(r).intValue();
         }
     }
 
