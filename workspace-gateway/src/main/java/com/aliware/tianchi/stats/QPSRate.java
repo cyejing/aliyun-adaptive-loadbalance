@@ -35,21 +35,24 @@ public class QPSRate {
 
     public int getAvgQPS() {
         checkAndResetWindow();
-        int total = 0;
+        int totalQPS = 0;
         int s = index.get();
+        int total;
         if (s >= size) {
             for (int i = 0; i < size; i++) {
-                total += qpsHistory[i];
+                totalQPS += qpsHistory[i];
             }
+            total = size;
         } else {
             for (int i = 0; i < s; i++) {
-                total += qpsHistory[i];
+                totalQPS += qpsHistory[i];
             }
+            total = s;
         }
         if (s == 0) {
             return 0;
         }
-        return total / s;
+        return totalQPS / total;
     }
 
 

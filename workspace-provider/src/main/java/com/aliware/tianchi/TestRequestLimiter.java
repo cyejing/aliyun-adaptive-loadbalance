@@ -17,42 +17,6 @@ import org.apache.dubbo.remoting.transport.RequestLimiter;
  */
 public class TestRequestLimiter implements RequestLimiter {
 
-    private static final Logger log = LoggerFactory.getLogger(TestRequestLimiter.class);
-
-    static {
-        try {
-           String json = loadResourceAsString("provider-conf.json");
-            log.info(json);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static String loadResourceAsString(String fileName) throws ClassNotFoundException {
-        ClassLoader classLoader = getClassLoader();
-
-        Enumeration<URL> resources;
-        try {
-            resources = classLoader.getResources(fileName);
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to load provider-conf.json,cause:" + e.getMessage(), e);
-        }
-
-        while (resources.hasMoreElements()) {
-            URL url = resources.nextElement();
-            try {
-                return IOUtils.read(new InputStreamReader(url.openStream())).replace("\n", "").trim();
-            } catch (IOException e) {
-                throw new IllegalStateException("Failed to load provider-conf.json,cause:" + e.getMessage(), e);
-            }
-        }
-        throw new IllegalStateException("Can not found provider-conf.json");
-    }
-
-    private static ClassLoader getClassLoader() throws ClassNotFoundException {
-        return Class.forName("com.aliware.tianchi.policy.BaseConfig").getClassLoader();
-    }
-
     /**
      * @param request 服务请求
      * @param activeCount 服务端对应线程池的活跃线程数

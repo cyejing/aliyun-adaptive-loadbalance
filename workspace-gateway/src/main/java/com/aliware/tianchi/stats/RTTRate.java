@@ -9,7 +9,7 @@ public class RTTRate {
     private static final double α = 0.125;
     private static final double β = 0.75;
     private static final double μ = 1;
-    private static final double e = 1;
+    private static final double e = 1.5;
 
     double srtt = 100;
     double devRtt = 1;

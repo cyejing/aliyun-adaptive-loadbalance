@@ -33,19 +33,22 @@ public class BucketRate {
         checkAndResetWindow();
         int totalBucket = 0;
         int s = index.get();
+        int total;
         if (s >= size) {
             for (int i = 0; i < size; i++) {
                 totalBucket += buckets[i];
             }
+            total = size;
         } else {
             for (int i = 0; i < s; i++) {
                 totalBucket += buckets[i];
             }
+            total = s;
         }
         if (s == 0) {
             return DEFAULT_BUCKET;
         }
-        return totalBucket / s;
+        return totalBucket / total;
     }
 
 

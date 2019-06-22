@@ -13,7 +13,7 @@ public class DistributionRate {
 
     private long delayThreshold;
 
-    public DistributionRate(long delay,int size) {
+    public DistributionRate(long delay, int size) {
         this.size = size;
         this.requestRTTs = new double[size];
 
@@ -23,19 +23,22 @@ public class DistributionRate {
     public double getMean() {
         double totalRTT = 0;
         int s = index.get();
+        int total;
         if (s >= size) {
             for (int i = 0; i < size; i++) {
                 totalRTT += requestRTTs[i];
             }
+            total = size;
         } else {
             for (int i = 0; i < s; i++) {
                 totalRTT += requestRTTs[i];
             }
+            total = s;
         }
         if (s == 0) {
             return 100d;
         }
-        return totalRTT / size;
+        return totalRTT / total;
     }
 
 
