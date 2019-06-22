@@ -78,7 +78,7 @@ public class DataCollector {
         if (getActive() == 0) {
             return getOneQPS();
         } else {
-            double r = getActive() / DEFAULT_BUCKET * getOneQPS();
+            double r = getOneQPS() * bucket;
             return new Double(r).intValue();
         }
     }
