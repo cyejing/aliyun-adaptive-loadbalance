@@ -74,10 +74,11 @@ public class DataCollector {
     }
 
     public int getWeight() {
+        int oneQPS = getOneQPS();
         if (getActive() == 0) {
-            return getOneQPS();
+            return oneQPS;
         } else {
-            double r = getOneQPS() * bucket;
+            double r = oneQPS * bucket + oneQPS * 100;
             return new Double(r).intValue();
         }
     }
