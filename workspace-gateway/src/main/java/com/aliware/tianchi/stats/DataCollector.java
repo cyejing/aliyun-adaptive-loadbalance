@@ -69,13 +69,9 @@ public class DataCollector {
     }
 
     public int getWeight() {
-        int oneQPS = getOneQPS();
-        if (getActive() == 0) {
-            return oneQPS;
-        } else {
-            double r = oneQPS * bucket;
-            return new Double(r).intValue();
-        }
+        double mean = distributionRate.getMean();
+        double r = (1000 / mean) * bucket;
+        return new Double(r).intValue();
     }
 
 }
