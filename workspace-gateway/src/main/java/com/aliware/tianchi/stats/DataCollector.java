@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
     private static final int DEFAULT_BUCKET = 1000;
-    private static final int ALPHA = 100;
+    private static final double ALPHA = 1.25;
 
 
 
@@ -72,8 +72,9 @@ public class DataCollector {
 
     public int getWeight() {
         double mean = distributionRate.getMean();
-        double r = (1000 / mean) * bucket + (1000 / mean) * ALPHA;
+        double r = Math.pow((1000 / mean) * bucket, ALPHA);
         return new Double(r).intValue();
     }
+
 
 }
