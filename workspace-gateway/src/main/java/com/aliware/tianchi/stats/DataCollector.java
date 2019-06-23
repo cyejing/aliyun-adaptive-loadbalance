@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
     private static final int DEFAULT_BUCKET = 1000;
-    private static final int ALPHA = 50;
+    private static final int ALPHA = 40;
 
 
 
