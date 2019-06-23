@@ -52,31 +52,4 @@ public class WeightedLoadBalance extends BasicWeightedLoadBalance {
         return select;
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        URL url = new URL("doubb", "12.0.0.1", 8090);
-        Invoker<WeightedLoadBalance> i1  = new MockInvoker<>(new URL("doubb", "12.0.0.1", 8090).addParameter("weight",10), WeightedLoadBalance.class);
-        Invoker<WeightedLoadBalance> i2  = new MockInvoker<>(new URL("doubb", "12.0.0.1", 8091).addParameter("weight",20), WeightedLoadBalance.class);
-        Invoker<WeightedLoadBalance> i3 = new MockInvoker<>(new URL("doubb", "12.0.0.1", 8092).addParameter("weight",30), WeightedLoadBalance.class);
-
-        Map<Invoker, AtomicInteger> map = new ConcurrentHashMap<>();
-        map.put(i1, new AtomicInteger(0));
-        map.put(i2, new AtomicInteger(0));
-        map.put(i3, new AtomicInteger(0));
-        List<Invoker<WeightedLoadBalance>> invokers = Arrays.asList(i1, i2, i3);
-        WeightedLoadBalance loadBalance = new WeightedLoadBalance();
-
-        ExecutorService executorService = Executors.newFixedThreadPool(100);
-        for (int i = 0; i < 1000000; i++) {
-            executorService.submit(() -> {
-                Invoker<WeightedLoadBalance> select = loadBalance.select(invokers, url, new RpcInvocation());
-                map.get(select).incrementAndGet();
-            });
-        }
-
-        executorService.shutdown();
-        executorService.awaitTermination(10, TimeUnit.DAYS);
-        for (Entry<Invoker, AtomicInteger> entry : map.entrySet()) {
-            System.out.println(entry.getKey().getUrl().toIdentityString() + ": " + entry.getValue().get());
-        }
-    }
 }

@@ -12,8 +12,6 @@ public class DataCollector {
 
     private volatile int bucket = DEFAULT_BUCKET;
     private AtomicInteger activeRequests = new AtomicInteger(0);
-    private AtomicInteger failedRequests = new AtomicInteger(0);
-    private QPSRate qps = new QPSRate(3000, 1000, 3);
     private DistributionRate distributionRate = new DistributionRate(3000, 100);
 
     public DataCollector() {
@@ -25,7 +23,6 @@ public class DataCollector {
     }
 
     public void incrementFailedRequests() {
-        failedRequests.incrementAndGet();
     }
 
     public void decrementRequests() {
@@ -33,7 +30,6 @@ public class DataCollector {
     }
 
     public void noteBucket(int i) {
-//        bucketRate.noteValue(i);
     }
 
     public void setBucket(int i) {
@@ -45,7 +41,6 @@ public class DataCollector {
     }
 
     public void succeedRequest() {
-        qps.note();
     }
 
 
@@ -54,7 +49,7 @@ public class DataCollector {
     }
 
     public int getQPS() {
-        return qps.getAvgQPS();
+        return 0;
     }
 
     public int getAvgBucket() {
@@ -66,7 +61,7 @@ public class DataCollector {
     }
 
     public int getFailed() {
-        return failedRequests.get();
+        return 0;
     }
 
     public int getOneQPS() {
