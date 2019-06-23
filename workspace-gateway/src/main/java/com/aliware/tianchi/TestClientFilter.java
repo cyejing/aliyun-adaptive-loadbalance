@@ -33,7 +33,6 @@ public class TestClientFilter implements Filter {
         try {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             dc.incrementRequests();
-            invocation.getAttachments().put("active", String.valueOf(dc.getActive()));
             invocation.getAttachments().put("startTime", String.valueOf(System.nanoTime()));
             Result result = invoker.invoke(invocation);
             return result;
@@ -53,14 +52,11 @@ public class TestClientFilter implements Filter {
             Long startTime = Long.valueOf(invocation.getAttachment("startTime"));
             Stopwatch stopwatch = Stopwatch.createStarted(startTime);
             if (result.hasException()) {
-                String active = invocation.getAttachment("active");
-                dc.noteBucket(Integer.valueOf(active));
-                dc.decrementRequests();
                 dc.incrementFailedRequests();
             } else {
-                dc.decrementRequests();
                 dc.succeedRequest();
             }
+            dc.decrementRequests();
             dc.noteValue(stopwatch.stop().elapsed(TimeUnit.MILLISECONDS));
         } catch (Exception e) {
             log.error("", e);
