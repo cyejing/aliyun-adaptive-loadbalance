@@ -7,8 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DataCollector {
 
-    private static final double ALPHA = 1.005;
-    private static final double GAMMA = 1.25;
+    private static final double ALPHA = 1.0025;
+    private static final double GAMMA = 1.21;
 
 
     private volatile int bucket = 1000;
@@ -71,7 +71,7 @@ public class DataCollector {
 
     public int getWeight() {
         double mean = distributionRate.getMean();
-        double r = mean * bucket;
+        double r = Math.pow(Math.pow(1000 / mean, GAMMA) * bucket, ALPHA);
         return new Double(r).intValue();
     }
 
