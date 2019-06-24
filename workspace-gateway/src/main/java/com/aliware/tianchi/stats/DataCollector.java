@@ -9,6 +9,7 @@ public class DataCollector {
 
     private static final int DEFAULT_BUCKET = 1000;
     private static final double ALPHA = 1.25;
+    private static final double GAMMA = 1.50;
 
 
 
@@ -72,7 +73,7 @@ public class DataCollector {
 
     public int getWeight() {
         double mean = distributionRate.getMean();
-        double r = Math.pow((1000 / mean) * bucket, ALPHA);
+        double r = Math.pow(Math.pow(1000 / mean, GAMMA) * bucket, ALPHA);
         return new Double(r).intValue();
     }
 
