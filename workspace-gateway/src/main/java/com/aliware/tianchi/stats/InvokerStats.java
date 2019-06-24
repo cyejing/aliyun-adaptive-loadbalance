@@ -1,5 +1,8 @@
 package com.aliware.tianchi.stats;
 
+import static com.aliware.tianchi.stats.DataCollector.ALPHA;
+import static com.aliware.tianchi.stats.DataCollector.GAMMA;
+
 import java.time.LocalDateTime;
 import java.util.Map.Entry;
 import java.util.Timer;
@@ -20,7 +23,7 @@ public class InvokerStats {
 
 
     public InvokerStats() {
-        System.out.println("make by Born");
+        System.out.println("make by Born. ALPHA: "+ALPHA+", GAMMA: "+GAMMA);
         logTimer.schedule(new TimerTask() {
             @Override
             public void run() {
