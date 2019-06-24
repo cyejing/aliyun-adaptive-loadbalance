@@ -7,13 +7,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DataCollector {
 
-    private static final int DEFAULT_BUCKET = 1000;
     private static final double ALPHA = 1;
     private static final double GAMMA = 1.35;
 
 
-
-    private volatile int bucket = DEFAULT_BUCKET;
+    private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
     private DistributionRate distributionRate = new DistributionRate(3000, 100);
 
