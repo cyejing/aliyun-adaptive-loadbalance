@@ -37,7 +37,7 @@ public class InvokerStats {
                         String s = String.format(
                                 "%s bucket active:%d, bucket:%d, weight:%d, mean:%f, oneqps:%d.",
                                 LocalDateTime.now().toString(),dc.getActive(), dc.getAvgBucket(),
-                                dc.getWeight(), dc.getMean(), dc.getOneQPS());
+                                dc.getWeight(), dc.getMean());
 
                         log.info(s);
                     }

@@ -42,13 +42,6 @@ public class DistributionRate {
     }
 
 
-    public int getOneQPS() {
-        if (getMean() == 0) {
-            return 10;
-        }
-        return (new Double(1000D / getMean()).intValue());
-    }
-
     public void calc(double v) {
         if (delayThreshold > System.currentTimeMillis()) {
             return;

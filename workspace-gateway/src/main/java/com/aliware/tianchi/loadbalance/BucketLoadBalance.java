@@ -36,7 +36,7 @@ public class BucketLoadBalance implements LoadBalance {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             int bucket = dc.getAvgBucket();
             int limit = dc.getActive();
-            if (limit < bucket) {
+            if (limit + 10 < bucket) {
                 selects.add(invoker);
             }
         }

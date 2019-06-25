@@ -20,14 +20,14 @@ public class DataCollector {
 
 
     public void incrementRequests() {
-//        activeRequests.incrementAndGet();
+        activeRequests.incrementAndGet();
     }
 
     public void incrementFailedRequests() {
     }
 
     public void decrementRequests() {
-//        activeRequests.decrementAndGet();
+        activeRequests.decrementAndGet();
     }
 
     public void setBucket(int i) {
@@ -55,24 +55,10 @@ public class DataCollector {
     }
 
 
-    public int getOneQPS() {
-        return distributionRate.getOneQPS();
-    }
-
     public int getWeight() {
         double mean = distributionRate.getMean();
         double r = Math.pow(1000 / mean, GAMMA) * Math.pow(bucket, ALPHA);
         return new Double(r).intValue();
     }
 
-    public static void main(String[] args) {
-        System.out.println(Math.pow(19,1.32));
-        System.out.println(Math.pow(25,1.32));
-        System.out.println(Math.pow(650,1.015));
-        System.out.println(Math.pow(450,1.015));
-        System.out.println(Math.pow(200,1.015));
-        System.out.println(Math.pow(15000,1.005));
-        System.out.println(Math.pow(25000,1.005));
-        System.out.println(Math.pow(35000,1.005));
-    }
 }

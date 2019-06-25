@@ -26,7 +26,7 @@ import org.apache.dubbo.rpc.service.CallbackService;
 public class TestClientFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(TestClientFilter.class);
-    private ConcurrentMap<Invocation, Stopwatch> map = new ConcurrentHashMap<>(1024 * 1024);
+//    private ConcurrentMap<Invocation, Stopwatch> map = new ConcurrentHashMap<>(1024 * 1024);
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
@@ -36,8 +36,7 @@ public class TestClientFilter implements Filter {
         try {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             dc.incrementRequests();
-//            invocation.getAttachments().put("st", String.valueOf(System.nanoTime()));
-            map.put(invocation, Stopwatch.createStarted());
+            invocation.getAttachments().put("st", String.valueOf(System.nanoTime()));
             Result result = invoker.invoke(invocation);
             return result;
         } catch (Exception e) {
@@ -53,8 +52,8 @@ public class TestClientFilter implements Filter {
         }
         try {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
-//            Long startTime = Long.valueOf(invocation.getAttachment("st"));
-            Stopwatch stopwatch = map.remove(invocation);
+            Long startTime = Long.valueOf(invocation.getAttachment("st"));
+            Stopwatch stopwatch = Stopwatch.createStarted(startTime);
             if (result.hasException()) {
                 dc.incrementFailedRequests();
             } else {
