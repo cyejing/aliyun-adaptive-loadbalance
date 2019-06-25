@@ -30,9 +30,6 @@ public class DataCollector {
         activeRequests.decrementAndGet();
     }
 
-    public void noteBucket(int i) {
-    }
-
     public void setBucket(int i) {
         this.bucket = i;
     }
@@ -49,10 +46,6 @@ public class DataCollector {
         return activeRequests.get();
     }
 
-    public int getQPS() {
-        return 0;
-    }
-
     public int getAvgBucket() {
         return bucket;
     }
@@ -61,9 +54,6 @@ public class DataCollector {
         return distributionRate.getMean();
     }
 
-    public int getFailed() {
-        return 0;
-    }
 
     public int getOneQPS() {
         return distributionRate.getOneQPS();

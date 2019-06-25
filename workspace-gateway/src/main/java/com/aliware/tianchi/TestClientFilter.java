@@ -3,6 +3,8 @@ package com.aliware.tianchi;
 import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
 import com.aliware.tianchi.stats.Stopwatch;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import org.apache.dubbo.common.Constants;
 import org.apache.dubbo.common.extension.Activate;
@@ -24,6 +26,7 @@ import org.apache.dubbo.rpc.service.CallbackService;
 public class TestClientFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(TestClientFilter.class);
+    private ConcurrentMap<Invocation, Stopwatch> map = new ConcurrentHashMap<>(1024 * 1024);
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
@@ -33,7 +36,8 @@ public class TestClientFilter implements Filter {
         try {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             dc.incrementRequests();
-            invocation.getAttachments().put("startTime", String.valueOf(System.nanoTime()));
+//            invocation.getAttachments().put("st", String.valueOf(System.nanoTime()));
+            map.put(invocation, Stopwatch.createStarted());
             Result result = invoker.invoke(invocation);
             return result;
         } catch (Exception e) {
@@ -49,8 +53,8 @@ public class TestClientFilter implements Filter {
         }
         try {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
-            Long startTime = Long.valueOf(invocation.getAttachment("startTime"));
-            Stopwatch stopwatch = Stopwatch.createStarted(startTime);
+//            Long startTime = Long.valueOf(invocation.getAttachment("st"));
+            Stopwatch stopwatch = map.remove(invocation);
             if (result.hasException()) {
                 dc.incrementFailedRequests();
             } else {
