@@ -20,14 +20,14 @@ public class DataCollector {
 
 
     public void incrementRequests() {
-        activeRequests.incrementAndGet();
+//        activeRequests.incrementAndGet();
     }
 
     public void incrementFailedRequests() {
     }
 
     public void decrementRequests() {
-        activeRequests.decrementAndGet();
+//        activeRequests.decrementAndGet();
     }
 
     public void setBucket(int i) {
