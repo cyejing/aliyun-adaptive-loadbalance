@@ -23,8 +23,6 @@ import org.apache.dubbo.rpc.cluster.LoadBalance;
 
 public class BucketLoadBalance implements LoadBalance {
 
-    private static final Logger log = LoggerFactory.getLogger(BucketLoadBalance.class);
-
     private final LoadBalance loadBalance;
 
     public BucketLoadBalance(LoadBalance loadBalance) {

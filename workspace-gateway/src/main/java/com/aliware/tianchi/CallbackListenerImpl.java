@@ -1,7 +1,6 @@
 package com.aliware.tianchi;
 
 import com.aliware.tianchi.stats.InvokerStats;
-import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.listener.CallbackListener;
 
 /**
