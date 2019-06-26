@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
     public static final double ALPHA = 0.962;
-    public static final double GAMMA = 1.30;
+    public static final double GAMMA = 1.28;
 
 
     private volatile int bucket = 1000;
