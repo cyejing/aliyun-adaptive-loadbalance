@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DistributionRate {
 
-    private int bucket;
+    private int bucket = 1000;
     private int size;
     private double[] requestRTTs;
     private double[] currs;
@@ -17,9 +17,8 @@ public class DistributionRate {
     private long delayThreshold;
     private volatile long startTime;
 
-    public DistributionRate(long delay, int size,int bucket) {
+    public DistributionRate(long delay, int size) {
         this.size = size;
-        this.bucket = bucket;
         this.requestRTTs = new double[size];
         this.currs = new double[]{bucket,bucket,bucket,bucket,bucket};
 
@@ -81,6 +80,13 @@ public class DistributionRate {
             totalCurr += currs[i];
         }
         return totalCurr / currs.length;
+    }
+
+    public void setBucket(int bucket) {
+        this.bucket = bucket;
+        for (int i = 0; i < currs.length; i++) {
+            currs[i] = bucket;
+        }
     }
 
     public String toMeanString() {

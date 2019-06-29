@@ -13,7 +13,7 @@ public class DataCollector {
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
-    private DistributionRate distributionRate;
+    private DistributionRate distributionRate = new DistributionRate(3000, 200);
 
     public DataCollector() {
     }
@@ -30,9 +30,9 @@ public class DataCollector {
         activeRequests.decrementAndGet();
     }
 
-    public void setBucket(int i) {
-        this.bucket = i;
-        this.distributionRate = new DistributionRate(3000, 200, bucket);
+    public void setBucket(int bucket) {
+        this.bucket = bucket;
+        this.distributionRate.setBucket(bucket);
     }
 
     public void noteValue(long i) {
