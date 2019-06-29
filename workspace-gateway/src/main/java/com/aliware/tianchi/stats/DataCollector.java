@@ -58,7 +58,7 @@ public class DataCollector {
     public int getWeight() {
         double mean = distributionRate.getMean();
         double curr = distributionRate.getCurr();
-        double r = Math.pow(1000 / mean, GAMMA) * ((Math.pow(bucket, ALPHA) + curr));
+        double r = Math.pow(1000 / mean, GAMMA) * (curr);
         return new Double(r).intValue();
     }
 
