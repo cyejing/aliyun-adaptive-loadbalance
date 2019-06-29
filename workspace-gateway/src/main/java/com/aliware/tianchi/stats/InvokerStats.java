@@ -3,12 +3,18 @@ package com.aliware.tianchi.stats;
 import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 import static com.aliware.tianchi.stats.DataCollector.GAMMA;
 
+import com.aliware.tianchi.stats.DataCollector.DataCollectorCopy;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.rpc.Invoker;
@@ -28,14 +34,21 @@ public class InvokerStats {
             @Override
             public void run() {
                 try {
-                    ConcurrentMap<String, DataCollector> dcm = InvokerStats.getInstance().getDataCollectors();
-                    for (Entry<String, DataCollector> e : dcm.entrySet()) {
-                        String key = e.getKey();
-                        DataCollector dc = e.getValue();
+                    Map<String, DataCollector> dcm = InvokerStats.getInstance().getDataCollectors();
+                    List<DataCollectorCopy> copyList = new ArrayList<>();
+                    int totalWeight = 0;
+                    for (DataCollector dc : dcm.values()) {
+                        DataCollectorCopy copy = dc.copy();
+                        copyList.add(copy);
+                        totalWeight += copy.getWeight();
+                    }
+
+
+                    for (DataCollectorCopy dc : copyList) {
                         String s = String.format(
                                 "%s bucket active:%d, bucket:%d, weight:%d, mean:%f, curr:%f.",
                                 LocalDateTime.now().toString(), dc.getActive(), dc.getBucket(),
-                                dc.getWeight(), dc.getMean(), dc.getCurr());
+                                dc.getWeight() / totalWeight, dc.getMean(), dc.getCurr());
 
                         log.info(s);
                     }
@@ -72,8 +85,8 @@ public class InvokerStats {
         return getDataCollector(key);
     }
 
-    public ConcurrentMap<String, DataCollector> getDataCollectors() {
-        return dataMap;
+    public Map<String, DataCollector> getDataCollectors() {
+        return Collections.unmodifiableMap(dataMap);
     }
 
     public void putBucket(String port, int max) {

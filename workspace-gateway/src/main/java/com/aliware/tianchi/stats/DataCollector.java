@@ -57,9 +57,6 @@ public class DataCollector {
 
 
     public int getWeight() {
-        if (distributionRate == null) {
-            return 1000;
-        }
         double mean = distributionRate.getMean();
         double curr = distributionRate.getCurr();
         double r = Math.pow(1000 / mean, GAMMA) * (curr);
@@ -68,5 +65,66 @@ public class DataCollector {
 
     public double getCurr() {
         return distributionRate.getCurr();
+    }
+
+    public DataCollectorCopy copy() {
+        return new DataCollectorCopy(getActive(), getBucket(), getMean(), getCurr(), getWeight());
+    }
+
+    public static class DataCollectorCopy{
+
+        public DataCollectorCopy(int active, int bucket, double mean, double curr, int weight) {
+            this.active = active;
+            this.bucket = bucket;
+            this.mean = mean;
+            this.curr = curr;
+            this.weight = weight;
+        }
+
+        private int active;
+        private int bucket;
+        private double mean;
+        private double curr;
+        private int weight;
+
+        public int getActive() {
+            return active;
+        }
+
+        public void setActive(int active) {
+            this.active = active;
+        }
+
+        public int getBucket() {
+            return bucket;
+        }
+
+        public void setBucket(int bucket) {
+            this.bucket = bucket;
+        }
+
+        public double getMean() {
+            return mean;
+        }
+
+        public void setMean(double mean) {
+            this.mean = mean;
+        }
+
+        public double getCurr() {
+            return curr;
+        }
+
+        public void setCurr(double curr) {
+            this.curr = curr;
+        }
+
+        public int getWeight() {
+            return weight;
+        }
+
+        public void setWeight(int weight) {
+            this.weight = weight;
+        }
     }
 }
