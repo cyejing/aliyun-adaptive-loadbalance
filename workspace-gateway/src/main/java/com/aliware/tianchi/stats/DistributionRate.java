@@ -16,10 +16,11 @@ public class DistributionRate {
     private long delayThreshold;
     private volatile long startTime;
 
-    public DistributionRate(long delay, int size) {
+    public DistributionRate(long delay, int size,int bucket) {
         this.size = size;
         this.requestRTTs = new double[size];
-        this.currs = new double[10];
+        this.currs = new double[]{bucket,bucket,bucket,bucket,bucket,bucket,bucket,bucket,bucket,bucket};
+
 
         this.delayThreshold = System.currentTimeMillis() + delay;
         this.startTime = System.currentTimeMillis();
@@ -58,7 +59,7 @@ public class DistributionRate {
         if (i == 0) {
             this.startTime = System.currentTimeMillis();
         } else if (i % (size) == 0) {
-            this.currs[(i / size) % 10] = (1000D / (now - startTime) * (size)) / (1000D / mean);
+            this.currs[(i / size) % currs.length] = (1000D / (now - startTime) * (size)) / (1000D / mean);
             this.startTime = now;
         }
 
@@ -67,23 +68,10 @@ public class DistributionRate {
 
     public double getCurr() {
         double totalCurr = 0;
-        int s = index.get() / size;
-        int total;
-        if (s >= 10) {
-            for (int i = 0; i < 10; i++) {
-                totalCurr += currs[i];
-            }
-            total = 10;
-        } else {
-            for (int i = 0; i < s; i++) {
-                totalCurr += currs[i];
-            }
-            total = s;
+        for (int i = 0; i < currs.length; i++) {
+            totalCurr += currs[i];
         }
-        if (s == 0) {
-            return 100D;
-        }
-        return totalCurr / total;
+        return totalCurr / currs.length;
     }
 
     public String toMeanString() {
