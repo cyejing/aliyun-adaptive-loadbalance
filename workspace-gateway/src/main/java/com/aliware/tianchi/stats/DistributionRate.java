@@ -22,7 +22,7 @@ public class DistributionRate {
         this.size = size;
         this.rSize = rSize;
         this.requestRTTs = new double[size];
-        this.currs = new double[]{bucket,bucket,bucket,bucket,bucket,bucket};
+        this.currs = new double[]{bucket,bucket,bucket,bucket,bucket};
 
 
         this.delayThreshold = System.currentTimeMillis() + delay;
