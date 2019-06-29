@@ -9,15 +9,18 @@ public class DistributionRate {
 
     private int size;
     private double[] requestRTTs;
+    private volatile double curr = 0;
     private AtomicInteger index = new AtomicInteger(0);
 
     private long delayThreshold;
+    private long startTime;
 
     public DistributionRate(long delay, int size) {
         this.size = size;
         this.requestRTTs = new double[size];
 
         this.delayThreshold = System.currentTimeMillis() + delay;
+        this.startTime = System.currentTimeMillis();
     }
 
     public double getMean() {
@@ -43,10 +46,20 @@ public class DistributionRate {
 
 
     public void calc(double v) {
-        if (delayThreshold > System.currentTimeMillis()) {
+        long now = System.currentTimeMillis();
+        if (delayThreshold > now) {
             return;
         }
-        int i = index.getAndIncrement();
+        int i = index.incrementAndGet();
+        double mean = getMean();
+        if (i % (size * 10) == 0) {
+            this.curr = (1000 / (now - startTime) * (size * 10)) / (1000 / mean);
+            this.startTime = now;
+        }
         requestRTTs[i % size] = v;
+    }
+
+    public double getCurr() {
+        return curr;
     }
 }

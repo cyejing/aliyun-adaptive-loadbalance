@@ -28,16 +28,14 @@ public class InvokerStats {
             @Override
             public void run() {
                 try {
-
-                    ConcurrentMap<String, DataCollector> dcm = InvokerStats.getInstance()
-                            .getDataCollectors();
+                    ConcurrentMap<String, DataCollector> dcm = InvokerStats.getInstance().getDataCollectors();
                     for (Entry<String, DataCollector> e : dcm.entrySet()) {
                         String key = e.getKey();
                         DataCollector dc = e.getValue();
                         String s = String.format(
-                                "%s bucket active:%d, bucket:%d, weight:%d, mean:%f.",
-                                LocalDateTime.now().toString(),dc.getActive(), dc.getAvgBucket(),
-                                dc.getWeight(), dc.getMean());
+                                "%s bucket active:%d, bucket:%d, weight:%d, mean:%f, curr:%f.",
+                                LocalDateTime.now().toString(), dc.getActive(), dc.getBucket(),
+                                dc.getWeight(), dc.getMean(), dc.getCurr());
 
                         log.info(s);
                     }

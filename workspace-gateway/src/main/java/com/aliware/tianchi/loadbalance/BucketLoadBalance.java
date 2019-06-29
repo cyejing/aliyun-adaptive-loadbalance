@@ -3,18 +3,9 @@ package com.aliware.tianchi.loadbalance;
 
 import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.dubbo.common.URL;
-import org.apache.dubbo.common.logger.Logger;
-import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
@@ -34,7 +25,7 @@ public class BucketLoadBalance implements LoadBalance {
         List<Invoker<T>> selects = new ArrayList<>();
         for (Invoker invoker : invokers) {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
-            int bucket = dc.getAvgBucket();
+            int bucket = dc.getBucket();
             int limit = dc.getActive();
             if (limit + 10 < bucket) {
                 selects.add(invoker);
