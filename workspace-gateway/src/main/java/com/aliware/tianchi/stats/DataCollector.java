@@ -13,7 +13,7 @@ public class DataCollector {
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
-    private DistributionRate distributionRate = new DistributionRate(3000, 200,bucket);
+    private DistributionRate distributionRate;
 
     public DataCollector() {
     }
@@ -32,6 +32,7 @@ public class DataCollector {
 
     public void setBucket(int i) {
         this.bucket = i;
+        this.distributionRate = new DistributionRate(3000, 200, bucket);
     }
 
     public void noteValue(long i) {
@@ -56,6 +57,9 @@ public class DataCollector {
 
 
     public int getWeight() {
+        if (distributionRate == null) {
+            return 1000;
+        }
         double mean = distributionRate.getMean();
         double curr = distributionRate.getCurr();
         double r = Math.pow(1000 / mean, GAMMA) * (curr);
