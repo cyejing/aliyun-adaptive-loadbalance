@@ -59,8 +59,10 @@ public class DistributionRate {
         if (i == 0) {
             this.startTime = System.currentTimeMillis();
         } else if (i % (size) == 0) {
-            this.curr = (1000D / (now - startTime) * (size)) / (1000D / mean);
             this.currs[(i / size) % 10] = (1000D / (now - startTime) * (size)) / (1000D / mean);
+            if (((i / size) % 10) == 0) {
+                this.currs[(i / size) % 10] += 20;
+            }
             this.startTime = now;
         }
 
