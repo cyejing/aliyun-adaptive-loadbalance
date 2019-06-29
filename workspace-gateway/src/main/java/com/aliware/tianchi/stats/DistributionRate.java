@@ -54,6 +54,9 @@ public class DistributionRate {
         double mean = getMean();
         if (i % (size * 10) == 0) {
             this.curr = (1000 / (now - startTime) * (size * 10)) / (1000 / mean);
+            if (curr == 0.0) {
+                System.out.println("ERROR!!!!!!!" + now + "," + startTime + "," + mean + "," + size * 10);
+            }
             this.startTime = now;
         }
         requestRTTs[i % size] = v;
