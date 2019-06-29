@@ -10,15 +10,17 @@ public class DistributionRate {
 
     private int size;
     private double[] requestRTTs;
+    private double[] currs;
     private volatile double curr = 0;
     private AtomicInteger index = new AtomicInteger(0);
 
     private long delayThreshold;
-    private long startTime;
+    private volatile long startTime;
 
     public DistributionRate(long delay, int size) {
         this.size = size;
         this.requestRTTs = new double[size];
+        this.currs = new double[10];
 
         this.delayThreshold = System.currentTimeMillis() + delay;
         this.startTime = System.currentTimeMillis();
@@ -58,6 +60,7 @@ public class DistributionRate {
             this.startTime = System.currentTimeMillis();
         } else if (i % (size) == 0) {
             this.curr = (1000D / (now - startTime) * (size)) / (1000D / mean);
+            this.currs[(i / size) % 10] = (1000D / (now - startTime) * (size)) / (1000D / mean);
             this.startTime = now;
         }
 
@@ -65,7 +68,24 @@ public class DistributionRate {
     }
 
     public double getCurr() {
-        return curr;
+        double totalCurr = 0;
+        int s = index.get() / size;
+        int total;
+        if (s >= 10) {
+            for (int i = 0; i < 10; i++) {
+                totalCurr += currs[i];
+            }
+            total = 10;
+        } else {
+            for (int i = 0; i < s; i++) {
+                totalCurr += currs[i];
+            }
+            total = s;
+        }
+        if (s == 0) {
+            return 0D;
+        }
+        return totalCurr / total;
     }
 
     public String toMeanString() {
