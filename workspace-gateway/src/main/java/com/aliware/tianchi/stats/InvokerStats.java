@@ -36,7 +36,7 @@ public class InvokerStats {
                 try {
                     Map<String, DataCollector> dcm = InvokerStats.getInstance().getDataCollectors();
                     List<DataCollectorCopy> copyList = new ArrayList<>();
-                    int totalWeight = 0;
+                    double totalWeight = 0;
                     for (DataCollector dc : dcm.values()) {
                         DataCollectorCopy copy = dc.copy();
                         copyList.add(copy);
@@ -46,7 +46,7 @@ public class InvokerStats {
 
                     for (DataCollectorCopy dc : copyList) {
                         String s = String.format(
-                                "%s bucket active:%d, bucket:%d, weight:%d, mean:%f, curr:%f.",
+                                "%s bucket active:%d, bucket:%d, weight:%f, mean:%f, curr:%f.",
                                 LocalDateTime.now().toString(), dc.getActive(), dc.getBucket(),
                                 dc.getWeight() / totalWeight, dc.getMean(), dc.getCurr());
 
