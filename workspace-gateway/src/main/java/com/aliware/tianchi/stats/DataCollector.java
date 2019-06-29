@@ -59,9 +59,9 @@ public class DataCollector {
         double mean = distributionRate.getMean();
         double curr = distributionRate.getCurr();
         if (Math.abs(curr - getActive()) < 10) {
-            curr = curr + 100;
+            curr = curr + 20;
         }
-        double r = Math.pow(1000 / mean, GAMMA) * ((Math.pow(bucket, ALPHA) + curr));
+        double r = Math.pow(1000 / mean, GAMMA) * (curr);
         return new Double(r).intValue();
     }
 
