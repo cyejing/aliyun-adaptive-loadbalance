@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DataCollector {
 
-    public static final double ALPHA = 0.962;
+    public static final double ALPHA = 1;
     public static final double GAMMA = 1;
 
 
@@ -58,7 +58,10 @@ public class DataCollector {
     public int getWeight() {
         double mean = distributionRate.getMean();
         double curr = distributionRate.getCurr();
-        double r = Math.pow(1000 / mean, GAMMA) * (curr);
+        if (Math.abs(curr - getActive()) < 10) {
+            curr = curr + 100;
+        }
+        double r = Math.pow(1000 / mean, GAMMA) * ((Math.pow(bucket, ALPHA) + curr));
         return new Double(r).intValue();
     }
 
