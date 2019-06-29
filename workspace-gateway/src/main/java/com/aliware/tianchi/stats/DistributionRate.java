@@ -1,5 +1,6 @@
 package com.aliware.tianchi.stats;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -50,16 +51,24 @@ public class DistributionRate {
         if (delayThreshold > now) {
             return;
         }
-        int i = index.incrementAndGet();
+        int i = index.getAndIncrement();
         double mean = getMean();
-        if (i % (size * 10) == 0) {
-            this.curr = (1000D / (now - startTime) * (size * 10)) / (1000D / mean);
+
+        if (i == 0) {
+            this.startTime = System.currentTimeMillis();
+        } else if (i % (size) == 0) {
+            this.curr = (1000D / (now - startTime) * (size)) / (1000D / mean);
             this.startTime = now;
         }
+
         requestRTTs[i % size] = v;
     }
 
     public double getCurr() {
         return curr;
+    }
+
+    public String toMeanString() {
+        return Arrays.toString(requestRTTs);
     }
 }
