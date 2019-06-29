@@ -53,7 +53,7 @@ public class DistributionRate {
         int i = index.incrementAndGet();
         double mean = getMean();
         if (i % (size * 10) == 0) {
-            this.curr = (1000 / (now - startTime) * (size * 10)) / (1000 / mean);
+            this.curr = (1000D / (now - startTime) * (size * 10)) / (1000D / mean);
             if (curr == 0.0) {
                 System.out.println("ERROR!!!!!!!" + now + "," + startTime + "," + mean + "," + size * 10);
             }
