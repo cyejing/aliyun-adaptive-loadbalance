@@ -64,9 +64,6 @@ public class DistributionRate {
                 this.currs[(i / size) % currs.length] = this.bucket;
             }else{
                 this.currs[(i / size) % currs.length] = (1000D / (now - startTime) * (size)) / (1000D / mean);
-                if (bucket == 200) {
-                    System.out.println(this.currs[(i / size) % currs.length] + "="+(now - startTime)+","+ (1000D / (now - startTime) * (size))+","+(1000D / mean));
-                }
             }
             this.startTime = now;
         }
