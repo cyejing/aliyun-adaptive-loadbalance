@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DistributionRate {
 
+    private int bucket;
     private int size;
     private double[] requestRTTs;
     private double[] currs;
@@ -18,8 +19,9 @@ public class DistributionRate {
 
     public DistributionRate(long delay, int size,int bucket) {
         this.size = size;
+        this.bucket = bucket;
         this.requestRTTs = new double[size];
-        this.currs = new double[]{bucket,bucket,bucket,bucket,bucket,bucket,bucket,bucket,bucket,bucket};
+        this.currs = new double[]{bucket,bucket,bucket,bucket,bucket};
 
 
         this.delayThreshold = System.currentTimeMillis() + delay;
@@ -59,7 +61,11 @@ public class DistributionRate {
         if (i == 0) {
             this.startTime = System.currentTimeMillis();
         } else if (i % (size) == 0) {
-            this.currs[(i / size) % currs.length] = (1000D / (now - startTime) * (size)) / (1000D / mean);
+            if (((i / size) % currs.length) == 0) {
+                this.currs[(i / size) % currs.length] = this.bucket;
+            }else{
+                this.currs[(i / size) % currs.length] = (1000D / (now - startTime) * (size)) / (1000D / mean);
+            }
             this.startTime = now;
         }
 
