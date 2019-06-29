@@ -10,6 +10,7 @@ public class DistributionRate {
 
     private int bucket = 1000;
     private int size;
+    private int rSize;
     private double[] requestRTTs;
     private double[] currs;
     private AtomicInteger index = new AtomicInteger(0);
@@ -17,11 +18,11 @@ public class DistributionRate {
     private long delayThreshold;
     private volatile long startTime;
 
-    public DistributionRate(long delay, int size) {
+    public DistributionRate(long delay, int size,int rSize) {
         this.size = size;
+        this.rSize = rSize;
         this.requestRTTs = new double[size];
-        this.currs = new double[]{bucket,bucket,bucket,bucket,bucket,
-                bucket,bucket,bucket};
+        this.currs = new double[]{bucket,bucket,bucket,bucket,bucket,bucket};
 
 
         this.delayThreshold = System.currentTimeMillis() + delay;
@@ -52,6 +53,7 @@ public class DistributionRate {
 
     public void calc(double v) {
         long now = System.currentTimeMillis();
+        long st = startTime;
         if (delayThreshold > now) {
             return;
         }
@@ -60,11 +62,11 @@ public class DistributionRate {
 
         if (i == 0) {
             this.startTime = System.currentTimeMillis();
-        } else if (i % (size) == 0) {
-            if (((i / size) % currs.length) == 0) {
-                this.currs[(i / size) % currs.length] = this.bucket;
+        } else if (i % (rSize) == 0) {
+            if (((i / rSize) % currs.length) == 0) {
+                this.currs[0] = this.bucket;
             }else{
-                this.currs[(i / size) % currs.length] = (1000D / (now - startTime) * (size)) / (1000D / mean);
+                this.currs[(i / rSize) % currs.length] = (1000D / (now - st) * (rSize)) / (1000D / mean);
             }
             this.startTime = now;
         }
