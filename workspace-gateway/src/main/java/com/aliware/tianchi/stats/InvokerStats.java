@@ -56,7 +56,7 @@ public class InvokerStats {
                     log.error("", e);
                 }
             }
-        }, 1000, 500);
+        }, 1000, 200);
 
     }
 
