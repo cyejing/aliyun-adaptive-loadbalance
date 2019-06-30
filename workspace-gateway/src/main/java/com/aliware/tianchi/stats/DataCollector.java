@@ -66,7 +66,8 @@ public class DataCollector {
     }
 
     public double getCurr() {
-        return distributionRate.getCurr();
+        double curr = distributionRate.getCurr();
+        return (Math.pow(bucket, ALPHA) * BETA + curr * (1 - BETA));
     }
 
     public DataCollectorCopy copy() {
