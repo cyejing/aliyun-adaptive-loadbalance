@@ -8,12 +8,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
     public static final double ALPHA = 1;
-    public static final double GAMMA = 1.15;
+    public static final double GAMMA = 1.05;
 
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
-    private DistributionRate distributionRate = new DistributionRate(3000, 200, 400);
+    private DistributionRate distributionRate = new DistributionRate(3000, 200, 200);
 
     public DataCollector() {
     }

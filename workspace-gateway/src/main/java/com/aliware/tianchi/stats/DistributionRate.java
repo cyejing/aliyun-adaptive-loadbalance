@@ -10,20 +10,19 @@ public class DistributionRate {
 
     private int bucket = 1000;
     private int size;
-    private int rSize;
     private double[] requestRTTs;
     private double curr;
     private AtomicInteger index = new AtomicInteger(0);
 
     private int currIndex = 0;
     private long currThreshold;
-    private long currInternal = 200;
+    private long currInternal;
     private long delayThreshold;
     private volatile long startTime;
 
-    public DistributionRate(long delay, int size,int rSize) {
+    public DistributionRate(long delay, int size,int currInternal) {
         this.size = size;
-        this.rSize = rSize;
+        this.currInternal = currInternal;
         this.requestRTTs = new double[size];
 
         this.delayThreshold = System.currentTimeMillis() + delay;
