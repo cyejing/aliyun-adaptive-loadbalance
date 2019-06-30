@@ -10,23 +10,22 @@ public class DistributionRate {
 
     private int bucket = 1000;
     private int size;
+    private int rSize;
     private double[] requestRTTs;
-    private volatile double curr;
+    private double[] currs;
     private AtomicInteger index = new AtomicInteger(0);
 
-    private volatile int currIndex = 0;
-    private volatile long currThreshold;
-    private long currInternal;
     private long delayThreshold;
     private volatile long startTime;
 
-    public DistributionRate(long delay, int size,int currInternal) {
+    public DistributionRate(long delay, int size,int rSize) {
         this.size = size;
-        this.currInternal = currInternal;
+        this.rSize = rSize;
         this.requestRTTs = new double[size];
+        this.currs = new double[]{bucket,bucket,bucket,bucket,bucket};
+
 
         this.delayThreshold = System.currentTimeMillis() + delay;
-        this.currThreshold = System.currentTimeMillis() + currInternal;
         this.startTime = System.currentTimeMillis();
     }
 
@@ -59,30 +58,24 @@ public class DistributionRate {
             return;
         }
         int i = index.getAndIncrement();
-        requestRTTs[i % size] = v;
         double mean = getMean();
 
         if (i == 0) {
             this.startTime = now;
-            this.currThreshold = now + currInternal;
-            this.currIndex = 0;
-        }
-//        else if (i % (rSize) == 0) {
-//            this.curr = (1000D / (now - st) * (rSize)) / (1000D / mean);
-//            this.startTime = now;
-//        }
-
-        if (now > currThreshold) {
-            this.curr = (1000D / (now - st) * (i - currIndex)) / (1000D / mean);
-            this.currIndex = i;
+        } else if (i % (rSize) == 0) {
+            this.currs[(i / rSize) % currs.length] = (1000D / (now - st) * (rSize)) / (1000D / mean);
             this.startTime = now;
-            this.currThreshold = now + currInternal;
         }
 
+        requestRTTs[i % size] = v;
     }
 
     public double getCurr() {
-        return this.curr;
+        double totalCurr = 0;
+        for (int i = 0; i < currs.length; i++) {
+            totalCurr += currs[i];
+        }
+        return totalCurr / currs.length;
     }
 
     public void setBucket(int bucket) {

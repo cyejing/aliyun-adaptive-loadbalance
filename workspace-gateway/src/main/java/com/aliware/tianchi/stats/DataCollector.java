@@ -15,7 +15,7 @@ public class DataCollector {
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
-    private DistributionRate distributionRate = new DistributionRate(3000, 200, 200);
+    private DistributionRate distributionRate = new DistributionRate(3000, 200, 400);
 
     public DataCollector() {
     }
