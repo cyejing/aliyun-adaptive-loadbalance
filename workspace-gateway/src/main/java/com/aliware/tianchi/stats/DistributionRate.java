@@ -56,6 +56,7 @@ public class DistributionRate {
             return;
         }
         int i = index.getAndIncrement();
+        requestRTTs[i % size] = v;
         double mean = getMean();
 
         if (i == 0) {
@@ -65,7 +66,6 @@ public class DistributionRate {
             this.startTime = now;
         }
 
-        requestRTTs[i % size] = v;
     }
 
     public double getCurr() {
