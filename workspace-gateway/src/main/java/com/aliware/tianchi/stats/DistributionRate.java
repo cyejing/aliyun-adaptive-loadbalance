@@ -11,11 +11,11 @@ public class DistributionRate {
     private int bucket = 1000;
     private int size;
     private double[] requestRTTs;
-    private double curr;
+    private volatile double curr;
     private AtomicInteger index = new AtomicInteger(0);
 
-    private int currIndex = 0;
-    private long currThreshold;
+    private volatile int currIndex = 0;
+    private volatile long currThreshold;
     private long currInternal;
     private long delayThreshold;
     private volatile long startTime;
