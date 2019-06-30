@@ -74,7 +74,7 @@ public class DistributionRate {
 //        }
 
         if (now > currThreshold) {
-            this.curr = (1000D / (now - st) * (i - currIndex)) / (1000D / mean) + bucket / 5D;
+            this.curr = (1000D / (now - st) * (i - currIndex)) / (1000D / mean);
             this.currIndex = i;
             this.startTime = now;
             this.currThreshold = now + currInternal;
