@@ -60,9 +60,6 @@ public class DistributionRate {
 
         if (i == 0) {
             this.startTime = now;
-        } else if (i % (rSize * 10) == 0) {
-            this.curr = bucket;
-            this.startTime = now;
         } else if (i % (rSize) == 0) {
             this.curr = (1000D / (now - st) * (rSize)) / (1000D / mean);
             this.startTime = now;
