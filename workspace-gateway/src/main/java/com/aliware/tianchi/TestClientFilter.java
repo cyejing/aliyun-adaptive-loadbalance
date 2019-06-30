@@ -26,7 +26,6 @@ import org.apache.dubbo.rpc.service.CallbackService;
 public class TestClientFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(TestClientFilter.class);
-//    private ConcurrentMap<Invocation, Stopwatch> map = new ConcurrentHashMap<>(1024 * 1024);
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {

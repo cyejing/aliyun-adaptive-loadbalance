@@ -12,7 +12,7 @@ public class DistributionRate {
     private int size;
     private int rSize;
     private double[] requestRTTs;
-    private double[] currs;
+    private double curr;
     private AtomicInteger index = new AtomicInteger(0);
 
     private long delayThreshold;
@@ -22,8 +22,6 @@ public class DistributionRate {
         this.size = size;
         this.rSize = rSize;
         this.requestRTTs = new double[size];
-        this.currs = new double[]{bucket,bucket,bucket,bucket,bucket};
-
 
         this.delayThreshold = System.currentTimeMillis() + delay;
         this.startTime = System.currentTimeMillis();
@@ -61,13 +59,12 @@ public class DistributionRate {
         double mean = getMean();
 
         if (i == 0) {
-            this.startTime = System.currentTimeMillis();
+            this.startTime = now;
+        } else if (i % (rSize * 5) == 0) {
+            this.curr = bucket;
+            this.startTime = now;
         } else if (i % (rSize) == 0) {
-            if (((i / rSize) % currs.length) == 0) {
-                this.currs[0] = this.bucket;
-            }else{
-                this.currs[(i / rSize) % currs.length] = (1000D / (now - st) * (rSize)) / (1000D / mean);
-            }
+            this.curr = (1000D / (now - st) * (rSize)) / (1000D / mean);
             this.startTime = now;
         }
 
@@ -75,18 +72,11 @@ public class DistributionRate {
     }
 
     public double getCurr() {
-        double totalCurr = 0;
-        for (int i = 0; i < currs.length; i++) {
-            totalCurr += currs[i];
-        }
-        return totalCurr / currs.length;
+        return this.curr;
     }
 
     public void setBucket(int bucket) {
         this.bucket = bucket;
-        for (int i = 0; i < currs.length; i++) {
-            currs[i] = bucket;
-        }
     }
 
     public String toMeanString() {
