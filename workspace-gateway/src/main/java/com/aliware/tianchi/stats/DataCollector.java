@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
 
-    public static final double ALPHA = 0.962;
-    public static final double BETA = 0.145;
+    public static final double ALPHA = 1;
+    public static final double BETA = 0.125;
     public static final double GAMMA = 1;
 
 
