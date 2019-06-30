@@ -15,6 +15,9 @@ public class DistributionRate {
     private double curr;
     private AtomicInteger index = new AtomicInteger(0);
 
+    private int currIndex = 0;
+    private long currThreshold;
+    private long currInternal = 200;
     private long delayThreshold;
     private volatile long startTime;
 
@@ -24,6 +27,7 @@ public class DistributionRate {
         this.requestRTTs = new double[size];
 
         this.delayThreshold = System.currentTimeMillis() + delay;
+        this.currThreshold = System.currentTimeMillis() + currInternal;
         this.startTime = System.currentTimeMillis();
     }
 
@@ -61,9 +65,19 @@ public class DistributionRate {
 
         if (i == 0) {
             this.startTime = now;
-        } else if (i % (rSize) == 0) {
-            this.curr = (1000D / (now - st) * (rSize)) / (1000D / mean);
+            this.currThreshold = now + currInternal;
+            this.currIndex = 0;
+        }
+//        else if (i % (rSize) == 0) {
+//            this.curr = (1000D / (now - st) * (rSize)) / (1000D / mean);
+//            this.startTime = now;
+//        }
+
+        if (now > currThreshold) {
+            this.curr = (1000D / (now - st) * (i - currIndex)) / (1000D / mean);
+            this.currIndex = i;
             this.startTime = now;
+            this.currThreshold = now + currInternal;
         }
 
     }
