@@ -1,6 +1,8 @@
 package com.aliware.tianchi;
 
 import com.aliware.tianchi.stats.InvokerStats;
+import org.apache.dubbo.common.logger.Logger;
+import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.rpc.listener.CallbackListener;
 
 /**
@@ -12,10 +14,11 @@ import org.apache.dubbo.rpc.listener.CallbackListener;
  *
  */
 public class CallbackListenerImpl implements CallbackListener {
+    private static final Logger log = LoggerFactory.getLogger(CallbackListenerImpl.class);
 
     @Override
     public void receiveServerMsg(String msg) {
-        System.out.println("receive msg from server :" + msg);
+        log.info("receive msg from server :" + msg);
         String[] split = msg.split(":");
         InvokerStats.getInstance().putBucket(split[0], Integer.valueOf(split[1]));
     }
