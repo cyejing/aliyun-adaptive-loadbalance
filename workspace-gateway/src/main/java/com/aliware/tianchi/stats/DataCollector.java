@@ -15,7 +15,7 @@ public class DataCollector {
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
-    private ThroughputRate throughputRate = new ThroughputRate(500);
+    private ThroughputRate throughputRate = new ThroughputRate(300);
 
     public DataCollector() {
     }
