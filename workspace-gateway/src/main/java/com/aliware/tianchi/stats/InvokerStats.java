@@ -1,6 +1,7 @@
 package com.aliware.tianchi.stats;
 
 import static com.aliware.tianchi.stats.DataCollector.ALPHA;
+import static com.aliware.tianchi.stats.DataCollector.BETA;
 import static com.aliware.tianchi.stats.DataCollector.GAMMA;
 
 import com.aliware.tianchi.stats.DataCollector.DataCollectorCopy;
@@ -29,7 +30,7 @@ public class InvokerStats {
 
 
     public InvokerStats() {
-        System.out.println("make by Born. ALPHA: "+ALPHA+", GAMMA: "+GAMMA);
+        System.out.println("make by Born. ALPHA: " + ALPHA + ", BETA: " + BETA + ", GAMMA: " + GAMMA);
         logTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -46,9 +47,9 @@ public class InvokerStats {
 
                     for (DataCollectorCopy dc : copyList) {
                         String s = String.format(
-                                "%s bucket active:%d, bucket:%d, weight:%f, mean:%f, curr:%f.",
+                                "%s bucket active:%d, bucket:%d, weight:%f, throughput:%d.",
                                 LocalDateTime.now().toString(), dc.getActive(), dc.getBucket(),
-                                dc.getWeight() / totalWeight, dc.getMean(), dc.getCurr());
+                                dc.getWeight() / totalWeight, dc.getWeight());
 
                         log.info(s);
                     }

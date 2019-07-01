@@ -3,8 +3,6 @@ package com.aliware.tianchi;
 import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
 import com.aliware.tianchi.stats.Stopwatch;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import org.apache.dubbo.common.Constants;
 import org.apache.dubbo.common.extension.Activate;
@@ -35,7 +33,6 @@ public class TestClientFilter implements Filter {
         try {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
             dc.incrementRequests();
-            invocation.getAttachments().put("st", String.valueOf(System.nanoTime()));
             Result result = invoker.invoke(invocation);
             return result;
         } catch (Exception e) {
@@ -51,15 +48,12 @@ public class TestClientFilter implements Filter {
         }
         try {
             DataCollector dc = InvokerStats.getInstance().getDataCollector(invoker);
-            Long startTime = Long.valueOf(invocation.getAttachment("st"));
-            Stopwatch stopwatch = Stopwatch.createStarted(startTime);
             if (result.hasException()) {
-                dc.incrementFailedRequests();
+                dc.failedRequest();
             } else {
                 dc.succeedRequest();
             }
             dc.decrementRequests();
-            dc.noteValue(stopwatch.stop().elapsed(TimeUnit.MILLISECONDS));
         } catch (Exception e) {
             log.error("", e);
         }

@@ -15,7 +15,7 @@ public class DataCollector {
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
-    private DistributionRate distributionRate = new DistributionRate(3000, 200, 400);
+    private ThroughputRate throughputRate = new ThroughputRate(500);
 
     public DataCollector() {
     }
@@ -25,20 +25,16 @@ public class DataCollector {
         activeRequests.incrementAndGet();
     }
 
-    public void incrementFailedRequests() {
+    public void failedRequest() {
     }
 
     public void decrementRequests() {
         activeRequests.decrementAndGet();
+        throughputRate.note();
     }
 
     public void setBucket(int bucket) {
         this.bucket = bucket;
-        this.distributionRate.setBucket(bucket);
-    }
-
-    public void noteValue(long i) {
-        distributionRate.calc(i);
     }
 
     public void succeedRequest() {
@@ -53,41 +49,25 @@ public class DataCollector {
         return bucket;
     }
 
-    public double getMean() {
-        return distributionRate.getMean();
-    }
-
 
     public int getWeight() {
-        double mean = distributionRate.getMean();
-        double curr = distributionRate.getCurr();
-        double r = Math.pow(1000 / mean, GAMMA) * (Math.pow(bucket, ALPHA) * BETA + curr * (1 - BETA));
-        return new Double(r).intValue();
-    }
-
-    public double getCurr() {
-        double curr = distributionRate.getCurr();
-        return (Math.pow(bucket, ALPHA) * BETA + curr * (1 - BETA));
+        return throughputRate.getThroughputRate();
     }
 
     public DataCollectorCopy copy() {
-        return new DataCollectorCopy(getActive(), getBucket(), getMean(), getCurr(), getWeight());
+        return new DataCollectorCopy(getActive(), getBucket(), getWeight());
     }
 
     public static class DataCollectorCopy{
 
-        public DataCollectorCopy(int active, int bucket, double mean, double curr, int weight) {
+        public DataCollectorCopy(int active, int bucket, int weight) {
             this.active = active;
             this.bucket = bucket;
-            this.mean = mean;
-            this.curr = curr;
             this.weight = weight;
         }
 
         private int active;
         private int bucket;
-        private double mean;
-        private double curr;
         private int weight;
 
         public int getActive() {
@@ -104,22 +84,6 @@ public class DataCollector {
 
         public void setBucket(int bucket) {
             this.bucket = bucket;
-        }
-
-        public double getMean() {
-            return mean;
-        }
-
-        public void setMean(double mean) {
-            this.mean = mean;
-        }
-
-        public double getCurr() {
-            return curr;
-        }
-
-        public void setCurr(double curr) {
-            this.curr = curr;
         }
 
         public int getWeight() {
