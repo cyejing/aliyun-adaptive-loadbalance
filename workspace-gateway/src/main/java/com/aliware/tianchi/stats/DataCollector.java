@@ -63,7 +63,7 @@ public class DataCollector {
 
 
             if (ThreadLocalRandom.current().nextInt(2000) < bucket) {
-                this.weight = this.weight + (bucket/10);
+                this.weight = this.weight + (bucket/5);
             }
         
         return new Double(this.weight).intValue();
