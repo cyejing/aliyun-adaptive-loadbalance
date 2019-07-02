@@ -51,7 +51,7 @@ public class DataCollector {
 
 
     public int getWeight() {
-        return throughputRate.getThroughputRate();
+        return new Double(throughputRate.getThroughputRate()).intValue();
     }
 
     public DataCollectorCopy copy() {

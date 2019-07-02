@@ -9,7 +9,7 @@ public class ThroughputRate {
 
     AtomicInteger throughput = new AtomicInteger(0);
 
-    private int throughputRate;
+    private double throughputRate;
 
     private long interval;
     private long threshold;
@@ -24,7 +24,7 @@ public class ThroughputRate {
         return throughput.incrementAndGet();
     }
 
-    public int getThroughputRate() {
+    public double getThroughputRate() {
         checkAndSet();
         return throughputRate;
     }
@@ -33,7 +33,7 @@ public class ThroughputRate {
         int i = throughput.get();
         long now = System.currentTimeMillis();
         if (now > threshold) {
-            this.throughputRate = i;
+            this.throughputRate = i * (1000D / (now - threshold + interval));
             this.throughput.set(0);
             this.threshold = now + interval;
         }
