@@ -1,5 +1,6 @@
 package com.aliware.tianchi.stats;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -52,13 +53,21 @@ public class DataCollector {
 
 
     public int getWeight() {
+
         double rate = this.throughputRate.getThroughputRate();
         if (this.weight == 0) {
             this.weight = rate;
         }
         this.weight = this.weight * ALPHA + rate * (1 - ALPHA);
+
+        if (bucket == 650) {
+            if (ThreadLocalRandom.current().nextInt(10000) == 500) {
+                this.weight = this.weight * 1.10;
+            }
+        }
         return new Double(this.weight).intValue();
     }
+
 
     public DataCollectorCopy copy() {
         return new DataCollectorCopy(getActive(), getBucket(), getWeight());
