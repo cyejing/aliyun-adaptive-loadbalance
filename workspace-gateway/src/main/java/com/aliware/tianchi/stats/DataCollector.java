@@ -8,14 +8,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
 
-    public static final double ALPHA = 1;
-    public static final double BETA = 0.125;
+    public static final double ALPHA = 0.125;
+    public static final double BETA = 1;
     public static final double GAMMA = 1;
 
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
     private ThroughputRate throughputRate = new ThroughputRate(300);
+    private double weight;
 
     public DataCollector() {
     }
@@ -51,7 +52,12 @@ public class DataCollector {
 
 
     public int getWeight() {
-        return new Double(throughputRate.getThroughputRate()).intValue();
+        double rate = this.throughputRate.getThroughputRate();
+        if (this.weight == 0) {
+            this.weight = rate;
+        }
+        this.weight = this.weight * ALPHA + rate * (1 - ALPHA);
+        return new Double(this.weight).intValue();
     }
 
     public DataCollectorCopy copy() {
