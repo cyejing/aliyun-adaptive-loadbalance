@@ -58,13 +58,14 @@ public class DataCollector {
         if (this.weight == 0) {
             this.weight = rate;
         }
+        
         this.weight = this.weight * ALPHA + rate * (1 - ALPHA);
 
-        if (bucket == 650) {
-            if (ThreadLocalRandom.current().nextInt(1000) == 500) {
-                this.weight = this.weight * 1.10;
+
+            if (ThreadLocalRandom.current().nextInt(2000) < bucket) {
+                this.weight = this.weight + (bucket/10);
             }
-        }
+        
         return new Double(this.weight).intValue();
     }
 
