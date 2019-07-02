@@ -61,7 +61,7 @@ public class DataCollector {
         this.weight = this.weight * ALPHA + rate * (1 - ALPHA);
 
         if (bucket == 650) {
-            if (ThreadLocalRandom.current().nextInt(10000) == 500) {
+            if (ThreadLocalRandom.current().nextInt(1000) == 500) {
                 this.weight = this.weight * 1.10;
             }
         }
