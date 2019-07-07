@@ -48,7 +48,7 @@ public class InvokerStats {
 
                     for (DataCollectorCopy dc : copyList) {
                         String s = String.format(
-                                "%s bucket active:%d, bucket:%d, weightRate:%f, weight%d, throughput:%d, total:%d.",
+                                "%s bucket active:%d, bucket:%d, weightRate:%f, weight:%d, throughput:%d, total:%d.",
                                 LocalDateTime.now().toString(), dc.getActive(), dc.getBucket(),
                                 dc.getWeight() / totalWeight, dc.getWeight(),
                                 dc.getThroughput(), dc.getTotal());
