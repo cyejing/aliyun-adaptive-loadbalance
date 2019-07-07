@@ -8,6 +8,7 @@ import static com.aliware.tianchi.stats.DataCollector.GAMMA;
 import com.aliware.tianchi.stats.DataCollector.DataCollectorCopy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -69,12 +70,9 @@ public class InvokerStats {
             @Override
             public void run() {
                 try {
-                    Set<Entry<String, DataCollector>> entries = InvokerStats.getInstance().getDataCollectors()
-                            .entrySet();
-                    for (Entry<String, DataCollector> entry : entries) {
-                        String key = entry.getKey();
-                        DataCollector dc = entry.getValue();
-                        log.info(LocalDateTime.now().toString() + " key:" + key + " fire");
+                    Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
+                    for (DataCollector dc : values) {
+                        log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " fire");
                         dc.setRate(1.05);
                         Thread.sleep(200);
                         dc.setRate(1.0);
