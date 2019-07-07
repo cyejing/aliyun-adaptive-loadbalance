@@ -21,6 +21,8 @@ public class DataCollector {
     private ThroughputRate throughputRate = new ThroughputRate(COLLECT);
     private ThroughputRate totalRate;
 
+    private double rate = 1.0;
+
     public DataCollector(ThroughputRate totalRate) {
         this.totalRate = totalRate;
     }
@@ -61,13 +63,18 @@ public class DataCollector {
 
         double weight = this.throughputRate.getWeight();
 
-        if (ThreadLocalRandom.current().nextInt(2000) < bucket) {
-            weight = weight + (bucket / 5);
-        }
+//        if (ThreadLocalRandom.current().nextInt(2000) < bucket) {
+//            weight = weight + (bucket / 5);
+//        }
+
+        weight = weight * rate;
         
         return new Double(weight).intValue();
     }
 
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
 
     public DataCollectorCopy copy() {
         return new DataCollectorCopy(getActive(), getBucket(), getWeight(),

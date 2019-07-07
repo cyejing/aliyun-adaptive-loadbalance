@@ -12,10 +12,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
@@ -28,6 +30,7 @@ public class InvokerStats {
 
     private static final Logger log = LoggerFactory.getLogger(InvokerStats.class);
     private Timer logTimer = new Timer();
+    private Timer fire = new Timer();
 
 
     public InvokerStats() {
@@ -61,6 +64,27 @@ public class InvokerStats {
             }
         }, 1000, 200);
 
+
+        fire.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    Set<Entry<String, DataCollector>> entries = InvokerStats.getInstance().getDataCollectors()
+                            .entrySet();
+                    for (Entry<String, DataCollector> entry : entries) {
+                        String key = entry.getKey();
+                        DataCollector dc = entry.getValue();
+                        log.info(LocalDateTime.now().toString() + " key:" + key + " fire");
+                        dc.setRate(1.05);
+                        Thread.sleep(200);
+                        dc.setRate(1.0);
+                        Thread.sleep(100);
+                    }
+                } catch (Exception e) {
+                    log.error("", e);
+                }
+            }
+        },3000,100);
     }
 
     private static class InvokerStatsBuilder {
@@ -78,8 +102,10 @@ public class InvokerStats {
     public DataCollector getDataCollector(String key) {
         DataCollector dataCollector = dataMap.get(key);
         if (dataCollector == null) {
-            dataMap.put(key, new DataCollector(totalRate));
-            dataCollector = dataMap.get(key);
+            synchronized (this) {
+                dataMap.put(key, new DataCollector(totalRate));
+                dataCollector = dataMap.get(key);
+            }
         }
         return dataCollector;
     }
