@@ -2,6 +2,7 @@ package com.aliware.tianchi.stats;
 
 import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 import static com.aliware.tianchi.stats.DataCollector.BETA;
+import static com.aliware.tianchi.stats.DataCollector.COLLECT;
 import static com.aliware.tianchi.stats.DataCollector.GAMMA;
 
 import com.aliware.tianchi.stats.DataCollector.DataCollectorCopy;
@@ -47,9 +48,10 @@ public class InvokerStats {
 
                     for (DataCollectorCopy dc : copyList) {
                         String s = String.format(
-                                "%s bucket active:%d, bucket:%d, weight:%f, throughput:%d.",
+                                "%s bucket active:%d, bucket:%d, weightRate:%f, weight%d, throughput:%d, total:%d.",
                                 LocalDateTime.now().toString(), dc.getActive(), dc.getBucket(),
-                                dc.getWeight() / totalWeight, dc.getWeight());
+                                dc.getWeight() / totalWeight, dc.getWeight(),
+                                dc.getThroughput(), dc.getTotal());
 
                         log.info(s);
                     }
@@ -71,11 +73,12 @@ public class InvokerStats {
     }
 
     private ConcurrentMap<String, DataCollector> dataMap = new ConcurrentHashMap();
+    private ThroughputRate totalRate = new ThroughputRate(COLLECT);
 
     public DataCollector getDataCollector(String key) {
         DataCollector dataCollector = dataMap.get(key);
         if (dataCollector == null) {
-            dataMap.put(key, new DataCollector());
+            dataMap.put(key, new DataCollector(totalRate));
             dataCollector = dataMap.get(key);
         }
         return dataCollector;

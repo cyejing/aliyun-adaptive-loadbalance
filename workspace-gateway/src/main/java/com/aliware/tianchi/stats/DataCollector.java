@@ -13,13 +13,16 @@ public class DataCollector {
     public static final double BETA = 1;
     public static final double GAMMA = 1;
 
+    public static final int COLLECT =300;
+
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
-    private ThroughputRate throughputRate = new ThroughputRate(300);
-    private volatile double weight;
+    private ThroughputRate throughputRate = new ThroughputRate(COLLECT);
+    private ThroughputRate totalRate;
 
-    public DataCollector() {
+    public DataCollector(ThroughputRate totalRate) {
+        this.totalRate = totalRate;
     }
 
 
@@ -33,6 +36,7 @@ public class DataCollector {
     public void decrementRequests() {
         activeRequests.decrementAndGet();
         throughputRate.note();
+        totalRate.note();
     }
 
     public void setBucket(int bucket) {
@@ -54,60 +58,59 @@ public class DataCollector {
 
     public int getWeight() {
 
-        double rate = this.throughputRate.getThroughputRate();
-        if (this.weight == 0) {
-            this.weight = rate;
+
+        double weight = this.throughputRate.getWeight();
+
+        if (ThreadLocalRandom.current().nextInt(2000) < bucket) {
+            weight = weight + (bucket / 5);
         }
         
-        this.weight = this.weight * ALPHA + rate * (1 - ALPHA);
-
-
-            if (ThreadLocalRandom.current().nextInt(2000) < bucket) {
-                this.weight = this.weight + (bucket/5);
-            }
-        
-        return new Double(this.weight).intValue();
+        return new Double(weight).intValue();
     }
 
 
     public DataCollectorCopy copy() {
-        return new DataCollectorCopy(getActive(), getBucket(), getWeight());
+        return new DataCollectorCopy(getActive(), getBucket(), getWeight(),
+                new Double(this.throughputRate.getThroughputRate()).intValue(),
+                new Double(totalRate.getThroughputRate()).intValue());
     }
 
     public static class DataCollectorCopy{
 
-        public DataCollectorCopy(int active, int bucket, int weight) {
+        public DataCollectorCopy(int active, int bucket, int weight,int throughput,int total) {
             this.active = active;
             this.bucket = bucket;
             this.weight = weight;
+            this.throughput = throughput;
+            this.total = total;
         }
 
         private int active;
         private int bucket;
         private int weight;
+        private int throughput;
+        private int total;
 
         public int getActive() {
             return active;
         }
 
-        public void setActive(int active) {
-            this.active = active;
-        }
 
         public int getBucket() {
             return bucket;
         }
 
-        public void setBucket(int bucket) {
-            this.bucket = bucket;
-        }
 
         public int getWeight() {
             return weight;
         }
 
-        public void setWeight(int weight) {
-            this.weight = weight;
+        public int getThroughput() {
+            return throughput;
+        }
+
+        public int getTotal() {
+            return total;
         }
     }
 }

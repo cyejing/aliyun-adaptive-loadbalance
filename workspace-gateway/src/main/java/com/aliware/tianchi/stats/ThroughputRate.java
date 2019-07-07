@@ -1,5 +1,7 @@
 package com.aliware.tianchi.stats;
 
+import static com.aliware.tianchi.stats.DataCollector.ALPHA;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -10,6 +12,7 @@ public class ThroughputRate {
     AtomicInteger throughput = new AtomicInteger(0);
 
     private double throughputRate;
+    private double weight;
 
     private long interval;
     private long threshold;
@@ -29,11 +32,21 @@ public class ThroughputRate {
         return throughputRate;
     }
 
+    public double getWeight() {
+        checkAndSet();
+        return weight;
+    }
+
     public void checkAndSet() {
         int i = throughput.get();
         long now = System.currentTimeMillis();
         if (now > threshold) {
-            this.throughputRate = i * (1000D / (now - threshold + interval));
+            double nWeight = i * (1000D / (now - threshold + interval));
+
+            double oWeight = this.weight;
+            this.weight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
+
+            this.throughputRate = nWeight;
             this.throughput.set(0);
             this.threshold = now + interval;
         }
