@@ -73,10 +73,8 @@ public class InvokerStats {
                 try {
                     Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
                     for (DataCollector dc : values) {
-                        if (dc.getThroughputRate().isRising()) {
-                            log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " fire: " + Arrays.toString(dc.getThroughputRate().getDevWeights()));
-                            dc.setRate(1.05);
-                        }
+                        log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " fire: " );
+                        dc.setRate(1.05);
                         Thread.sleep(200);
                         dc.setRate(1.0);
                         Thread.sleep(100);

@@ -2,7 +2,6 @@ package com.aliware.tianchi.stats;
 
 import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -14,16 +13,17 @@ public class ThroughputRate {
 
     private double throughputRate;
     private double weight;
-
-    private double[] devWeights = new double[]{0,0,0};
-    private AtomicInteger devIndex = new AtomicInteger(0);
+    private double devWeight;
 
     private long interval;
     private long threshold;
 
+    private long maxThreshold;
+
     public ThroughputRate(long interval) {
         this.interval = interval;
         this.threshold = System.currentTimeMillis() + interval;
+        this.maxThreshold = System.currentTimeMillis() + interval * 10;
     }
 
     public int note() {
@@ -49,29 +49,17 @@ public class ThroughputRate {
             double nWeight = i * (1000D / (now - threshold + interval));
             this.throughputRate = nWeight;
             nWeight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
-            double devWeight = nWeight - oWeight;
 
-            this.weight = nWeight;
-            this.devWeights[devIndex.getAndIncrement() % this.devWeights.length] = devWeight;
+            this.weight = nWeight > oWeight ? nWeight : oWeight;
+
+            if (now > maxThreshold) {
+                this.weight = nWeight;
+                this.maxThreshold = now + interval * 10;
+            }
 
             this.throughput.set(0);
             this.threshold = now + interval;
         }
     }
 
-    public boolean isRising() {
-        for (int i = 0; i < devWeights.length; i++) {
-            if (devWeights[i] > 100) {
-                return true;
-            }
-        }
-//        if (ThreadLocalRandom.current().nextInt(10) == 1) {
-//            return true;
-//        }
-        return false;
-    }
-
-    public double[] getDevWeights() {
-        return devWeights;
-    }
 }

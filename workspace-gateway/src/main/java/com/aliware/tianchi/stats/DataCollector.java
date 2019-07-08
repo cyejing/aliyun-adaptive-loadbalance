@@ -59,13 +59,7 @@ public class DataCollector {
 
 
     public int getWeight() {
-
-
         double weight = this.throughputRate.getWeight();
-
-//        if (ThreadLocalRandom.current().nextInt(2000) < bucket) {
-//            weight = weight + (bucket / 5);
-//        }
 
         weight = weight * rate;
 
