@@ -8,6 +8,7 @@ import static com.aliware.tianchi.stats.DataCollector.GAMMA;
 import com.aliware.tianchi.stats.DataCollector.DataCollectorCopy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -73,7 +74,7 @@ public class InvokerStats {
                     Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
                     for (DataCollector dc : values) {
                         if (dc.getThroughputRate().isRising()) {
-                            log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " fire");
+                            log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " fire: " + Arrays.toString(dc.getThroughputRate().getDevWeights()));
                             dc.setRate(1.05);
                         }
                         Thread.sleep(200);

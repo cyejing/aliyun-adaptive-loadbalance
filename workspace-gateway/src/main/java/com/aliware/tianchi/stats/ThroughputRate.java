@@ -66,5 +66,7 @@ public class ThroughputRate {
         return false;
     }
 
-
+    public double[] getDevWeights() {
+        return devWeights;
+    }
 }
