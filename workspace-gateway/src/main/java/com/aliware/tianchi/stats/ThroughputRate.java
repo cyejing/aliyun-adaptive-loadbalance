@@ -2,6 +2,7 @@ package com.aliware.tianchi.stats;
 
 import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -59,10 +60,13 @@ public class ThroughputRate {
 
     public boolean isRising() {
         for (int i = 0; i < devWeights.length; i++) {
-            if (devWeights[i] > 200) {
+            if (devWeights[i] > 100) {
                 return true;
             }
         }
+//        if (ThreadLocalRandom.current().nextInt(10) == 1) {
+//            return true;
+//        }
         return false;
     }
 
