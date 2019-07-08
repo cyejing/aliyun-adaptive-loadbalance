@@ -47,12 +47,13 @@ public class ThroughputRate {
         if (now > threshold) {
             double oWeight = this.weight;
             double nWeight = i * (1000D / (now - threshold + interval));
-
+            nWeight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
             double devWeight = nWeight - oWeight;
-            this.weight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
+
+            this.weight = nWeight;
+            this.throughputRate = nWeight;
             this.devWeights[devIndex.getAndIncrement() % this.devWeights.length] = devWeight;
 
-            this.throughputRate = nWeight;
             this.throughput.set(0);
             this.threshold = now + interval;
         }
