@@ -50,7 +50,6 @@ public class ThroughputRate {
 
             double devWeight = nWeight - oWeight;
             this.weight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
-            this.weight = nWeight;
             this.devWeights[devIndex.getAndIncrement() % this.devWeights.length] = devWeight;
 
             this.throughputRate = nWeight;
