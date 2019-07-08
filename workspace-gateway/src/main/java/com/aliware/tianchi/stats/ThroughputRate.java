@@ -14,6 +14,9 @@ public class ThroughputRate {
     private double throughputRate;
     private double weight;
 
+    private double[] devWeights = new double[]{0,0,0};
+    private AtomicInteger devIndex = new AtomicInteger(0);
+
     private long interval;
     private long threshold;
 
@@ -41,10 +44,12 @@ public class ThroughputRate {
         int i = throughput.get();
         long now = System.currentTimeMillis();
         if (now > threshold) {
+            double oWeight = this.weight;
             double nWeight = i * (1000D / (now - threshold + interval));
 
-            double oWeight = this.weight;
+            double devWeight = nWeight - oWeight;
             this.weight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
+            this.devWeights[devIndex.getAndIncrement() % this.devWeights.length] = devWeight;
 
             this.throughputRate = nWeight;
             this.throughput.set(0);
@@ -52,6 +57,14 @@ public class ThroughputRate {
         }
     }
 
+    public boolean isRising() {
+        for (int i = 0; i < devWeights.length; i++) {
+            if (devWeights[i] > 200) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 }

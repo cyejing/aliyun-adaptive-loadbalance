@@ -68,12 +68,16 @@ public class DataCollector {
 //        }
 
         weight = weight * rate;
-        
+
         return new Double(weight).intValue();
     }
 
     public void setRate(double rate) {
         this.rate = rate;
+    }
+
+    public ThroughputRate getThroughputRate() {
+        return throughputRate;
     }
 
     public DataCollectorCopy copy() {
