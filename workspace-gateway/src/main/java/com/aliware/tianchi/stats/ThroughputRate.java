@@ -18,39 +18,11 @@ public class ThroughputRate {
 
     private volatile double throughputRate;
     private volatile double weight;
-        private volatile AtomicInteger rise = new AtomicInteger(0);
+    private volatile AtomicInteger rise = new AtomicInteger(0);
 
     private long interval;
     private volatile long threshold;
 
-    class Rise{
-
-        private double weight;
-        private boolean rise;
-
-        public Rise(double weight, boolean rise) {
-            this.weight = weight;
-            this.rise = rise;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof Rise)) {
-                return false;
-            }
-            Rise rise1 = (Rise) o;
-            return Double.compare(rise1.weight, weight) == 0 &&
-                    rise == rise1.rise;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(weight, rise);
-        }
-    }
 
     public ThroughputRate(long interval) {
         this.interval = interval;
@@ -78,8 +50,8 @@ public class ThroughputRate {
         long t = this.threshold;
         if (now > t) {
             synchronized (this) {
-                System.out.println(LocalDateTime.now().toString() + " weight" + this.weight);
                 if (now > threshold) {
+                    System.out.println(LocalDateTime.now().toString() + " 时间变化weight" + this.weight);
                     double oWeight = this.weight;
                     double nWeight = i * (1000D / (now - t + interval));
                     this.throughputRate = nWeight;
@@ -93,8 +65,6 @@ public class ThroughputRate {
                         this.weight = oWeight;
                         this.rise.decrementAndGet();
                     }
-
-
 
                     this.throughput.set(0);
                     this.threshold = now + interval;
