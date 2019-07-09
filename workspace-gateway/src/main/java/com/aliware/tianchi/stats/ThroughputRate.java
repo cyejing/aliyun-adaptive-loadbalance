@@ -2,6 +2,9 @@ package com.aliware.tianchi.stats;
 
 import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 
+import java.time.LocalDateTime;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -11,14 +14,14 @@ public class ThroughputRate {
 
     AtomicInteger throughput = new AtomicInteger(0);
 
-    private double throughputRate;
-    private double weight;
-    private double devWeight;
+    private volatile double throughputRate;
+    private volatile double weight;
+    private volatile AtomicBoolean rise = new AtomicBoolean(false);
 
     private long interval;
-    private long threshold;
+    private volatile long threshold;
 
-    private long maxThreshold;
+    private volatile long maxThreshold;
 
     public ThroughputRate(long interval) {
         this.interval = interval;
@@ -50,9 +53,17 @@ public class ThroughputRate {
             this.throughputRate = nWeight;
             nWeight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
-            this.weight = nWeight > oWeight ? nWeight : oWeight;
+            if (nWeight > oWeight) {
+                this.weight = nWeight;
+                this.rise.compareAndSet(false, true);
+            }else{
+                this.weight = oWeight;
+                this.rise.compareAndSet(true, false);
+            }
+
 
             if (now > maxThreshold) {
+                System.out.println(LocalDateTime.now().toString() + " reset weight:" + nWeight);
                 this.weight = nWeight;
                 this.maxThreshold = now + interval * 10;
             }
@@ -62,4 +73,10 @@ public class ThroughputRate {
         }
     }
 
+    public boolean isRise() {
+        if (rise.get()) {
+            return true;
+        }
+        return false;
+    }
 }

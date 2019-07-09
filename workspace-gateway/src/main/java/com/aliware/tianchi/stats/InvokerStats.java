@@ -19,6 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.apache.dubbo.common.logger.Logger;
@@ -73,11 +74,18 @@ public class InvokerStats {
                 try {
                     Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
                     for (DataCollector dc : values) {
-                        log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " fire: " );
-                        dc.setRate(1.05);
-                        Thread.sleep(200);
+                        if (dc.getThroughputRate().isRise()) {
+                            log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " fire: ");
+                            dc.setRate(1.05);
+                        } else {
+                            if (ThreadLocalRandom.current().nextInt(10) == 1) {
+                                log.info(LocalDateTime.now().toString() + " random bucket:" + dc.getBucket()
+                                        + " fire: ");
+                                dc.setRate(1.05);
+                            }
+                        }
+                        Thread.sleep(COLLECT);
                         dc.setRate(1.0);
-                        Thread.sleep(100);
                     }
                 } catch (Exception e) {
                     log.error("", e);
