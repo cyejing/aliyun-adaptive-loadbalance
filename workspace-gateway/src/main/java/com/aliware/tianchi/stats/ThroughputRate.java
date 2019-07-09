@@ -78,6 +78,7 @@ public class ThroughputRate {
         long t = this.threshold;
         if (now > t) {
             synchronized (this) {
+                System.out.println(LocalDateTime.now().toString() + " weight" + this.weight);
                 if (now > threshold) {
                     double oWeight = this.weight;
                     double nWeight = i * (1000D / (now - t + interval));
@@ -88,10 +89,9 @@ public class ThroughputRate {
                     if (nWeight > oWeight || devWeight > 1200) {
                         this.weight = nWeight;
                         this.rise.set(1);
-                        System.out.println(LocalDateTime.now().toString() + "设置时间上升" + nWeight);
                     }else{
                         this.weight = oWeight;
-                        int i1 = this.rise.decrementAndGet();
+                        this.rise.decrementAndGet();
                     }
 
 
