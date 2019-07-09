@@ -78,7 +78,7 @@ public class ThroughputRate {
         long t = this.threshold;
         if (now > t) {
             synchronized (this) {
-                if (System.currentTimeMillis() > threshold) {
+                if (now > threshold) {
                     double oWeight = this.weight;
                     double nWeight = i * (1000D / (now - t + interval));
                     this.throughputRate = nWeight;
@@ -92,13 +92,12 @@ public class ThroughputRate {
                     }else{
                         this.weight = oWeight;
                         int i1 = this.rise.decrementAndGet();
-                        System.out.println(LocalDateTime.now().toString() + " 设置时间下降" + oWeight +" i:"+i1);
                     }
 
 
 
                     this.throughput.set(0);
-                    this.threshold = System.currentTimeMillis() + interval;
+                    this.threshold = now + interval;
                 }
             }
         }
