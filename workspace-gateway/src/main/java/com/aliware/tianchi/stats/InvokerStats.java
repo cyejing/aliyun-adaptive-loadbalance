@@ -79,8 +79,7 @@ public class InvokerStats {
                             dc.setRate(1.05);
                         } else {
                             if (ThreadLocalRandom.current().nextInt(5) == 1) {
-                                log.info(LocalDateTime.now().toString() + " random bucket:" + dc.getBucket()
-                                        + " fire: ");
+                                log.info(LocalDateTime.now().toString() + " random bucket:" + dc.getBucket() + " fire: ");
                                 dc.setRate(1.05);
                             }
                         }

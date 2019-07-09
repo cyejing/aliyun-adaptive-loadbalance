@@ -63,7 +63,6 @@ public class ThroughputRate {
 
 
             if (now > maxThreshold) {
-                System.out.println(LocalDateTime.now().toString() + " reset weight:" + nWeight);
                 this.weight = nWeight;
                 this.maxThreshold = now + interval * 10;
             }
