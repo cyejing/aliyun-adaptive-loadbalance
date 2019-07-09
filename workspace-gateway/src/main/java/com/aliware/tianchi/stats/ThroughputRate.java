@@ -53,18 +53,14 @@ public class ThroughputRate {
             double devWeight = Math.abs(nWeight - oWeight);
             nWeight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
-            if (nWeight > oWeight) {
+            if (nWeight > oWeight || devWeight > 1200) {
                 this.weight = nWeight;
-                this.rise.set(2);
+                this.rise.set(1);
             }else{
                 this.weight = oWeight;
                 this.rise.decrementAndGet();
             }
 
-            if (devWeight > 1200) {
-                this.weight = nWeight;
-                this.rise.set(1);
-            }
 
             this.throughput.set(0);
             this.threshold = now + interval;
