@@ -78,26 +78,30 @@ public class ThroughputRate {
         long now = System.currentTimeMillis();
         long t = this.threshold;
         if (now > t) {
-            double oWeight = this.weight;
-            double nWeight = i * (1000D / (now - t + interval));
-            this.throughputRate = nWeight;
-            double devWeight = Math.abs(nWeight - oWeight);
-            nWeight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
+            synchronized (this) {
+                if (now > threshold) {
+                    double oWeight = this.weight;
+                    double nWeight = i * (1000D / (now - t + interval));
+                    this.throughputRate = nWeight;
+                    double devWeight = Math.abs(nWeight - oWeight);
+                    nWeight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
-            if (nWeight > oWeight || devWeight > 1200) {
-                this.weight = nWeight;
-                this.rise.set(new Rise(nWeight, true));
-                System.out.println(LocalDateTime.now().toString() + "设置时间上升" + nWeight);
-            }else{
-                this.weight = oWeight;
-                if (this.rise.compareAndSet(new Rise(oWeight, true), new Rise(oWeight, false))) {
-                    System.out.println(LocalDateTime.now().toString() + " 设置时间下降" + oWeight);
+                    if (nWeight > oWeight || devWeight > 1200) {
+                        this.weight = nWeight;
+                        this.rise.set(new Rise(nWeight, true));
+                        System.out.println(LocalDateTime.now().toString() + "设置时间上升" + nWeight);
+                    }else{
+                        this.weight = oWeight;
+                        if (this.rise.compareAndSet(new Rise(oWeight, true), new Rise(oWeight, false))) {
+                            System.out.println(LocalDateTime.now().toString() + " 设置时间下降" + oWeight);
+                        }
+                    }
+
+
+                    this.throughput.set(0);
+                    this.threshold = now + interval;
                 }
             }
-
-
-            this.throughput.set(0);
-            this.threshold = now + interval;
         }
     }
 
