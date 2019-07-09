@@ -45,11 +45,12 @@ public class ThroughputRate {
     }
 
     public void checkAndSet() {
-        int i = throughput.get();
+        int i = this.throughput.get();
         long now = System.currentTimeMillis();
-        if (now > threshold) {
+        long t = this.threshold;
+        if (now > t) {
             double oWeight = this.weight;
-            double nWeight = i * (1000D / (now - threshold + interval));
+            double nWeight = i * (1000D / (now - t + interval));
             this.throughputRate = nWeight;
             nWeight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
