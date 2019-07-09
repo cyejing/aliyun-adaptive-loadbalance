@@ -16,7 +16,7 @@ public class ThroughputRate {
 
     private volatile double throughputRate;
     private volatile double weight;
-    private volatile AtomicBoolean rise = new AtomicBoolean(false);
+    private volatile AtomicInteger rise = new AtomicInteger(0);
 
     private long interval;
     private volatile long threshold;
@@ -55,10 +55,10 @@ public class ThroughputRate {
 
             if (nWeight > oWeight) {
                 this.weight = nWeight;
-                this.rise.compareAndSet(false, true);
+                this.rise.set(3);
             }else{
                 this.weight = oWeight;
-                this.rise.compareAndSet(true, false);
+                this.rise.incrementAndGet();
             }
 
 
@@ -73,7 +73,7 @@ public class ThroughputRate {
     }
 
     public boolean isRise() {
-        if (rise.get()) {
+        if (rise.get() > 0) {
             return true;
         }
         return false;
