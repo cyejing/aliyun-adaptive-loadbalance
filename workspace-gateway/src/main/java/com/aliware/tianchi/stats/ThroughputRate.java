@@ -63,7 +63,7 @@ public class ThroughputRate {
                 this.rise.decrementAndGet();
             }
 
-            if (now > maxThreshold || devWeight > 2000) {
+            if (now > maxThreshold || devWeight > 1200) {
                 this.weight = nWeight;
                 this.maxThreshold = now + interval * 10;
             }
