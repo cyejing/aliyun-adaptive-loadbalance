@@ -52,8 +52,8 @@ public class ThroughputRate {
             double oWeight = this.weight;
             double nWeight = i * (1000D / (now - t + interval));
             this.throughputRate = nWeight;
+            double devWeight = Math.abs(nWeight - oWeight);
             nWeight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
-            double devWeight = nWeight - oWeight;
 
             if (nWeight > oWeight) {
                 this.weight = nWeight;
