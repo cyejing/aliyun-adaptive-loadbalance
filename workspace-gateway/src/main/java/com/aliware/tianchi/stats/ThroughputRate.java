@@ -78,7 +78,7 @@ public class ThroughputRate {
         long t = this.threshold;
         if (now > t) {
             synchronized (this) {
-                if (now > threshold) {
+                if (System.currentTimeMillis() > threshold) {
                     double oWeight = this.weight;
                     double nWeight = i * (1000D / (now - t + interval));
                     this.throughputRate = nWeight;
@@ -98,7 +98,7 @@ public class ThroughputRate {
 
 
                     this.throughput.set(0);
-                    this.threshold = now + interval;
+                    this.threshold = System.currentTimeMillis() + interval;
                 }
             }
         }
