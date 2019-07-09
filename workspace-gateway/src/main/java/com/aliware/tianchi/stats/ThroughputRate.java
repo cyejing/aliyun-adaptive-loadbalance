@@ -18,8 +18,7 @@ public class ThroughputRate {
 
     private volatile double throughputRate;
     private volatile double weight;
-    //    private volatile AtomicInteger rise = new AtomicInteger(0);
-    private volatile AtomicReference<Rise> rise = new AtomicReference<>();
+        private volatile AtomicInteger rise = new AtomicInteger(0);
 
     private long interval;
     private volatile long threshold;
@@ -88,14 +87,14 @@ public class ThroughputRate {
 
                     if (nWeight > oWeight || devWeight > 1200) {
                         this.weight = nWeight;
-                        this.rise.set(new Rise(nWeight, true));
+                        this.rise.set(1);
                         System.out.println(LocalDateTime.now().toString() + "设置时间上升" + nWeight);
                     }else{
                         this.weight = oWeight;
-                        if (this.rise.compareAndSet(new Rise(oWeight, true), new Rise(oWeight, false))) {
-                            System.out.println(LocalDateTime.now().toString() + " 设置时间下降" + oWeight);
-                        }
+                        int i1 = this.rise.decrementAndGet();
+                        System.out.println(LocalDateTime.now().toString() + " 设置时间下降" + oWeight +" i:"+i1);
                     }
+
 
 
                     this.throughput.set(0);
