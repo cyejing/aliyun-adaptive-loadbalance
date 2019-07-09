@@ -3,9 +3,11 @@ package com.aliware.tianchi.stats;
 import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Born
@@ -16,11 +18,40 @@ public class ThroughputRate {
 
     private volatile double throughputRate;
     private volatile double weight;
-    private volatile AtomicInteger rise = new AtomicInteger(0);
+    //    private volatile AtomicInteger rise = new AtomicInteger(0);
+    private volatile AtomicReference<Rise> rise = new AtomicReference<>();
 
     private long interval;
     private volatile long threshold;
 
+    class Rise{
+
+        private double weight;
+        private boolean rise;
+
+        public Rise(double weight, boolean rise) {
+            this.weight = weight;
+            this.rise = rise;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof Rise)) {
+                return false;
+            }
+            Rise rise1 = (Rise) o;
+            return Double.compare(rise1.weight, weight) == 0 &&
+                    rise == rise1.rise;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(weight, rise);
+        }
+    }
 
     public ThroughputRate(long interval) {
         this.interval = interval;
@@ -55,10 +86,13 @@ public class ThroughputRate {
 
             if (nWeight > oWeight || devWeight > 1200) {
                 this.weight = nWeight;
-                this.rise.set(1);
+                this.rise.set(new Rise(nWeight, true));
+                System.out.println(LocalDateTime.now().toString() + "设置时间上升" + nWeight);
             }else{
                 this.weight = oWeight;
-                this.rise.decrementAndGet();
+                if (this.rise.compareAndSet(new Rise(oWeight, true), new Rise(oWeight, false))) {
+                    System.out.println(LocalDateTime.now().toString() + " 设置时间下降" + oWeight);
+                }
             }
 
 
@@ -68,7 +102,7 @@ public class ThroughputRate {
     }
 
     public boolean isRise() {
-        if (rise.get() > 0) {
+        if (rise.get().rise) {
             return true;
         }
         return false;
