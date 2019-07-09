@@ -21,12 +21,10 @@ public class ThroughputRate {
     private long interval;
     private volatile long threshold;
 
-    private volatile long maxThreshold;
 
     public ThroughputRate(long interval) {
         this.interval = interval;
         this.threshold = System.currentTimeMillis() + interval;
-        this.maxThreshold = System.currentTimeMillis() + interval * 10;
     }
 
     public int note() {
@@ -63,9 +61,9 @@ public class ThroughputRate {
                 this.rise.decrementAndGet();
             }
 
-            if (now > maxThreshold || devWeight > 1200) {
+            if (devWeight > 1200) {
                 this.weight = nWeight;
-                this.maxThreshold = now + interval * 10;
+                this.rise.set(1);
             }
 
             this.throughput.set(0);
