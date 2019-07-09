@@ -56,7 +56,7 @@ public class ThroughputRate {
 
             if (nWeight > oWeight) {
                 this.weight = nWeight;
-                this.rise.set(3);
+                this.rise.set(2);
             }else{
                 this.weight = oWeight;
                 this.rise.decrementAndGet();
