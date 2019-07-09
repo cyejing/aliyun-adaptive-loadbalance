@@ -58,7 +58,7 @@ public class ThroughputRate {
                 this.rise.set(3);
             }else{
                 this.weight = oWeight;
-                this.rise.incrementAndGet();
+                this.rise.decrementAndGet();
             }
 
 
