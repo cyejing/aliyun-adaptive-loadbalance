@@ -51,7 +51,6 @@ public class ThroughputRate {
         if (now > t) {
             synchronized (this) {
                 if (now > threshold) {
-                    System.out.println(LocalDateTime.now().toString() + " 时间变化weight" + this.weight);
                     double oWeight = this.weight;
                     double nWeight = i * (1000D / (now - t + interval));
                     this.throughputRate = nWeight;
