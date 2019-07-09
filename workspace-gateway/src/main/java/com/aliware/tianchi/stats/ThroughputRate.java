@@ -43,14 +43,12 @@ public class ThroughputRate {
     public void checkAndSet() {
         int i = this.throughput.get();
         long now = System.currentTimeMillis();
-        long t = this.threshold;
-        if (now > t) {
+        if (now > threshold) {
 
             if (calc.compareAndSet(false, true)) {
                 if (now > threshold) {
-                    System.out.println(LocalDateTime.now().toString() + " 时间变化weight" + this.weight);
                     double oWeight = this.weight;
-                    double nWeight = i * (1000D / (now - t + interval));
+                    double nWeight = i * (1000D / (now - threshold + interval));
                     this.throughputRate = nWeight;
                     double devWeight = Math.abs(nWeight - oWeight);
 //                    nWeight = oWeight * (1 - ALPHA) + nWeight * ALPHA;
