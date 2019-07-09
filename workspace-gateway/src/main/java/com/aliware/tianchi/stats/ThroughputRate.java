@@ -105,7 +105,7 @@ public class ThroughputRate {
     }
 
     public boolean isRise() {
-        if (rise.get().rise) {
+        if (rise.get() > 0) {
             return true;
         }
         return false;
