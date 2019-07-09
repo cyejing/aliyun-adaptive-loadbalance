@@ -66,7 +66,7 @@ public class ThroughputRate {
                     this.throughput.set(0);
                     this.threshold = now + interval;
                 }
-                calc.compareAndSet(false, true);
+                calc.compareAndSet(true, false);
             }
 
         }
