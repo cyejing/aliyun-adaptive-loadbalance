@@ -1,6 +1,5 @@
 package com.aliware.tianchi.stats;
 
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -9,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
 
-    public static final double ALPHA = 0.775;
+    public static final double ALPHA = 1;
     public static final double BETA = 0.20;
     public static final double GAMMA = 1.18;
 
