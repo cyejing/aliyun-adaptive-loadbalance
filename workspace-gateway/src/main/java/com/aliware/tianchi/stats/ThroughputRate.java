@@ -62,7 +62,6 @@ public class ThroughputRate {
                         this.rise.set(1);
                     } else {
                         this.weight = oWeight;
-                        this.rise.decrementAndGet();
                     }
 
                     this.throughput.set(0);
@@ -79,6 +78,10 @@ public class ThroughputRate {
             return true;
         }
         return false;
+    }
+
+    public void decrementRise() {
+        this.rise.decrementAndGet();
     }
 
 }
