@@ -79,7 +79,6 @@ public class InvokerStats {
                             dc.setRate(1.16);
                             Thread.sleep(COLLECT);
                             dc.setRate(1.0);
-                        }else{
                             dc.getThroughputRate().decrementRise();
                         }
                     }
