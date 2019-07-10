@@ -65,7 +65,7 @@ public class ThroughputRate {
                         this.weight = weightTran;
                         this.rise.getAndUpdate(operand -> {
                             if (operand > 0) {
-                                return operand + 1;
+                                return Math.min(2, operand + 1);
                             } else {
                                 return 1;
                             }
