@@ -77,20 +77,15 @@ public class InvokerStats {
                         if (dc.getThroughputRate().isRise()) {
                             log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " fire: ");
                             dc.setRate(1.16);
-                        } else {
-                            if (ThreadLocalRandom.current().nextInt(3) == 1) {
-                                log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " random fire: ");
-                                dc.setRate(1.08);
-                            }
+                            Thread.sleep(COLLECT);
+                            dc.setRate(1.0);
                         }
-                        Thread.sleep(COLLECT);
-                        dc.setRate(1.0);
                     }
                 } catch (Exception e) {
                     log.error("", e);
                 }
             }
-        },3000,100);
+        },3000,300);
     }
 
     private static class InvokerStatsBuilder {

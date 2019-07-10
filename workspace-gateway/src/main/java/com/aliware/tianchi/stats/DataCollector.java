@@ -10,7 +10,7 @@ public class DataCollector {
 
 
     public static final double ALPHA = 0.875;
-    public static final double BETA = 1;
+    public static final double BETA = 0.15;
     public static final double GAMMA = 1;
 
     public static final int COLLECT = 300;

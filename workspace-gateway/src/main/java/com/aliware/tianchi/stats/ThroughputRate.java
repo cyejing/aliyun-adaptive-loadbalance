@@ -1,6 +1,7 @@
 package com.aliware.tianchi.stats;
 
 import static com.aliware.tianchi.stats.DataCollector.ALPHA;
+import static com.aliware.tianchi.stats.DataCollector.BETA;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -55,7 +56,8 @@ public class ThroughputRate {
                     double devWeight = Math.abs(nWeight - oWeight);
                     double weightTran = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
-                    if (nWeight > oWeight || devWeight > 1200) {
+                    if (nWeight > oWeight || devWeight > (oWeight * BETA)) {
+                        System.out.println(LocalDateTime.now().toString()+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(oWeight * BETA));
                         this.weight = weightTran;
                         this.rise.set(1);
                     } else {
@@ -78,4 +80,5 @@ public class ThroughputRate {
         }
         return false;
     }
+
 }
