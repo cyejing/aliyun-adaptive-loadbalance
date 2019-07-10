@@ -63,7 +63,13 @@ public class ThroughputRate {
                             System.out.println(LocalDateTime.now().toString()+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight);
                         }
                         this.weight = weightTran;
-                        this.rise.set(1);
+                        this.rise.getAndUpdate(operand -> {
+                            if (operand > 0) {
+                                return operand + 1;
+                            } else {
+                                return 1;
+                            }
+                        });
                     } else {
                         this.weight = oWeight;
                     }
