@@ -57,7 +57,11 @@ public class ThroughputRate {
                     double weightTran = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
                     if (nWeight > oWeight || devWeight > (oWeight * BETA)) {
-                        System.out.println(LocalDateTime.now().toString()+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(oWeight * BETA));
+                        if (devWeight > (oWeight * BETA)) {
+                            System.out.println(LocalDateTime.now().toString()+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(oWeight * BETA));
+                        }else{
+                            System.out.println(LocalDateTime.now().toString()+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight);
+                        }
                         this.weight = weightTran;
                         this.rise.set(1);
                     } else {
