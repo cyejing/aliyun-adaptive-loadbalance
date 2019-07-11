@@ -18,6 +18,7 @@ public class ThroughputRate {
     private volatile double weight;
     private volatile AtomicInteger rise = new AtomicInteger(0);
     private volatile AtomicBoolean calc = new AtomicBoolean(false);
+    private volatile AtomicBoolean devRise = new AtomicBoolean(false);
 
     private long interval;
     private volatile long threshold;
@@ -58,6 +59,7 @@ public class ThroughputRate {
 
                     if (nWeight > oWeight || devWeight > (oWeight * BETA)) {
                         if (devWeight > (oWeight * BETA)) {
+                            devRise.compareAndSet(false, true);
                             System.out.println(LocalDateTime.now().toString()+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(oWeight * BETA));
                         }else{
                             System.out.println(LocalDateTime.now().toString()+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight);
@@ -92,6 +94,10 @@ public class ThroughputRate {
 
     public void decrementRise() {
         this.rise.decrementAndGet();
+    }
+
+    public AtomicBoolean getDevRise() {
+        return devRise;
     }
 
 }
