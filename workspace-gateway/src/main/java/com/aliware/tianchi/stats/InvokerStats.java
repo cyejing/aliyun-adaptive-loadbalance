@@ -68,7 +68,6 @@ public class InvokerStats {
             }
         }, 1000, 200);
 
-
         fire.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -76,10 +75,11 @@ public class InvokerStats {
                     Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
                     for (DataCollector dc : values) {
                         if (dc.getThroughputRate().isRise()) {
-                            log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " 施压探测fire: "+dc.getThroughputRate().getDevRise().get());
-                            if (dc.getThroughputRate().getDevRise().compareAndSet(true,false)) {
+                            log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " 施压探测fire: " + dc
+                                    .getThroughputRate().getDevRise().get());
+                            if (dc.getThroughputRate().getDevRise().compareAndSet(true, false)) {
                                 dc.setRate(NEUTRON);
-                            }else{
+                            } else {
                                 dc.setRate(GAMMA);
                             }
                             Thread.sleep(COLLECT);
@@ -91,7 +91,7 @@ public class InvokerStats {
                     log.error("", e);
                 }
             }
-        },3000,COLLECT);
+        }, 3000, 100);
     }
 
     private static class InvokerStatsBuilder {
