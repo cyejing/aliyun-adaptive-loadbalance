@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
 
-    public static final double ALPHA = 1;
+    public static final double ALPHA = 0.875;
     public static final double BETA = 0.23;
     public static final double GAMMA = 1.25;
     public static final double NEUTRON = 1.28;
@@ -16,7 +16,6 @@ public class DataCollector {
     public static final int COLLECT = 300;
 
     private volatile int bucket = 1000;
-    private AtomicInteger activeRequests = new AtomicInteger(0);
     private ThroughputRate throughputRate = new ThroughputRate(COLLECT);
 
     private double rate = 1.0;
@@ -26,14 +25,12 @@ public class DataCollector {
 
 
     public void incrementRequests() {
-        activeRequests.incrementAndGet();
     }
 
     public void failedRequest() {
     }
 
     public void decrementRequests() {
-        activeRequests.decrementAndGet();
         throughputRate.note();
     }
 
@@ -47,7 +44,7 @@ public class DataCollector {
 
 
     public int getActive() {
-        return activeRequests.get();
+        return 1;
     }
 
     public int getBucket() {

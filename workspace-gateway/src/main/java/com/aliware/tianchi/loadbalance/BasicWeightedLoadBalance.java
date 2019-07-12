@@ -17,7 +17,6 @@ public abstract class BasicWeightedLoadBalance implements LoadBalance {
 
     public static final int DEFAULT_WEIGHT = 1000;
 
-    private static final Logger log = LoggerFactory.getLogger(BasicWeightedLoadBalance.class);
 
     abstract protected WeightedRoundRobin getWeightedRoundRobin(Invoker invoker);
 

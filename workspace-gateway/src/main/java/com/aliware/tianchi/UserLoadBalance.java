@@ -20,9 +20,8 @@ import org.apache.dubbo.rpc.cluster.LoadBalance;
  * 选手需要基于此类实现自己的负载均衡算法
  */
 public class UserLoadBalance implements LoadBalance {
-    private static final Logger log = LoggerFactory.getLogger(UserLoadBalance.class);
 
-    private static LoadBalance loadBalance = new BucketLoadBalance(new WeightedLoadBalance());
+    private static LoadBalance loadBalance = new WeightedLoadBalance();
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
