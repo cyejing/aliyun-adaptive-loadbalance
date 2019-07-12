@@ -91,7 +91,7 @@ public class InvokerStats {
                     log.error("", e);
                 }
             }
-        },3000,300);
+        },3000,COLLECT);
     }
 
     private static class InvokerStatsBuilder {

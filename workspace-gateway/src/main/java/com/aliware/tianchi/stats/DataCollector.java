@@ -14,7 +14,7 @@ public class DataCollector {
     public static final double NEUTRON = 1.23;
 
 
-    public static final int COLLECT = 300;
+    public static final int COLLECT = 500;
 
 
     private volatile int bucket = 1000;
