@@ -73,7 +73,7 @@ public class ThroughputRate {
                         this.weight = oWeight;
                     }
 
-                    System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 收集数据,nWeight:"+nWeight+" oWeight:"+oWeight);
+                    System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" collect data current,Weight:"+this.weight+" throughputRate:"+throughputRate);
                     this.throughput.set(0);
                     this.threshold = now + interval;
                 }
@@ -103,7 +103,6 @@ public class ThroughputRate {
             this.throughput.set(0);
             this.threshold = System.currentTimeMillis() + interval;
             calc.compareAndSet(true, false);
-            System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+"重置计算weight:" + weight);
         }
     }
 
