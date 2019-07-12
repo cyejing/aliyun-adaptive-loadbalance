@@ -4,6 +4,7 @@ import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 import static com.aliware.tianchi.stats.DataCollector.BETA;
 import static com.aliware.tianchi.stats.DataCollector.COLLECT;
 import static com.aliware.tianchi.stats.DataCollector.GAMMA;
+import static com.aliware.tianchi.stats.DataCollector.NEUTRON;
 
 import com.aliware.tianchi.stats.DataCollector.DataCollectorCopy;
 import java.time.LocalDateTime;
@@ -77,7 +78,7 @@ public class InvokerStats {
                         if (dc.getThroughputRate().isRise()) {
                             log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " 施压探测fire: "+dc.getThroughputRate().getDevRise().get());
                             if (dc.getThroughputRate().getDevRise().compareAndSet(true,false)) {
-                                dc.setRate(1.28);
+                                dc.setRate(NEUTRON);
                             }else{
                                 dc.setRate(GAMMA);
                             }
