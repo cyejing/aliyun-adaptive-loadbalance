@@ -9,17 +9,14 @@ public class DataCollector {
 
 
     public static final double ALPHA = 0.875;
-    public static final double BETA = 0.23;
-    public static final double GAMMA = 1.25;
+    public static final double BETA = 0.22;
+    public static final double GAMMA = 1.22;
     public static final double NEUTRON = 1.28;
 
     public static final int COLLECT = 300;
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
-    private AtomicInteger activeRequests1 = new AtomicInteger(0);
-    private AtomicInteger activeRequests2 = new AtomicInteger(0);
-    private AtomicInteger activeRequests3 = new AtomicInteger(0);
     private ThroughputRate throughputRate = new ThroughputRate(COLLECT);
 
     private double rate = 1.0;
@@ -30,9 +27,6 @@ public class DataCollector {
 
     public void incrementRequests() {
         activeRequests.incrementAndGet();
-        activeRequests1.incrementAndGet();
-        activeRequests2.incrementAndGet();
-        activeRequests3.incrementAndGet();
     }
 
     public void failedRequest() {
