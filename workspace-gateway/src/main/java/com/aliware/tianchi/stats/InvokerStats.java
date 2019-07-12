@@ -31,31 +31,31 @@ public class InvokerStats {
     public InvokerStats() {
         System.out.println("make by Born. ALPHA: " + ALPHA + ", BETA: " + BETA + ", GAMMA: " + GAMMA);
 
-//        fire.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                try {
-//                    Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
-//                    for (DataCollector dc : values) {
-//                        if (dc.getThroughputRate().isRise()) {
-//
-//                            dc.getThroughputRate().reset();
-//                            if (dc.getThroughputRate().getDevRise().compareAndSet(true, false)) {
-//                                dc.setRate(NEUTRON);
-//                            } else {
-//                                dc.setRate(GAMMA);
-//                            }
-//                            System.out.println(LocalDateTime.now().toString()+" bucket:"+dc.getBucket()+" 施压探测,weight: "+dc.getWeight()+" b:" + dc.getThroughputRate().getDevRise().get());
-//                            Thread.sleep(COLLECT);
-//                            dc.setRate(1.0);
-//                            dc.getThroughputRate().decrementRise();
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    log.error("", e);
-//                }
-//            }
-//        }, 3000, 100);
+        fire.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
+                    for (DataCollector dc : values) {
+                        if (dc.getThroughputRate().isRise()) {
+
+                            dc.getThroughputRate().reset();
+                            if (dc.getThroughputRate().getDevRise().compareAndSet(true, false)) {
+                                dc.setRate(NEUTRON);
+                            } else {
+                                dc.setRate(GAMMA);
+                            }
+                            System.out.println(LocalDateTime.now().toString()+" bucket:"+dc.getBucket()+" 施压探测,weight: "+dc.getWeight()+" b:" + dc.getThroughputRate().getDevRise().get());
+                            Thread.sleep(COLLECT);
+                            dc.setRate(1.0);
+                            dc.getThroughputRate().decrementRise();
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("", e);
+                }
+            }
+        }, 3000, 100);
     }
 
     private static class InvokerStatsBuilder {

@@ -43,8 +43,7 @@ public class ThroughputRate {
 
     public double getWeight() {
         checkAndSet();
-//        return throughputRate * (1 - ALPHA) + weight * ALPHA;
-        return throughputRate;
+        return throughputRate * (1 - ALPHA) + weight * ALPHA;
     }
 
     public void checkAndSet() {
