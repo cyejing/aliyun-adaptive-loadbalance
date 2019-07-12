@@ -38,13 +38,14 @@ public class InvokerStats {
                     Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
                     for (DataCollector dc : values) {
                         if (dc.getThroughputRate().isRise()) {
-                            log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " 施压探测fire: " + dc.getThroughputRate().getDevRise().get());
+
+                            dc.getThroughputRate().reset();
                             if (dc.getThroughputRate().getDevRise().compareAndSet(true, false)) {
                                 dc.setRate(NEUTRON);
                             } else {
                                 dc.setRate(GAMMA);
                             }
-                            dc.getThroughputRate().reset();
+                            log.info(LocalDateTime.now().toString() + " bucket:" + dc.getBucket() + " 施压探测weight: "+dc.getWeight()+" b:" + dc.getThroughputRate().getDevRise().get());
                             Thread.sleep(COLLECT);
                             dc.setRate(1.0);
                             dc.getThroughputRate().decrementRise();
