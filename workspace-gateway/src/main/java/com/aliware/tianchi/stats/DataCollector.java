@@ -13,19 +13,15 @@ public class DataCollector {
     public static final double GAMMA = 1.21;
     public static final double NEUTRON = 1.28;
 
-
     public static final int COLLECT = 300;
-
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
     private ThroughputRate throughputRate = new ThroughputRate(COLLECT);
-    private ThroughputRate totalRate;
 
     private double rate = 1.0;
 
-    public DataCollector(ThroughputRate totalRate) {
-        this.totalRate = totalRate;
+    public DataCollector() {
     }
 
 
@@ -39,7 +35,6 @@ public class DataCollector {
     public void decrementRequests() {
         activeRequests.decrementAndGet();
         throughputRate.note();
-        totalRate.note();
     }
 
     public void setBucket(int bucket) {

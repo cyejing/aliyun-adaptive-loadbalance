@@ -67,13 +67,12 @@ public class InvokerStats {
     }
 
     private ConcurrentMap<String, DataCollector> dataMap = new ConcurrentHashMap();
-    private ThroughputRate totalRate = new ThroughputRate(COLLECT);
 
     public DataCollector getDataCollector(String key) {
         DataCollector dataCollector = dataMap.get(key);
         if (dataCollector == null) {
             synchronized (this) {
-                dataMap.put(key, new DataCollector(totalRate));
+                dataMap.put(key, new DataCollector());
                 dataCollector = dataMap.get(key);
             }
         }
