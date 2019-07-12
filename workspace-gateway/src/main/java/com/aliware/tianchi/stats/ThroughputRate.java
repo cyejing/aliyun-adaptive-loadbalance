@@ -50,9 +50,10 @@ public class ThroughputRate {
         if (now > threshold) {
 
             if (calc.compareAndSet(false, true)) {
-                if (now > threshold) {
+                double t = threshold;
+                if (now > t) {
                     double oWeight = this.weight;
-                    double nWeight = i * (1000D / (now - threshold + interval));
+                    double nWeight = i * (1000D / (now - t + interval));
                     this.throughputRate = nWeight;
                     double devWeight = Math.abs(nWeight - oWeight);
                     double weightTran = oWeight * (1 - ALPHA) + nWeight * ALPHA;
@@ -65,17 +66,12 @@ public class ThroughputRate {
                             System.out.println(LocalDateTime.now().toString()+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight);
                         }
                         this.weight = nWeight;
-                        this.rise.getAndUpdate(operand -> {
-                            if (operand > 0) {
-                                return Math.min(2, operand + 1);
-                            } else {
-                                return 1;
-                            }
-                        });
+                        this.rise.set(1);
                     } else {
                         this.weight = oWeight;
                     }
 
+                    System.out.println(LocalDateTime.now().toString()+" 收集数据,nWeight:"+nWeight+" oWeight:"+oWeight);
                     this.throughput.set(0);
                     this.threshold = now + interval;
                 }
@@ -100,4 +96,12 @@ public class ThroughputRate {
         return devRise;
     }
 
+    public void reset() {
+        if (calc.compareAndSet(false, true)) {
+            this.throughput.set(0);
+            this.threshold = System.currentTimeMillis() + interval;
+            calc.compareAndSet(true, false);
+            System.out.println(LocalDateTime.now().toString() + "重置计算weight:" + weight);
+        }
+    }
 }

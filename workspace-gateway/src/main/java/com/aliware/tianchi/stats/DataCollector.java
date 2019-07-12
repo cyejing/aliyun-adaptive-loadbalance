@@ -9,7 +9,7 @@ public class DataCollector {
 
 
     public static final double ALPHA = 1;
-    public static final double BETA = 0.21;
+    public static final double BETA = 0.23;
     public static final double GAMMA = 1.21;
     public static final double NEUTRON = 1.28;
 
@@ -75,48 +75,4 @@ public class DataCollector {
         return throughputRate;
     }
 
-    public DataCollectorCopy copy() {
-        return new DataCollectorCopy(getActive(), getBucket(), getWeight(),
-                new Double(this.throughputRate.getThroughputRate()).intValue(),
-                new Double(totalRate.getThroughputRate()).intValue());
-    }
-
-    public static class DataCollectorCopy{
-
-        public DataCollectorCopy(int active, int bucket, int weight,int throughput,int total) {
-            this.active = active;
-            this.bucket = bucket;
-            this.weight = weight;
-            this.throughput = throughput;
-            this.total = total;
-        }
-
-        private int active;
-        private int bucket;
-        private int weight;
-        private int throughput;
-        private int total;
-
-        public int getActive() {
-            return active;
-        }
-
-
-        public int getBucket() {
-            return bucket;
-        }
-
-
-        public int getWeight() {
-            return weight;
-        }
-
-        public int getThroughput() {
-            return throughput;
-        }
-
-        public int getTotal() {
-            return total;
-        }
-    }
 }
