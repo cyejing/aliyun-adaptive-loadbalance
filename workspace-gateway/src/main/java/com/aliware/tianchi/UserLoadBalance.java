@@ -21,7 +21,7 @@ import org.apache.dubbo.rpc.cluster.LoadBalance;
  */
 public class UserLoadBalance implements LoadBalance {
 
-    private static LoadBalance loadBalance = new WeightedLoadBalance();
+    private static LoadBalance loadBalance = new BucketLoadBalance(new WeightedLoadBalance());
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
