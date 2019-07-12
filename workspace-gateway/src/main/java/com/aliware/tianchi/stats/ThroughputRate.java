@@ -23,6 +23,8 @@ public class ThroughputRate {
     private long interval;
     private volatile long threshold;
 
+    private int bucket;
+
 
     public ThroughputRate(long interval) {
         this.interval = interval;
@@ -61,7 +63,7 @@ public class ThroughputRate {
                     if (nWeight > oWeight || devWeight > (oWeight * BETA)) {
                         if (devWeight > (oWeight * BETA)) {
                             devRise.compareAndSet(false, true);
-                            System.out.println(LocalDateTime.now().toString()+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(oWeight * BETA));
+                            System.out.println(LocalDateTime.now().toString()+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
                         }else{
                             System.out.println(LocalDateTime.now().toString()+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight);
                         }
@@ -71,7 +73,7 @@ public class ThroughputRate {
                         this.weight = oWeight;
                     }
 
-                    System.out.println(LocalDateTime.now().toString()+" 收集数据,nWeight:"+nWeight+" oWeight:"+oWeight);
+                    System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 收集数据,nWeight:"+nWeight+" oWeight:"+oWeight);
                     this.throughput.set(0);
                     this.threshold = now + interval;
                 }
@@ -103,5 +105,9 @@ public class ThroughputRate {
             calc.compareAndSet(true, false);
             System.out.println(LocalDateTime.now().toString() + "重置计算weight:" + weight);
         }
+    }
+
+    public void setBucket(int bucket) {
+        this.bucket = bucket;
     }
 }

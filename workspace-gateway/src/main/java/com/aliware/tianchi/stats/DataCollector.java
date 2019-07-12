@@ -44,6 +44,7 @@ public class DataCollector {
 
     public void setBucket(int bucket) {
         this.bucket = bucket;
+        throughputRate.setBucket(bucket);
     }
 
     public void succeedRequest() {
