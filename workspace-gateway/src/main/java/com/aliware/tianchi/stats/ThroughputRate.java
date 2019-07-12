@@ -22,6 +22,7 @@ public class ThroughputRate {
 
     private long interval;
     private volatile long threshold;
+    private volatile long weightThreshold;
 
     private int bucket;
 
@@ -60,15 +61,18 @@ public class ThroughputRate {
                     double devWeight = Math.abs(nWeight - oWeight);
                     double weightTran = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
-                    if (nWeight > oWeight || devWeight > (oWeight * BETA)) {
+                    if (nWeight > oWeight || devWeight > (oWeight * BETA) || now > weightThreshold) {
                         if (devWeight > (oWeight * BETA)) {
                             devRise.compareAndSet(false, true);
                             System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
-                        }else{
+                        }else if(nWeight > oWeight){
                             System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight);
+                        }else{
+                            System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 时间到期,nWeight:"+nWeight+" oWeight:"+oWeight);
                         }
                         this.weight = nWeight;
                         this.rise.set(1);
+                        this.weightThreshold = now + interval * 10;
                     }
 
                     System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" collect data current,weight:"+getWeight()+" maxWeight:"+weight+" throughputRate:"+throughputRate);
