@@ -65,12 +65,14 @@ public class ThroughputRate {
                         if (devWeight > (oWeight * BETA)) {
                             devRise.compareAndSet(false, true);
                             System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
+                            this.weight = nWeight;
                         }else if(nWeight > oWeight){
                             System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight);
+                            this.weight = nWeight;
                         }else{
                             System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 时间到期,nWeight:"+nWeight+" oWeight:"+oWeight);
+                            this.weight = weightTran;
                         }
-                        this.weight = nWeight;
                         this.rise.set(1);
                         this.weightThreshold = now + interval * 10;
                     }
