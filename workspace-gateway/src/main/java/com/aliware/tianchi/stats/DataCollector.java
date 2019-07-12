@@ -17,6 +17,9 @@ public class DataCollector {
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
+    private AtomicInteger activeRequests1 = new AtomicInteger(0);
+    private AtomicInteger activeRequests2 = new AtomicInteger(0);
+    private AtomicInteger activeRequests3 = new AtomicInteger(0);
     private ThroughputRate throughputRate = new ThroughputRate(COLLECT);
 
     private double rate = 1.0;
@@ -27,6 +30,9 @@ public class DataCollector {
 
     public void incrementRequests() {
         activeRequests.incrementAndGet();
+        activeRequests1.incrementAndGet();
+        activeRequests2.incrementAndGet();
+        activeRequests3.incrementAndGet();
     }
 
     public void failedRequest() {
