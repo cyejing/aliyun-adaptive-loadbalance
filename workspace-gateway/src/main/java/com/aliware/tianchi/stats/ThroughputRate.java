@@ -43,7 +43,7 @@ public class ThroughputRate {
 
     public double getWeight() {
         checkAndSet();
-        return weight;
+        return throughputRate * (1 - ALPHA) + weight * ALPHA;
     }
 
     public void checkAndSet() {
@@ -69,11 +69,9 @@ public class ThroughputRate {
                         }
                         this.weight = nWeight;
                         this.rise.set(1);
-                    } else {
-                        this.weight = oWeight;
                     }
 
-                    System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" collect data current,Weight:"+this.weight+" throughputRate:"+throughputRate);
+                    System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" collect data current,weight:"+getWeight()+" maxWeight:"+weight+" throughputRate:"+throughputRate);
                     this.throughput.set(0);
                     this.threshold = now + interval;
                 }
