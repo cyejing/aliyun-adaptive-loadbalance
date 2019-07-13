@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataCollector {
 
 
-    public static final double ALPHA = 0.625;
+    public static final double ALPHA = 0.775;
     public static final double BETA = 0.25;
     public static final double GAMMA = 1.42;
     public static final double NEUTRON = 1.52;
