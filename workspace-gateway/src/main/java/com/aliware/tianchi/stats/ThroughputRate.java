@@ -74,7 +74,7 @@ public class ThroughputRate {
                             this.weight = weightTran;
                         }
                         this.rise.set(1);
-                        this.weightThreshold = now + interval * 10;
+                        this.weightThreshold = now + interval * 10*3;
                     }
 
                     System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" collect data current,weight:"+getWeight()+" maxWeight:"+weight+" throughputRate:"+throughputRate);
