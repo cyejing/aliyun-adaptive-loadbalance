@@ -66,14 +66,18 @@ public class ThroughputRate {
                             devRise.compareAndSet(false, true);
                             System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
                             this.weight = nWeight;
+                            this.rise.set(1);
                         }else if(nWeight > oWeight){
-                            System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight);
+                            System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight);
+                            if (devWeight > 200) {
+                                this.rise.set(1);
+                            }
                             this.weight = nWeight;
                         }else{
-                            System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 时间到期,nWeight:"+nWeight+" oWeight:"+oWeight);
+                            System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 时间到期,nWeight:"+nWeight+" oWeight:"+oWeight+" weightTran"+weightTran);
                             this.weight = weightTran;
+                            this.rise.set(1);
                         }
-                        this.rise.set(1);
                         this.weightThreshold = now + interval * 10*2;
                     }
 
