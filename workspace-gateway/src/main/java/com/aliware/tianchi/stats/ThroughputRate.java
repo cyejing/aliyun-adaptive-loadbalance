@@ -61,25 +61,26 @@ public class ThroughputRate {
                     double devWeight = Math.abs(nWeight - oWeight);
                     double weightTran = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
-                    if (nWeight > oWeight || devWeight > (oWeight * BETA) || now > weightThreshold) {
-                        if (devWeight > (oWeight * BETA)) {
-                            System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
-                            if (nWeight > 1000) {
-                                devRise.compareAndSet(false, true);
-                                this.weight = nWeight;
-                                this.rise.set(1);
-                            }
-                        }else if(nWeight > oWeight){
-                            System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight);
-                            if (devWeight > 200) {
-                                this.rise.set(1);
-                            }
+//                    if (nWeight > oWeight || devWeight > (oWeight * BETA) || now > weightThreshold)
+                    if (devWeight > (oWeight * BETA)) {
+                        System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
+                        if (nWeight > 1000) {
+                            devRise.compareAndSet(false, true);
                             this.weight = nWeight;
-                        }else{
-                            System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 时间到期,nWeight:"+nWeight+" oWeight:"+oWeight+" weightTran"+weightTran);
-                            this.weight = weightTran;
                             this.rise.set(1);
+                            this.weightThreshold = now + interval * 25;
                         }
+                    }else if(nWeight > oWeight){
+                        System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight);
+                        if (devWeight > 200) {
+                            this.rise.set(1);
+                            this.weightThreshold = now + interval * 25;
+                        }
+                        this.weight = nWeight;
+                    }else if(now > weightThreshold){
+                        System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 时间到期,nWeight:"+nWeight+" oWeight:"+oWeight+" weightTran"+weightTran);
+                        this.weight = weightTran;
+                        this.rise.set(1);
                         this.weightThreshold = now + interval * 25;
                     }
 
