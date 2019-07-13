@@ -72,7 +72,7 @@ public class ThroughputRate {
                         }
                     }else if(nWeight > oWeight){
                         System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight);
-                        if (devWeight > 100) {
+                        if (devWeight > 150) {
                             this.rise.set(1);
                             this.weightThreshold = now + interval * 25;
                         }
