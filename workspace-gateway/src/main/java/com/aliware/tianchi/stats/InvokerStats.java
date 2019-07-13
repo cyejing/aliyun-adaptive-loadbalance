@@ -55,7 +55,7 @@ public class InvokerStats {
                     log.error("", e);
                 }
             }
-        }, 3000, 100);
+        }, 3000, 50);
     }
 
     private static class InvokerStatsBuilder {
