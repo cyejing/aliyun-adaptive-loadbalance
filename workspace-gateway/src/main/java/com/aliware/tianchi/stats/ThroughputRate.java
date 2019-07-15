@@ -2,6 +2,7 @@ package com.aliware.tianchi.stats;
 
 import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 import static com.aliware.tianchi.stats.DataCollector.BETA;
+import static com.aliware.tianchi.stats.DataCollector.REFRESH;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -68,20 +69,20 @@ public class ThroughputRate {
                             devRise.compareAndSet(false, true);
                             this.weight = nWeight;
                             this.rise.set(1);
-                            this.weightThreshold = now + interval * 20;
+                            this.weightThreshold = now + interval * REFRESH;
                         }
                     }else if(nWeight > oWeight){
                         System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight);
                         if (devWeight > 100) {
                             this.rise.set(1);
-                            this.weightThreshold = now + interval * 20;
+                            this.weightThreshold = now + interval * REFRESH;
                         }
                         this.weight = nWeight;
                     }else if(now > weightThreshold){
                         System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 时间到期,nWeight:"+nWeight+" oWeight:"+oWeight+" weightTran"+weightTran);
                         this.weight = weightTran;
                         this.rise.set(1);
-                        this.weightThreshold = now + interval * 20;
+                        this.weightThreshold = now + interval * REFRESH;
                     }
 
                     System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" collect data current,weight:"+getWeight()+" maxWeight:"+weight+" throughputRate:"+throughputRate);

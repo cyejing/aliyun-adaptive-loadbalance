@@ -10,10 +10,11 @@ public class DataCollector {
 
     public static final double ALPHA = 0.775;
     public static final double BETA = 0.25;
-    public static final double GAMMA = 1.35;
-    public static final double NEUTRON = 1.45;
+    public static final double GAMMA = 1.15;
+    public static final double NEUTRON = 1.25;
 
     public static final int COLLECT = 100;
+    public static final int REFRESH = 20;
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
