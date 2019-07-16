@@ -6,7 +6,6 @@ import static com.aliware.tianchi.stats.DataCollector.COLLECT;
 import static com.aliware.tianchi.stats.DataCollector.GAMMA;
 import static com.aliware.tianchi.stats.DataCollector.NEUTRON;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -45,7 +44,6 @@ public class InvokerStats {
                             } else {
                                 dc.setRate(GAMMA);
                             }
-                            System.out.println(LocalDateTime.now().toString()+" bucket:"+dc.getBucket()+" 施压探测,weight: "+dc.getWeight()+" b:" + dc.getThroughputRate().getDevRise().get());
                             Thread.sleep(COLLECT-10);
                             dc.setRate(1.0);
                             dc.getThroughputRate().decrementRise();

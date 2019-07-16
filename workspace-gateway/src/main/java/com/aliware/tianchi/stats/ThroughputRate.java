@@ -4,7 +4,6 @@ import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 import static com.aliware.tianchi.stats.DataCollector.BETA;
 import static com.aliware.tianchi.stats.DataCollector.REFRESH;
 
-import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -62,9 +61,7 @@ public class ThroughputRate {
                     double devWeight = Math.abs(nWeight - oWeight);
                     double weightTran = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
-//                    if (nWeight > oWeight || devWeight > (oWeight * BETA) || now > weightThreshold)
                     if (devWeight > (oWeight * BETA)) {
-                        System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
                         if (nWeight > 1000) {
                             devRise.compareAndSet(false, true);
                             this.weight = nWeight;
@@ -72,20 +69,17 @@ public class ThroughputRate {
                             this.weightThreshold = now + interval * REFRESH;
                         }
                     }else if(nWeight > oWeight){
-                        System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight);
                         if (devWeight > 100) {
                             this.rise.set(1);
                             this.weightThreshold = now + interval * REFRESH;
                         }
                         this.weight = nWeight;
                     }else if(now > weightThreshold){
-                        System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 时间到期,nWeight:"+nWeight+" oWeight:"+oWeight+" weightTran"+weightTran);
                         this.weight = weightTran;
                         this.rise.set(1);
                         this.weightThreshold = now + interval * REFRESH;
                     }
 
-                    System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" collect data current,weight:"+getWeight()+" maxWeight:"+weight+" throughputRate:"+throughputRate);
                     this.throughput.set(0);
                     this.threshold = now + interval;
                 }
