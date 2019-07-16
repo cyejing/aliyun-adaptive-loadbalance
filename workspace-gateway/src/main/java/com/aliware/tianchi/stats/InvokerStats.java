@@ -6,6 +6,7 @@ import static com.aliware.tianchi.stats.DataCollector.COLLECT;
 import static com.aliware.tianchi.stats.DataCollector.GAMMA;
 import static com.aliware.tianchi.stats.DataCollector.NEUTRON;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -37,6 +38,8 @@ public class InvokerStats {
                     Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
                     for (DataCollector dc : values) {
                         if (dc.getThroughputRate().isRise()) {
+                            System.out.println(
+                                    LocalDateTime.now().toString()+" bucket:"+dc.getBucket()+" 施压探测,weight: "+dc.getWeight()+" b:" + dc.getThroughputRate().getDevRise().get());
 
                             dc.getThroughputRate().reset();
                             if (dc.getThroughputRate().getDevRise().compareAndSet(true, false)) {

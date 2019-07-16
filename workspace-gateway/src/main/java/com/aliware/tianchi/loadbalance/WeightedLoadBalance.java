@@ -28,7 +28,6 @@ public class WeightedLoadBalance implements LoadBalance {
 
         double randomWeight = ThreadLocalRandom.current().nextDouble() * weightSoFar;
 
-        System.out.println("w:" + weightedRoundRobins + " rw" + randomWeight);
         for (WeightedRoundRobin wrr : weightedRoundRobins) {
             double weight = wrr.getWeight();
             if (weight > randomWeight) {
