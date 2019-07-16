@@ -1,55 +1,65 @@
 package com.aliware.tianchi.loadbalance;
 
-import com.aliware.tianchi.stats.DataCollector;
 import com.aliware.tianchi.stats.InvokerStats;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.dubbo.common.URL;
-import org.apache.dubbo.common.logger.Logger;
-import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcInvocation;
-import org.apache.dubbo.rpc.support.MockInvoker;
+import org.apache.dubbo.rpc.cluster.LoadBalance;
 
-public class WeightedLoadBalance extends BasicWeightedLoadBalance {
-
-    private static final Logger log = LoggerFactory.getLogger(WeightedLoadBalance.class);
-
-    private ConcurrentMap<String, WeightedRoundRobin> map = new ConcurrentHashMap<>();
-
-    @Override
-    protected WeightedRoundRobin getWeightedRoundRobin(Invoker invoker) {
-        String key = invoker.getUrl().toIdentityString();
-        WeightedRoundRobin weightedRoundRobin = map.get(key);
-        if (weightedRoundRobin == null) {
-            map.putIfAbsent(key, new WeightedRoundRobin(key, DEFAULT_WEIGHT));
-            weightedRoundRobin = map.get(key);
-        }
-
-        DataCollector dc = InvokerStats.getInstance().getDataCollector(key);
-        weightedRoundRobin.setWeight(dc.getWeight());
-        return weightedRoundRobin;
-    }
+public class WeightedLoadBalance implements LoadBalance {
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
-        Invoker<T> select = super.select(invokers, url, invocation);
-        if (select == null) {
-            log.error("should not happen!");
-            select = invokers.get(ThreadLocalRandom.current().nextInt(invokers.size()));
+        Invoker<T> selectedInvoker = null;
+        double weightSoFar = 0.0;
+        List<Double> wq = new ArrayList<>();
+        List<WeightedRoundRobin> weightedRoundRobins = new ArrayList<>();
+        for (Invoker<T> invoker : invokers) {
+            double weight = InvokerStats.getInstance().getDataCollector(invoker).getWeight();
+//            double weight = Double.parseDouble(invoker.getUrl().getParameter("weight"));
+            weightSoFar += weight;
+            wq.add(weightSoFar);
+            weightedRoundRobins.add(new WeightedRoundRobin(invoker, weightSoFar));
         }
-        return select;
+
+        double randomWeight = ThreadLocalRandom.current().nextDouble() * weightSoFar;
+
+        for (WeightedRoundRobin wrr : weightedRoundRobins) {
+            double weight = wrr.getWeight();
+            if (weight > randomWeight) {
+                selectedInvoker = wrr.getInvoker();
+                break;
+            }
+        }
+
+        if (selectedInvoker != null) {
+            return selectedInvoker;
+        }
+
+        return null;
     }
 
+
+    static class WeightedRoundRobin {
+
+        private final Invoker invoker;
+        private double weight;
+
+        public WeightedRoundRobin(Invoker invoker, double weight) {
+            this.invoker = invoker;
+            this.weight = weight;
+        }
+
+        public double getWeight() {
+            return weight;
+        }
+
+        public Invoker getInvoker() {
+            return invoker;
+        }
+    }
 }
