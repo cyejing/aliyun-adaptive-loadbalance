@@ -16,13 +16,10 @@ public class WeightedLoadBalance implements LoadBalance {
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException {
         Invoker<T> selectedInvoker = null;
         double weightSoFar = 0.0;
-        List<Double> wq = new ArrayList<>();
         List<WeightedRoundRobin> weightedRoundRobins = new ArrayList<>();
         for (Invoker<T> invoker : invokers) {
             double weight = InvokerStats.getInstance().getDataCollector(invoker).getWeight();
-//            double weight = Double.parseDouble(invoker.getUrl().getParameter("weight"));
             weightSoFar += weight;
-            wq.add(weightSoFar);
             weightedRoundRobins.add(new WeightedRoundRobin(invoker, weightSoFar));
         }
 
