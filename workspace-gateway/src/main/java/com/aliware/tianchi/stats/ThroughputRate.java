@@ -15,7 +15,7 @@ public class ThroughputRate {
     AtomicInteger throughput = new AtomicInteger(0);
 
     private volatile double throughputRate;
-    private volatile double weight;
+    private volatile double weight = 1000;
     private volatile AtomicInteger rise = new AtomicInteger(0);
     private volatile AtomicBoolean calc = new AtomicBoolean(false);
     private volatile AtomicBoolean devRise = new AtomicBoolean(false);
