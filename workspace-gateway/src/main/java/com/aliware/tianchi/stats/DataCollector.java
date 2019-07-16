@@ -56,12 +56,12 @@ public class DataCollector {
     }
 
 
-    public int getWeight() {
+    public double getWeight() {
         double weight = this.throughputRate.getWeight();
 
         weight = weight * rate;
 
-        return new Double(weight).intValue();
+        return weight;
     }
 
     public void setRate(double rate) {
