@@ -66,8 +66,8 @@ public class DataCollector {
 
         weight = weight * rate;
 
-        long now = System.currentTimeMillis();
         if (calc.compareAndSet(false, true)) {
+            long now = System.currentTimeMillis();
             if (print > now) {
                 System.out.println(
                         LocalDateTime.now().toString() + " bucket:" + bucket + " collect data current,weight:" + weight
