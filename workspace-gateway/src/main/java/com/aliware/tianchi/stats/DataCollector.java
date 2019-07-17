@@ -12,10 +12,10 @@ public class DataCollector {
 
     public static final double ALPHA = 0.775;
     public static final double BETA = 0.25;
-    public static final double GAMMA = 1.50;
+    public static final double GAMMA = 2.10;
 
     public static final int COLLECT = 100;
-    public static final int REFRESH = 1500;
+    public static final int REFRESH = 2000;
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
