@@ -73,7 +73,7 @@ public class ThroughputRate {
                     if (devWeight > (oWeight * BETA) && now > devThreshold) {
                         System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
                         if (nWeight > 1000) {
-                            this.weightThreshold = now + interval * 3;
+                            this.weightThreshold = now + interval * 2;
                             this.devThreshold = now + interval * 5;
                         }
                     }
