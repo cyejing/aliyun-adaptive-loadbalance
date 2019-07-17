@@ -16,7 +16,7 @@ public class DataCollector {
     public static final double NEUTRON = 2.15;
 
     public static final int COLLECT = 100;
-    public static final int REFRESH = 20;
+    public static final int REFRESH = 15;
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
