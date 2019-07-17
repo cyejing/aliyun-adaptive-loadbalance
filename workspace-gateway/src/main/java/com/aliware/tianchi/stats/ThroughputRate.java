@@ -19,12 +19,10 @@ public class ThroughputRate {
     private volatile double weight = 1000;
     private volatile AtomicInteger rise = new AtomicInteger(0);
     private volatile AtomicBoolean calc = new AtomicBoolean(false);
-    private volatile AtomicBoolean devRise = new AtomicBoolean(false);
 
     private long interval;
     private volatile long threshold;
     private volatile long weightThreshold;
-    private volatile long devThreshold;
 
 
     private int bucket;
@@ -34,7 +32,6 @@ public class ThroughputRate {
         this.interval = interval;
         this.threshold = System.currentTimeMillis() + interval;
         this.weightThreshold = System.currentTimeMillis() + interval;
-        this.devThreshold = System.currentTimeMillis() + interval;
     }
 
     public int note() {
@@ -70,13 +67,10 @@ public class ThroughputRate {
                         this.weight = nWeight;
                     }
 
-                    
-
                     if (now > weightThreshold) {
                         System.out.println(LocalDateTime.now().toString() + " bucket:" + bucket + " 时间到期,nWeight:" + nWeight + " oWeight:" + oWeight + " weightTran" + weightTran);
                         this.weight = nWeight;
                         this.rise.set(1);
-                        devRise.compareAndSet(true, false);
                         this.weightThreshold = now + REFRESH;
                     }
 
@@ -99,10 +93,6 @@ public class ThroughputRate {
 
     public void decrementRise() {
         this.rise.decrementAndGet();
-    }
-
-    public AtomicBoolean getDevRise() {
-        return devRise;
     }
 
     public void reset() {

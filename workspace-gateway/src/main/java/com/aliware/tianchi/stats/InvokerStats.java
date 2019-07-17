@@ -37,7 +37,7 @@ public class InvokerStats {
                     Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
                     for (DataCollector dc : values) {
                         if (dc.getThroughputRate().isRise()) {
-                            System.out.println(LocalDateTime.now().toString()+" bucket:"+dc.getBucket()+" 施压探测,weight: "+dc.getWeight()+" b:" + dc.getThroughputRate().getDevRise().get());
+                            System.out.println(LocalDateTime.now().toString()+" bucket:"+dc.getBucket()+" 施压探测,weight: "+dc.getWeight()+" rate:" + dc.getWeight()*GAMMA);
 
                             dc.getThroughputRate().reset();
                             dc.setRate(GAMMA);
