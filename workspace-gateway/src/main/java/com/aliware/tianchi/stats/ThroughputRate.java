@@ -2,6 +2,7 @@ package com.aliware.tianchi.stats;
 
 import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 import static com.aliware.tianchi.stats.DataCollector.BETA;
+import static com.aliware.tianchi.stats.DataCollector.GAMMA;
 import static com.aliware.tianchi.stats.DataCollector.REFRESH;
 
 import java.time.LocalDateTime;
@@ -64,7 +65,11 @@ public class ThroughputRate {
                     double weightTran = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
                     if (nWeight > oWeight) {
+                        System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" riseWeight:"+nWeight * BETA);
                         this.weight = nWeight + nWeight * BETA;
+                    } else if (nWeight < oWeight && devWeight > (oWeight * GAMMA)) {
+                        System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐下降,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
+                        this.weight = nWeight;
                     }
 
                     if (now > weightThreshold) {

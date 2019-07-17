@@ -4,6 +4,7 @@ import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 import static com.aliware.tianchi.stats.DataCollector.BETA;
 import static com.aliware.tianchi.stats.DataCollector.COLLECT;
 import static com.aliware.tianchi.stats.DataCollector.GAMMA;
+import static com.aliware.tianchi.stats.DataCollector.NEUTRON;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -28,7 +29,7 @@ public class InvokerStats {
 
 
     public InvokerStats() {
-        System.out.println("make by Born. ALPHA: " + ALPHA + ", BETA: " + BETA + ", GAMMA: " + GAMMA);
+        System.out.println("make by Born. ALPHA: " + ALPHA + ", BETA: " + BETA + ", GAMMA: " + GAMMA+" NEUTRON:"+NEUTRON);
 
         fire.schedule(new TimerTask() {
             @Override
@@ -37,10 +38,10 @@ public class InvokerStats {
                     Collection<DataCollector> values = InvokerStats.getInstance().getDataCollectors().values();
                     for (DataCollector dc : values) {
                         if (dc.getThroughputRate().isRise()) {
-                            System.out.println(LocalDateTime.now().toString()+" bucket:"+dc.getBucket()+" 施压探测,weight: "+dc.getWeight()+" rate:" + dc.getWeight()*GAMMA);
+                            System.out.println(LocalDateTime.now().toString()+" bucket:"+dc.getBucket()+" 施压探测,weight: "+dc.getWeight()+" rate:" + dc.getWeight()*NEUTRON);
 
                             dc.getThroughputRate().reset();
-                            dc.setRate(GAMMA);
+                            dc.setRate(NEUTRON);
                             Thread.sleep(COLLECT-10);
                             dc.setRate(1.0);
                             dc.getThroughputRate().decrementRise();
