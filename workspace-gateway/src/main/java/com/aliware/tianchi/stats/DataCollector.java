@@ -68,9 +68,9 @@ public class DataCollector {
         if (calc.compareAndSet(false, true)) {
             long now = System.currentTimeMillis();
             if (now > print) {
-                System.out.println(
-                        LocalDateTime.now().toString() + " bucket:" + bucket + " collect data current,weight:" + weight
-                                + " activeRequests:" + activeRequests.get() + " rate:" + rate);
+//                System.out.println(
+//                        LocalDateTime.now().toString() + " bucket:" + bucket + " collect data current,weight:" + weight
+//                                + " activeRequests:" + activeRequests.get() + " rate:" + rate);
                 print = now + 500;
             }
             calc.compareAndSet(true, false);
