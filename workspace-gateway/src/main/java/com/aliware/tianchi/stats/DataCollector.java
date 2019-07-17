@@ -13,10 +13,9 @@ public class DataCollector {
     public static final double ALPHA = 0.775;
     public static final double BETA = 0.25;
     public static final double GAMMA = 2.15;
-    public static final double NEUTRON = 2.15;
 
     public static final int COLLECT = 100;
-    public static final int REFRESH = 15;
+    public static final int REFRESH = 3000;
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);

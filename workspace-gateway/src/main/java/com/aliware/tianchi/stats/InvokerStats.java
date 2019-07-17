@@ -4,7 +4,6 @@ import static com.aliware.tianchi.stats.DataCollector.ALPHA;
 import static com.aliware.tianchi.stats.DataCollector.BETA;
 import static com.aliware.tianchi.stats.DataCollector.COLLECT;
 import static com.aliware.tianchi.stats.DataCollector.GAMMA;
-import static com.aliware.tianchi.stats.DataCollector.NEUTRON;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
