@@ -39,7 +39,9 @@ public class InvokerStats {
                     for (DataCollector dc : values) {
                         if (dc.getThroughputRate().isRise()) {
                             System.out.println(LocalDateTime.now().toString()+" bucket:"+dc.getBucket()+" 施压探测,weight: "+dc.getWeight()+" rate:" + dc.getWeight()*NEUTRON);
-
+                            long now = System.currentTimeMillis();
+                            values.stream().filter(d->d.equals(dc))
+                                    .forEach(d-> d.getThroughputRate().setSwitchThreshold(now + COLLECT));
                             dc.getThroughputRate().reset();
                             dc.setRate(NEUTRON);
                             Thread.sleep(COLLECT-10);

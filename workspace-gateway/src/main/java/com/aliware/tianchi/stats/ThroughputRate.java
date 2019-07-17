@@ -24,6 +24,7 @@ public class ThroughputRate {
     private long interval;
     private volatile long threshold;
     private volatile long weightThreshold;
+    private volatile long switchThreshold;
 
 
     private int bucket;
@@ -33,6 +34,7 @@ public class ThroughputRate {
         this.interval = interval;
         this.threshold = System.currentTimeMillis() + interval;
         this.weightThreshold = System.currentTimeMillis() + interval;
+        this.switchThreshold = System.currentTimeMillis();
     }
 
     public int note() {
@@ -67,7 +69,7 @@ public class ThroughputRate {
                     if (nWeight > oWeight) {
                         System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" riseWeight:"+nWeight * BETA);
                         this.weight = nWeight + nWeight * BETA;
-                    } else if (nWeight < oWeight && devWeight > (oWeight * GAMMA)) {
+                    } else if (now > switchThreshold && nWeight < oWeight && devWeight > (oWeight * GAMMA)) {
                         System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐下降,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
                         this.weight = nWeight;
                     }
@@ -110,5 +112,9 @@ public class ThroughputRate {
 
     public void setBucket(int bucket) {
         this.bucket = bucket;
+    }
+
+    public void setSwitchThreshold(long switchThreshold) {
+        this.switchThreshold = switchThreshold;
     }
 }
