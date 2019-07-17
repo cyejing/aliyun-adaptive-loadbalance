@@ -74,7 +74,7 @@ public class ThroughputRate {
 
                     if (now > weightThreshold) {
                         System.out.println(LocalDateTime.now().toString() + " bucket:" + bucket + " 时间到期,nWeight:" + nWeight + " oWeight:" + oWeight + " weightTran" + weightTran);
-                        this.weight = nWeight;
+                        this.weight = weightTran;
                         this.rise.set(1);
                         this.weightThreshold = now + REFRESH;
                     }
