@@ -41,11 +41,7 @@ public class InvokerStats {
                             System.out.println(LocalDateTime.now().toString()+" bucket:"+dc.getBucket()+" 施压探测,weight: "+dc.getWeight()+" b:" + dc.getThroughputRate().getDevRise().get());
 
                             dc.getThroughputRate().reset();
-                            if (dc.getThroughputRate().getDevRise().compareAndSet(true, false)) {
-                                dc.setRate(NEUTRON);
-                            } else {
-                                dc.setRate(GAMMA);
-                            }
+                            dc.setRate(GAMMA);
                             Thread.sleep(COLLECT-10);
                             dc.setRate(1.0);
                             dc.getThroughputRate().decrementRise();
