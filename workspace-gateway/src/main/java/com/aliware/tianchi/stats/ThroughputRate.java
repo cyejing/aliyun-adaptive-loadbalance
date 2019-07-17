@@ -64,7 +64,7 @@ public class ThroughputRate {
                     double weightTran = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
                     if (nWeight > oWeight) {
-                        this.weight = nWeight;
+                        this.weight = nWeight + nWeight * BETA;
                     }
 
                     if (now > weightThreshold) {
