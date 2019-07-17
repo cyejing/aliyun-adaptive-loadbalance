@@ -1,5 +1,7 @@
 package com.aliware.tianchi.stats;
 
+import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -21,6 +23,9 @@ public class DataCollector {
     private ThroughputRate throughputRate = new ThroughputRate(COLLECT);
 
     private double rate = 1.0;
+
+    private AtomicBoolean calc = new AtomicBoolean(false);
+    private long print = System.currentTimeMillis();
 
     public DataCollector() {
     }
@@ -61,6 +66,15 @@ public class DataCollector {
 
         weight = weight * rate;
 
+        long now = System.currentTimeMillis();
+        if (calc.compareAndSet(false, true)) {
+            if (print > now) {
+                System.out.println(
+                        LocalDateTime.now().toString() + " bucket:" + bucket + " collect data current,weight:" + weight
+                                + " activeRequests:" + activeRequests.get() + " rate:" + rate);
+                print = now + 500;
+            }
+        }
         return weight;
     }
 

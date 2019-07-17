@@ -84,7 +84,6 @@ public class ThroughputRate {
                         this.weightThreshold = now + interval * REFRESH;
                     }
 
-                    System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" collect data current,weight:"+getWeight()+" maxWeight:"+weight+" throughputRate:"+throughputRate);
                     this.throughput.set(0);
                     this.threshold = now + interval;
                 }
