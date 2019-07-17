@@ -12,7 +12,7 @@ public class DataCollector {
 
     public static final double ALPHA = 0.775;
     public static final double BETA = 0.0125;
-    public static final double GAMMA = 0.23;
+    public static final double GAMMA = 0.25;
     public static final double NEUTRON = 2.10;
 
 
@@ -24,9 +24,6 @@ public class DataCollector {
     private ThroughputRate throughputRate = new ThroughputRate(COLLECT);
 
     private double rate = 1.0;
-
-    private AtomicBoolean calc = new AtomicBoolean(false);
-    private long print = System.currentTimeMillis();
 
     public DataCollector() {
     }
@@ -67,16 +64,6 @@ public class DataCollector {
 
         weight = weight * rate;
 
-        if (calc.compareAndSet(false, true)) {
-            long now = System.currentTimeMillis();
-            if (now > print) {
-//                System.out.println(
-//                        LocalDateTime.now().toString() + " bucket:" + bucket + " collect data current,weight:" + weight
-//                                + " activeRequests:" + activeRequests.get() + " rate:" + rate);
-                print = now + 500;
-            }
-            calc.compareAndSet(true, false);
-        }
         return weight;
     }
 
