@@ -66,9 +66,10 @@ public class ThroughputRate {
                         this.weight = nWeight;
                     }
 
-                    if (devWeight > (oWeight * BETA)) {
+                    if (devWeight > (oWeight * BETA) && !devRise.get()) {
                         System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 方差变化,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
                         if (nWeight > 1000) {
+                            devRise.compareAndSet(false, true);
                             this.weightThreshold = now + interval * 3;
                         }
                     }
@@ -77,6 +78,7 @@ public class ThroughputRate {
                         System.out.println(LocalDateTime.now().toString() + " bucket:" + bucket + " 时间到期,nWeight:" + nWeight + " oWeight:" + oWeight + " weightTran" + weightTran);
                         this.weight = weightTran;
                         this.rise.set(1);
+                        devRise.compareAndSet(true, false);
                         this.weightThreshold = now + REFRESH;
                     }
 
