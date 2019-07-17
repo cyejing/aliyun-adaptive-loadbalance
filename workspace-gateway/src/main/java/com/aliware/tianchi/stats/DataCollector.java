@@ -15,7 +15,7 @@ public class DataCollector {
     public static final double GAMMA = 2.15;
 
     public static final int COLLECT = 100;
-    public static final int REFRESH = 3000;
+    public static final int REFRESH = 2000;
 
     private volatile int bucket = 1000;
     private AtomicInteger activeRequests = new AtomicInteger(0);
