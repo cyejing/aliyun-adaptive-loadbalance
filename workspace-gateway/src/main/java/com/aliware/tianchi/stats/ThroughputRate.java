@@ -67,21 +67,17 @@ public class ThroughputRate {
                     double weightTran = oWeight * (1 - ALPHA) + nWeight * ALPHA;
 
                     if (nWeight > oWeight) {
-                        System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐上升,nWeight:"+nWeight+" oWeight:"+oWeight+" riseWeight:"+nWeight * BETA);
                         this.weight = nWeight + nWeight * BETA;
                     } else if (now > switchThreshold && nWeight < oWeight && devWeight > (oWeight * GAMMA)) {
-                        System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" 吞吐下降,nWeight:"+nWeight+" oWeight:"+oWeight+" devWeight:"+devWeight+" rate:"+(devWeight / oWeight));
                         this.weight = nWeight;
                     }
 
                     if (now > weightThreshold) {
-                        System.out.println(LocalDateTime.now().toString() + " bucket:" + bucket + " 时间到期,nWeight:" + nWeight + " oWeight:" + oWeight + " weightTran" + weightTran);
                         this.weight = weightTran;
                         this.rise.set(1);
                         this.weightThreshold = now + REFRESH;
                     }
 
-                    System.out.println(LocalDateTime.now().toString()+" bucket:"+bucket+" collect data current,weight:"+getWeight()+" maxWeight:"+weight+" throughputRate:"+throughputRate);
                     this.throughput.set(0);
                     this.threshold = now + interval;
                 }
